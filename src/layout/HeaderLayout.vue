@@ -1,5 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>헤더</div>
+  <nav class="fixed top-0 left-0">
+    <RouterLink>asd</RouterLink>
+  </nav>
 </template>

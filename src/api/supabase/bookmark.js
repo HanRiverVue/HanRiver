@@ -1,4 +1,4 @@
-import { supabase } from '../../config/supabase'; // 경로는 실제 파일 위치에 맞게 수정
+import { supabase } from '@/config/supabase'; // 경로는 실제 파일 위치에 맞게 수정
 
 let user_id = ''; // user_id 변수 초기화
 

@@ -1,5 +1,5 @@
 import { supabase } from '@/config/supabase';
-import { getPostComments } from './comment';
+import { getPostComments } from '@/api/supabase/comment';
 
 // 전체 게시물을 보여주는 API ( 페이지네이션 x)
 export const getAllPosts = async () => {

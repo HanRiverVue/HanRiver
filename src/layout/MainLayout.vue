@@ -1,11 +1,13 @@
 <script setup>
-import router from '@/router';
-import FooterLayout from './FooterLayout.vue';
-import HeaderLayout from './HeaderLayout.vue';
+import FooterLayout from '@/layout/FooterLayout.vue';
+import HeaderLayout from '@/layout/HeaderLayout.vue';
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
   <HeaderLayout />
-  <RouterView></RouterView>
+  <main class="max-w-[1200px] px-10 mx-auto mt-20">
+    <RouterView></RouterView>
+  </main>
   <FooterLayout v-if="$route.meta.showFooter" />
 </template>

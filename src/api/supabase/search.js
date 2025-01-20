@@ -1,5 +1,5 @@
 import { supabase } from '@/config/supabase';
-import { getPostPositions, getPostTechStacks } from './post';
+import { getPostPositions, getPostTechStacks } from '@/api/supabase/post';
 
 // 게시물 검색 API  - GET
 // ilike: 대소문자를 구분하지 않고 문자열을 검색

@@ -1,5 +1,5 @@
 import { supabase } from '@/config/supabase';
-import { getUserLoggedIn } from './auth';
+import { getUserLoggedIn } from '@/api/supabase/auth';
 
 // 게시물 댓글 작성 API(🔒)  - POST
 export const postCreateComment = async (requestObj) => {
