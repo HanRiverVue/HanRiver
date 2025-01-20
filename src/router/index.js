@@ -21,6 +21,7 @@ const router = createRouter({
           path: 'MyPage',
           name: 'MyPage',
           component: () => import('@/pages/MyPage.vue'),
+          meta: { bg_color: 'bg-secondary-2' },
         },
         {
           path: 'EditProfile',
