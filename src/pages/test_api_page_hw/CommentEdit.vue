@@ -1,5 +1,5 @@
 <script setup>
-import { deleteComment, postCreateComment, putUpdateComment } from '@/api/comment_editor';
+import { deleteComment, postCreateComment, putUpdateComment } from '@/api/supabase/comment_editor';
 
 const handleSubmit = async () => {
   await postCreateComment({

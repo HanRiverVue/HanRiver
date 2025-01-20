@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <RouterView />
+  <div>로딩중</div>
 </template>

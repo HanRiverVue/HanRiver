@@ -1,6 +1,6 @@
 <script setup>
-import { getAllPostsWithPagination } from '@/api/post';
-import { getAllPosts, getPostDetails, getPostsByUser } from '@/api/post';
+import { getAllPostsWithPagination } from '@/api/supabase/post';
+import { getAllPosts, getPostDetails, getPostsByUser } from '@/api/supabase/post';
 import { onMounted, ref } from 'vue';
 
 const allPosts = ref([]);

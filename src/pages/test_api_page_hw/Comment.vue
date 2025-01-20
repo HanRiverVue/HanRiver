@@ -1,5 +1,5 @@
 <script setup>
-import { getPostComments } from '@/api/comment';
+import { getPostComments } from '@/api/supabase/comment';
 import { onMounted, ref } from 'vue';
 
 const comments = ref([]);

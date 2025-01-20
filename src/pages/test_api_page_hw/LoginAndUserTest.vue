@@ -5,14 +5,14 @@ import {
   signInWithGoogle,
   signInWithKakao,
   signOut,
-} from '@/api/auth';
+} from '@/api/supabase/auth';
 import {
   getAllUserInfo,
   getUserInfo,
   getUserInfoToUserId,
   postUserInfoOnboard,
   putUserInfo,
-} from '@/api/user';
+} from '@/api/supabase/user';
 import { onMounted, ref } from 'vue';
 
 const isLogin = ref(false);

@@ -1,5 +1,5 @@
 <script setup></script>
 
 <template>
-  <RouterView />
+  <div>내 정보 수정 페이지</div>
 </template>

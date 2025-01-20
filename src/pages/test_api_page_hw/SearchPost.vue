@@ -1,5 +1,5 @@
 <script setup>
-import { getSearchPost } from '@/api/search';
+import { getSearchPost } from '@/api/supabase/search';
 import { ref } from 'vue';
 
 const searchResults = ref([]);

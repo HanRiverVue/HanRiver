@@ -1,5 +1,5 @@
 <script setup>
-import { postUploadUserImage } from '@/api/imageUpload';
+import { postUploadUserImage } from '@/api/supabase/imageUpload';
 import { ref } from 'vue';
 
 // 이미지파일 upload API 활용예시

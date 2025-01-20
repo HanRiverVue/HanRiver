@@ -1,6 +1,11 @@
 <script setup>
-import { signInWithGithub } from '@/api/auth';
-import { deletePost, postCreatePost, postUploadPostImage, putUpdatePost } from '@/api/post_editor';
+import { signInWithGithub } from '@/api/supabase/auth';
+import {
+  deletePost,
+  postCreatePost,
+  postUploadPostImage,
+  putUpdatePost,
+} from '@/api/supabase/post_editor';
 import { ref } from 'vue';
 
 //  예시
