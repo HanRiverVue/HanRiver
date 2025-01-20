@@ -1,10 +1,10 @@
 import { supabase } from '@/config/supabase';
-import { getAuthUser } from './user';
+import { getUserLoggedIn } from './auth';
 
 // 게시물 댓글 작성 API(🔒)  - POST
 export const postCreateComment = async (requestObj) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }
@@ -46,7 +46,7 @@ export const postCreateComment = async (requestObj) => {
 // 게시물 댓글 수정 API(🔒)  - PUT
 export const putUpdateComment = async (requestObj, commentId) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
 
     if (!user) {
       throw new Error('로그인이 필요합니다!');
@@ -80,7 +80,7 @@ export const putUpdateComment = async (requestObj, commentId) => {
 // 게시물 댓글 삭제 API(🔒)  - DELETE
 export const deleteComment = async (commentId) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
 
     if (!user) {
       throw new Error('로그인이 필요합니다!');
