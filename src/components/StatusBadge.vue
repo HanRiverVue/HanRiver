@@ -17,12 +17,12 @@ const statusColor = {
   done: 'bg-gray-5 text-gray-50 border-gray-50',
 };
 
-const badgeClass = computed(() =>
+const styleClass = computed(() =>
   twMerge('caption-b py-1 border rounded-full px-2.5 justify-center', statusColor[props.status]),
 );
 </script>
 <template>
-  <span :class="badgeClass">
+  <span :class="styleClass">
     <slot></slot>
   </span>
 </template>
