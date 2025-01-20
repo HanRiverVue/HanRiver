@@ -1,0 +1,79 @@
+@layer base {
+  .h1-b {
+    font-size: 32px;
+    font-weight: bold;
+    line-height: 48px;
+  }
+
+  .h2-b {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 36px;
+  }
+
+  .h3-b {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+  }
+
+  .h4-b {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 24px;
+  }
+
+  .body-large-b {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 24px;
+  }
+
+  .body-large-m {
+    font-size: 16px;
+    font-weight: medium;
+    line-height: 24px;
+  }
+
+  .body-large-r {
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 24px;
+  }
+
+  .body-b {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 21px;
+  }
+
+  .body-m {
+    font-size: 14px;
+    font-weight: medium;
+    line-height: 21px;
+  }
+
+  .body-r {
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 21px;
+  }
+
+  .caption-b {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 18px;
+  }
+
+  .caption-m {
+    font-size: 12px;
+    font-weight: medium;
+    line-height: 18px;
+  }
+
+  .caption-r {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 18px;
+  }
+}
