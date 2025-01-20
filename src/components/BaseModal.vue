@@ -1,6 +1,7 @@
 <template>
   <!-- 흐린 배경 -->
-  <div class="bg-gray-40 w-full h-full fixed top-0 left-0 flex justify-center items-center">
+  <!-- bg-[#333333] -->
+  <div class="bg-gray-80 w-full h-full fixed top-0 left-0 flex justify-center items-center">
     <!-- 모달창 (opacity 적용 안됨) -->
     <div
       class="py-8 px-12 w-[330px] max-w-[330px] flex flex-col items-start gap-[10px] absolute top-[50%] left-[50%] rounded-[20px] transform: translate-x-[-50%] translate-y-[-50%] bg-secondary-2"
@@ -10,7 +11,9 @@
           <slot></slot>
         </p>
         <div class="flex gap-[16px] w-full mt-[16px]">
-          <button class="body-r text-gray-70 modal-button-shadow p-2 rounded-[8px] flex-grow">
+          <button
+            class="body-r bg-white text-gray-70 modal-button-shadow p-2 rounded-[8px] flex-grow"
+          >
             돌아가기
           </button>
           <button
