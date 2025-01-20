@@ -26,7 +26,7 @@ const styleClass = computed(() =>
 <template>
   <button type="button" :class="styleClass" @click="emit('click')">
     <slot name="icon" :className="'w-6 h-6'"></slot>
-    <slot class="bg-blue-400"></slot>
+    <slot class="text-gray-80 caption-r"></slot>
   </button>
 </template>
 <style scoped></style>
