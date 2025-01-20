@@ -1,6 +1,5 @@
 import { supabase } from '@/config/supabase';
-import { ref } from 'vue';
-import { getUserLoggedIn } from './auth';
+import { getUserLoggedIn } from '@/api/supabase/auth';
 
 // 온보딩 post API /////////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 <script setup>
-import LoginAndUserTest from './LoginAndUserTest.vue';
+import LoginAndUserTest from '@/pages/test_api_page_hw/LoginAndUserTest.vue';
 </script>
 
 <template>
