@@ -1,10 +1,10 @@
 import { supabase } from '@/config/supabase';
-import { getAuthUser } from '@/config/userAPI/user';
+import { getUserLoggedIn } from './auth';
 
 // 게시물 작성 API(🔒) - POST
 export const postCreatePost = async (requestObj, positions, techStacks) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }

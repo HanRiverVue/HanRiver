@@ -1,4 +1,5 @@
 import { supabase } from '@/config/supabase';
+import { getPostComments } from './comment';
 
 // 전체 게시물을 보여주는 API ( 페이지네이션 x)
 export const getAllPosts = async () => {
@@ -23,7 +24,6 @@ export const getAllPosts = async () => {
     return totalData;
   } catch (error) {
     console.error(error);
-    return { posts: [], totalCount: 0 };
   }
 };
 
@@ -33,21 +33,42 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     const from = (page - 1) * pageSize;
     const to = page * pageSize;
 
-    // 쿼리 체이닝 방식을 사용시 await을 마지막에 단한번 실행
+    // 기술 스택 요소를 포함하는 post_id를 담을 배열
+    let matchingPostIds = [];
+    if (filters.techStack && filters.techStack.length > 0) {
+      const { data: stackData } = await supabase
+        .from('post_stacks')
+        .select('post_id')
+        .or(filters.techStack.map((tech) => `stack.ilike.%${tech}%`).join(','));
+
+      matchingPostIds = stackData?.map((item) => item.post_id) || [];
+
+      if (matchingPostIds.length === 0) {
+        return { data: [], totalPost: 0, page, totalPage: 0 };
+      }
+    }
+
+    // 쿼리 체이닝 방식을 사용시 await을 마지막에 단 한번 실행
+    // post_positions 테이블을  post 테이블과 inner join
     let query = supabase
       .from('post')
-      .select(`*, post_positions(position), post_stacks(stack)`, { count: 'exact' })
+      .select(`*,post_positions!inner(position)`, { count: 'exact' })
       .order('created_at', { ascending: false });
 
+    if (matchingPostIds.length > 0) {
+      query = query.in('id', matchingPostIds);
+    }
+    if (filters.position) {
+      query = query.ilike('post_positions.position', `%${filters.position}%`);
+    }
     if (filters.recruitArea) {
-      query = query.ilike('recruit_area', `%${filters.recruitArea}%`);
+      query = query.is('recruit_area', `%${filters.recruitArea}%`);
     }
     if (filters.recruitType) {
-      query = query.ilike('recruit_type', filters.recruitType);
-      console.log('After recruitType filter:', query);
+      query = query.is('recruit_type', filters.recruitType);
     }
     if (filters.onOffline) {
-      query = query.ilike('on_offline', `%${filters.onOffline}%`);
+      query = query.is('on_offline', `%${filters.onOffline}%`);
     }
     query = query.range(from, to);
 
@@ -55,13 +76,12 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     if (error2) {
       throw new Error(error2);
     }
-
-    const totalPage = Math.ceil(count || 0 / pageSize);
+    const totalPage = Math.ceil((count || 0) / pageSize);
 
     return { data, totalPost: count, page, totalPage };
   } catch (error) {
     console.error(error);
-    return { posts: [], totalPost: 0 };
+    return { data: [], totalPost: 0, page, totalPage: 0 };
   }
 };
 
@@ -80,6 +100,7 @@ export const getPostDetails = async (postId) => {
     ]);
 
     const userId = data.author;
+
     const { data: user, error: userError } = await supabase
       .from('user_list')
       .select()
@@ -90,20 +111,8 @@ export const getPostDetails = async (postId) => {
       throw new Error(userError);
     }
 
-    const totalData = await Promise.all(
-      data.map(async (item) => {
-        return {
-          ...item,
-          position,
-          techStack,
-          comments,
-          user,
-        };
-      }),
-    );
-    return {
-      data: totalData,
-    };
+    const totalData = { ...data, position, techStack, comments, user };
+    return totalData;
   } catch (error) {
     console.error(error);
   }
@@ -137,57 +146,28 @@ export const getPostTechStacks = async (postId) => {
   return data.stack.split('/');
 };
 
-// //  모집 유형별(프로젝트/스터디) 게시물 목록 API
-// export const getPostsByType = async (typeName) => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('post')
-//       .select()
-//       .eq('recruit_type', typeName)
-//       .order('created_at', { ascending: false });
-
-//     if (error) {
-//       console.error(error);
-//     }
-
-//     return data;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
 // 사용자가 작성한 게시물 목록 API
-export const getPostsByUser = async (userName) => {
+export const getPostsByUser = async (userId) => {
   try {
-    const { data: user, error } = await supabase
-      .from('user_list')
-      .select('user_id')
-      .eq('name', userName)
-      .single();
-
-    if (error) {
-      throw new Error(error);
-    }
-    const userId = user.user_id;
-    const { data, error: error2 } = await supabase
+    const { data, error } = await supabase
       .from('post')
       .select()
       .eq('author', userId)
       .order('created_at', { ascending: false });
 
-    if (error2) {
-      throw new Error(error2);
+    if (error) {
+      throw new Error(error);
     }
-    const totalData = await Promise.all(
-      data.map(async (item) => {
-        return {
-          ...item,
-          positions: await getPostPositions(item.id),
-          techStacks: await getPostTechStacks(item.id),
-        };
-      }),
-    );
-    return totalData;
+    // const totalData = await Promise.all(
+    //   data.map(async (item) => {
+    //     return {
+    //       ...item,
+    //       // positions: await getPostPositions(item.id),
+    //       // techStacks: await getPostTechStacks(item.id),
+    //     };
+    //   }),
+    // );
+    return data;
   } catch (error) {
     console.error(error);
   }
