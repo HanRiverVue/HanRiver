@@ -15,7 +15,7 @@ const router = createRouter({
           path: '',
           name: 'MainPage',
           component: MainPage,
-          meta: { showFooter: true },
+          meta: { showFooter: true, showScrollTop: true },
         },
         {
           path: 'MyPage',
@@ -27,6 +27,7 @@ const router = createRouter({
           path: 'EditProfile',
           name: 'EditProfilePage',
           component: () => import('@/pages/EditProfilePage.vue'),
+          meta: { showScrollTop: true },
         },
         {
           path: 'UserPage',
@@ -37,11 +38,13 @@ const router = createRouter({
           path: 'EditRecruitPost',
           name: 'EditRecruitPostPage',
           component: () => import('@/pages/EditRecruitPostPage.vue'),
+          meta: { showScrollTop: true },
         },
         {
           path: 'RecruitPostDetail',
           name: 'RecruitPostDetailPage',
           component: () => import('@/pages/RecruitPostDetailPage.vue'),
+          meta: { showScrollTop: true },
         },
         {
           path: 'PostList',

@@ -30,7 +30,7 @@ onBeforeUnmount(() => {
         <HeaderLayout />
         <RouterView></RouterView>
         <UpScroll v-if="isScrollTopShow" />
-        <FooterLayout v-if="$route.meta.showFooter" />
+        <FooterLayout v-if="$route.meta.showScrollTop && $route.meta.showFooter" />
       </article>
     </section>
   </main>
