@@ -6,6 +6,8 @@ import { RouterView } from 'vue-router';
 
 <template>
   <HeaderLayout />
-  <RouterView></RouterView>
+  <main class="max-w-[1200px] px-10 mx-auto mt-20">
+    <RouterView></RouterView>
+  </main>
   <FooterLayout v-if="$route.meta.showFooter" />
 </template>
