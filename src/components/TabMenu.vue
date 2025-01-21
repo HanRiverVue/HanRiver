@@ -1,4 +1,6 @@
 <script setup>
+import { computed, ref } from 'vue';
+
 const props = defineProps({
   menuItems: {
     type: Array,
@@ -9,6 +11,8 @@ const props = defineProps({
     required: true,
   },
 });
+
+const emit = defineEmits(['update:activeIndex']);
 </script>
 <template>
   <div class="w-full flex flex-col justify-center items-center h-[50px] py-[18px] bg-secondary-1">
@@ -18,6 +22,7 @@ const props = defineProps({
           v-for="(item, index) in props.menuItems"
           :key="index"
           class="cursor-pointer"
+          @click="emit('update:activeIndex', index)"
           :class="props.activeIndex === index && 'text-primary-2'"
         >
           {{ item }}
