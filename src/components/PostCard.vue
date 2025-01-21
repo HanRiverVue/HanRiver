@@ -1,7 +1,6 @@
 <script setup>
+import { bookmark_icon, cheering_icon } from '@/assets/icons';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
-import cheeringIcon from '@/assets/icons/cheering-icon.svg';
-import bookmark from '@/assets/icons/bookmark.svg';
 
 const props = defineProps({
   userImage: {
@@ -47,10 +46,10 @@ const getSkillsLogoImageUrl = (name) => {
         </div>
         <div class="flex gap-[6px]">
           <button class="w-6 h-6">
-            <img :src="cheeringIcon" alt="" />
+            <img :src="cheering_icon" alt="" />
           </button>
           <button class="w-6 h-6">
-            <img :src="bookmark" alt="" />
+            <img :src="bookmark_icon" alt="" />
           </button>
         </div>
       </div>
