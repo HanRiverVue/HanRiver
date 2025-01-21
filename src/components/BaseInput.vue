@@ -30,7 +30,7 @@ const isFocused = ref(false);
 
 const styleClass = computed(() =>
   twMerge(
-    'input-shadow rounded-lg flex gap-1.5 items-center border border-transparent focus-within:border-primary-3 px-4 py-3 bg-white',
+    'input-shadow w-full rounded-lg flex gap-1.5 items-center border border-transparent focus-within:border-primary-3 px-4 py-3 bg-white',
     props.className,
   ),
 );
