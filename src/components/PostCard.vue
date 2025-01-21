@@ -1,8 +1,4 @@
 <script setup>
-<<<<<<< HEAD
-import { bookmark_icon, cheering_icon } from '@/assets/icons';
-import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
-=======
 import { ref } from 'vue';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import like from '@/assets/icons/like.svg';
@@ -20,7 +16,6 @@ const handleToggleBookmarkClick = () => {
 const handleToggleLikeClick = () => {
   isLikeFilled.value = !isLikeFilled.value;
 };
->>>>>>> a26a180c4aed4dcc6d68ef8235939def3a0a4cf7
 
 const props = defineProps({
   userImage: {
@@ -65,19 +60,11 @@ const getSkillsLogoImageUrl = (name) => {
           <span class="body-b">{{ userName }}</span>
         </div>
         <div class="flex gap-[6px]">
-<<<<<<< HEAD
-          <button class="w-6 h-6">
-            <img :src="cheering_icon" alt="" />
-          </button>
-          <button class="w-6 h-6">
-            <img :src="bookmark_icon" alt="" />
-=======
           <button @click="handleToggleLikeClick" class="w-6 h-6">
             <img :src="isLikeFilled ? likeFill : like" alt="" />
           </button>
           <button @click="handleToggleBookmarkClick" class="w-6 h-6">
             <img :src="isBookmarkFilled ? bookmarkFill : bookmark" alt="" />
->>>>>>> a26a180c4aed4dcc6d68ef8235939def3a0a4cf7
           </button>
         </div>
       </div>
