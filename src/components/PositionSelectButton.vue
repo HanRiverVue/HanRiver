@@ -1,0 +1,42 @@
+<script setup>
+import { twMerge } from 'tailwind-merge';
+import { computed } from 'vue';
+
+const props = defineProps({
+  size: {
+    type: String,
+    required: true,
+    validator: (value) => ['large', 'small'].includes(value),
+  },
+  isSelected: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(['click']);
+
+const sizeClass = {
+  large: 'py-2.5 px-8',
+  small: 'py-[6px] px-6',
+};
+
+const activeClass = {
+  selected: 'bg-secondary-2 text-primary-3 border-primary-3',
+  nonSelected: 'bg-white text-gray-80 border-transparent',
+};
+
+const styleClass = computed(() =>
+  twMerge(
+    'border input-shadow w-full rounded-[10px] body-large-m',
+    sizeClass[props.size],
+    props.isSelected ? activeClass.selected : activeClass.nonSelected,
+  ),
+);
+</script>
+<template>
+  <button type="button" :class="styleClass" @click="emit('click')">
+    <slot></slot>
+  </button>
+</template>
+<style scoped></style>
