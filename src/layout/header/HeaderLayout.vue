@@ -1,20 +1,23 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import logo from '@/assets/icons/logo.svg';
 import NonLoggedInRight from '@/layout/header/components/NonLoggedInRight.vue';
 import LoggedInRight from '@/layout/header/components/LoggedInRight.vue';
-import { twMerge } from 'tailwind-merge';
-import { useHeaderNavStore } from '@/stores/headerNavStore';
-import { storeToRefs } from 'pinia';
 
 const isLoggedIn = ref(true);
 
-const headerNavStore = useHeaderNavStore();
-const { navigateTarget } = storeToRefs(headerNavStore);
+const focusClass =
+  'text-primary-3 before:content-[""] before:w-1 before:h-1 before:rounded-full before:bg-primary-3 before:absolute before:top-[-4px] before:left-[50%] before:translate-x-[-50%]';
 
-const focusClass = twMerge(
-  'text-primary-3 before:content-[""] before:w-1 before:h-1 before:rounded-full before:bg-primary-3 before:absolute before:top-[-4px] before:left-[50%] before:translate-x-[-50%]',
-);
+const route = useRoute();
+
+const currentPath = ref('');
+const setPath = () => {
+  currentPath.value = window.location.pathname;
+};
+
+watch(route, setPath, { immediate: true });
 </script>
 
 <template>
@@ -26,13 +29,13 @@ const focusClass = twMerge(
             <img :src="logo" alt="mergi 로고 아이콘" class="min-w-[96px]" />
           </RouterLink>
           <ul class="w-full max-w-[370px] flex items-center justify-between h3-b">
-            <li :class="`relative ${navigateTarget === 'study' && focusClass}`">
+            <li :class="`relative ${currentPath === '/PostList/study' && focusClass}`">
               <RouterLink to="/PostList/study"> 스터디 </RouterLink>
             </li>
-            <li :class="`relative ${navigateTarget === 'project' && focusClass}`">
+            <li :class="`relative ${currentPath === '/PostList/project' && focusClass}`">
               <RouterLink to="/PostList/project"> 프로젝트 </RouterLink>
             </li>
-            <li :class="`relative ${navigateTarget === 'service' && focusClass}`">
+            <li :class="`relative ${currentPath === '/service' && focusClass}`">
               <RouterLink to="/service"> 서비스 </RouterLink>
             </li>
           </ul>

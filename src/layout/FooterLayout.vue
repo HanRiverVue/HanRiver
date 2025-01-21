@@ -26,7 +26,7 @@ const members = [
       <ul class="flex justify-between mb-2">
         <template v-for="(member, index) of members">
           <li class="caption-m text-gray-50">
-            <a :href="member.href" target="_blank">{{ member.name }}</a>
+            <a :href="member.href" target="_blank" rel="noopener noreferrer">{{ member.name }}</a>
           </li>
           <li v-if="index < members.length - 1" class="caption-m text-gray-50">|</li>
         </template>

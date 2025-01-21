@@ -1,21 +1,4 @@
-<script setup>
-import { useHeaderNavStore } from '@/stores/headerNavStore';
-import { onBeforeUnmount, watch } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-
-const headerNavStore = useHeaderNavStore();
-
-const changeNavigate = () => {
-  headerNavStore.setNavigate(route.params.type);
-};
-watch(route, changeNavigate, { immediate: true });
-
-onBeforeUnmount(() => {
-  changeNavigate('');
-});
-</script>
+<script setup></script>
 
 <template>
   <div>글 목록 페이지</div>

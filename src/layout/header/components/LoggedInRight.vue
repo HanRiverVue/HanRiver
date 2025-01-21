@@ -3,21 +3,22 @@ import default_user_img from '@/assets/images/default_user_img.png';
 import PostEditSvg from '@/assets/icons/PostEditSvg.vue';
 import NotificationSvg from '@/assets/icons/NotificationSvg.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
 
-const dropDownMenu = ref(false);
+const dropDownMenuShow = ref(false);
 // 엘리먼트 ref객체
 const targetElement = ref(null);
 const closeTargetElement = ref(null);
 
 const handleDropDownMenuClick = (event) => {
-  if (dropDownMenu.value && closeTargetElement.value === event.target) {
-    return (dropDownMenu.value = false);
+  if (dropDownMenuShow.value && closeTargetElement.value === event.target) {
+    return (dropDownMenuShow.value = false);
   }
 
   if (targetElement.value.contains(event.target)) {
-    dropDownMenu.value = true;
+    dropDownMenuShow.value = true;
   } else {
-    dropDownMenu.value = false;
+    dropDownMenuShow.value = false;
   }
 };
 
@@ -26,7 +27,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  document.addEventListener('click', handleDropDownMenuClick);
+  document.removeEventListener('click', handleDropDownMenuClick);
 });
 </script>
 
@@ -51,7 +52,7 @@ onBeforeUnmount(() => {
           class="w-10 rounded-full"
         />
       </button>
-      <article v-if="dropDownMenu" class="absolute bottom-[-30px] p-3 bg-white border">
+      <article v-if="dropDownMenuShow" class="absolute bottom-[-30px] p-3 bg-white border">
         메뉴드롭다운 나오는 곳
       </article>
     </li>
