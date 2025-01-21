@@ -4,7 +4,7 @@ import {
   photoshop_logo,
   xd_logo,
   zeplin_logo,
-} from '@/assets/skills';
+} from '@/assets/images/skills';
 
 export const DESIGN_SKILLS = [
   { name: 'Zeplin', image: zeplin_logo },

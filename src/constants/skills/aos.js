@@ -1,4 +1,4 @@
-import { flutter_logo, git_logo, kotlin_logo, reactnative_logo } from '@/assets/skills';
+import { flutter_logo, git_logo, kotlin_logo, reactnative_logo } from '@/assets/images/skills';
 
 export const AOS_SKILLS = [
   { name: 'React Native', image: reactnative_logo },

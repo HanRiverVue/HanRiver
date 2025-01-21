@@ -14,7 +14,7 @@ import {
   php_logo,
   python_logo,
   spring_logo,
-} from '@/assets/skills';
+} from '@/assets/images/skills';
 
 export const BACKEND_SKILLS = [
   { name: 'Java', image: java_logo },

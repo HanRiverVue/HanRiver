@@ -8,7 +8,7 @@ import {
   svelte_logo,
   typescript_logo,
   vue_logo,
-} from '@/assets/skills';
+} from '@/assets/images/skills';
 
 export const FRONTEND_SKILLS = [
   { name: 'JavaScript', image: javascript_logo },

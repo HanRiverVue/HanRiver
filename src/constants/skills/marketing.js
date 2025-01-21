@@ -1,4 +1,4 @@
-import { firebase_logo, google_ads_logo, google_analytics_logo } from '@/assets/skills';
+import { firebase_logo, google_ads_logo, google_analytics_logo } from '@/assets/images/skills';
 
 export const MARKETING_SKILLS = [
   { name: 'Google Analytics', image: google_analytics_logo },

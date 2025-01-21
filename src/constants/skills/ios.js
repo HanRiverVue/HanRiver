@@ -4,7 +4,7 @@ import {
   reactnative_logo,
   swift_logo,
   swiftui_logo,
-} from '@/assets/skills';
+} from '@/assets/images/skills';
 
 export const IOS_SKILLS = [
   { name: 'Swift', image: swift_logo },

@@ -5,7 +5,7 @@ import {
   jenkins_logo,
   jest_logo,
   kubernetes_logo,
-} from '@/assets/skills';
+} from '@/assets/images/skills';
 
 export const DEVOPS_SKILLS = [
   { name: 'Docker', image: docker_logo },

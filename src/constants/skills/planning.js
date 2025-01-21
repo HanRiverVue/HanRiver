@@ -6,7 +6,7 @@ import {
   productboard_logo,
   trello_logo,
   xd_logo,
-} from '@/assets/skills';
+} from '@/assets/images/skills';
 
 export const PLANNING_SKILLS = [
   { name: 'Miro', image: miro_logo },
