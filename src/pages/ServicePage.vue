@@ -1,5 +1,5 @@
 <script setup></script>
+
 <template>
-  <h1>Home Page</h1>
+  <div>준비중입니다...</div>
 </template>
-<style scoped></style>

@@ -38,6 +38,15 @@ export default {
         },
       },
     },
+    animation: {
+      'fade-in-500': 'fadeIn .5s linear',
+    },
+    keyframes: {
+      fadeIn: {
+        '0%': { opacity: 0 },
+        '100%': { opacity: 1 },
+      },
+    },
   },
   plugins: [],
 };
