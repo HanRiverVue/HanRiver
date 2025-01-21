@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  *:focus {
+    outline: none;
+  }
+
   body {
     font-family: 'Pretendard', sans-serif;
   }
