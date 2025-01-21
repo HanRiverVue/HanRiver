@@ -67,7 +67,6 @@ const handleRemoveLink = (targetIndex) => {
 };
 
 const handleSelectPositions = (position) => {
-  console.log(position);
   if (selectedPositions.includes(position)) {
     if (selectedPositions.length === 1) return;
     selectedPositions.splice(selectedPositions.indexOf(position), 1);
@@ -78,7 +77,6 @@ const handleSelectPositions = (position) => {
 };
 
 const toggleDropdown = () => {
-  console.log('test');
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
