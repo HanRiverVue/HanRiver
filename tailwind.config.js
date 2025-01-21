@@ -39,7 +39,7 @@ export default {
       },
     },
     animation: {
-      'fade-in': 'fadeIn .5s linear',
+      'fade-in-500': 'fadeIn .5s linear',
     },
     keyframes: {
       fadeIn: {
