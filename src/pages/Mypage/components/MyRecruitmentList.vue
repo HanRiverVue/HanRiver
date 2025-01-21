@@ -7,7 +7,7 @@ const arr = ['skills-logo-spring.png', 'skills-logo-nodejs.png'];
 <template>
   <!-- 모집 글이 있을때 화면 -->
 
-  <div class="flex px-4 justify-between items-center content-center gap-y-4 self-stretch flex-wrap">
+  <div class="flex px-4 justify-between items-center gap-y-4 flex-wrap">
     <PostCard
       :user-image="baseProfile"
       user-name="현우"

@@ -2,7 +2,7 @@
 import toggleBtn from '@/assets/icons/toggle_img.svg';
 import linkIcon from '@/assets/icons/link_icon.svg';
 import SkillBadge from '@/components/SkillBadge.vue';
-import vueLogo from '@/assets/images/skills-logo-vue.png';
+import vueLogo from '@/assets/images/skills/vue.png';
 </script>
 <template>
   <div class="flex flex-col gap-11 px-10">

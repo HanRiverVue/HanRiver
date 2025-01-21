@@ -2,7 +2,6 @@
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { ref } from 'vue';
-import reactLogo from '../../../assets/images/skills-logo-react.png';
 import AppButton from '@/components/AppButton.vue';
 const props = defineProps({
   projectTitle: {
@@ -38,7 +37,7 @@ if (props.status === 'success') {
 }
 
 const getSkillsLogoImageUrl = (name) => {
-  return new URL(`../../../assets/images/skills-logo-${name}.png`, import.meta.url).href;
+  return new URL(`../../../assets/images/skills/${name}.png`, import.meta.url).href;
 };
 </script>
 

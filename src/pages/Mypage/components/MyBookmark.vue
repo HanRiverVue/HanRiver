@@ -21,9 +21,12 @@ const arr = ['skills-logo-spring.png', 'skills-logo-nodejs.png'];
   <!-- 모집 글이 없을때 화면 -->
   <div class="flex flex-col justify-center items-center gap-5 flex-1 h-[600px]">
     <p class="text-center text-primary-4 h3-b">찜 목록이 없습니다.</p>
-    <button class="bg-primary-3 text-white rounded-lg body-large-m py-2 px-6">
+    <RouterLink
+      to="/Postlist/project"
+      class="bg-primary-3 text-white rounded-lg body-large-m py-2 px-6"
+    >
       찾아보러 가볼까요?
-    </button>
+    </RouterLink>
   </div>
 </template>
 <style scoped></style>

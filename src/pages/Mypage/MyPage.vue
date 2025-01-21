@@ -17,7 +17,7 @@ const activeIndex = ref(0);
   <div class="pb-20 pt-12">
     <!-- 프로필 카드 -->
     <div
-      class="px-[58px] py-[48px] flex items-center gap-[44px] rounded-[8px] bg-white max-w-[928px] m-auto"
+      class="px-[58px] py-[48px] flex items-center gap-[44px] rounded-[8px] bg-white max-w-[928px] m-auto card-shadow"
     >
       <!-- 프로필 이미지 -->
       <div>
