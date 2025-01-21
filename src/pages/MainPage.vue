@@ -9,6 +9,7 @@ import mainServiceBanner from '@/assets/images/main_service_banner.png';
 import pencil from '@/assets/images/pencil.png';
 import search from '@/assets/images/search.png';
 import talk from '@/assets/images/talk.png';
+import MainSmallBanner from '@/components/MainSmallBanner.vue';
 
 const postCardData = {
   userImage: PostcardUserImage,
@@ -28,47 +29,41 @@ const listItems = [
 </script>
 <template>
   <section class="mb-20">
-    <div class="mb-5"><img :src="mainBanner" alt="" /></div>
+    <div class="mb-5"><img :src="mainBanner" alt="mainBanner" /></div>
     <div class="flex gap-5">
-      <RouterLink to="/PostList/study">
-        <div class="flex-col w-[360px] px-[30px] py-[30px] rounded-md bg-secondary-2">
-          <h3 class="h3-b text-primary-1">
-            <p class="flex gap-1 items-center mb-[7px] caption-r text-gray-50">
-              모집 중인 스터디를 찾아보세요 <img class="mb-1" :src="pencil" alt="" />
-            </p>
-            스터디 보러가기
-          </h3>
-          <div class="justify-self-end">
-            <img :src="mainStudyBanner" alt="" />
-          </div>
-        </div>
-      </RouterLink>
-      <RouterLink to="/PostList/project">
-        <div class="flex-col w-[360px] px-[30px] py-[30px] rounded-md bg-secondary-1">
-          <h3 class="h3-b text-primary-1">
-            <p class="flex gap-1 items-center mb-[7px] caption-r text-gray-50">
-              모집 중인 프로젝트를 찾아보세요<img class="mb-1" :src="search" alt="" />
-            </p>
-            프로젝트 보러가기
-          </h3>
-          <div class="justify-self-end">
-            <img :src="mainProjectBanner" alt="" />
-          </div>
-        </div>
-      </RouterLink>
-      <RouterLink to="/service">
-        <div class="flex-col w-[360px] px-[30px] py-[30px] rounded-md bg-primary-5">
-          <h3 class="h3-b text-primary-1">
-            <p class="flex gap-1 items-center mb-[7px] caption-r text-gray-50">
-              홍보 중인 서비스를 구경해 보세요<img class="mb-1" :src="talk" alt="" />
-            </p>
-            서비스 보러가기
-          </h3>
-          <div class="justify-self-end">
-            <img :src="mainServiceBanner" alt="" />
-          </div>
-        </div>
-      </RouterLink>
+      <MainSmallBanner
+        to="/PostList/study"
+        bgColor="bg-secondary-2"
+        bannerCaption="모집 중인 스터디를 찾아보세요"
+        :icon="pencil"
+        iconAlt="pencilIcon"
+        title="스터디 보러가기"
+        :bannerImage="mainStudyBanner"
+        bannerAlt="mainStudyBanner"
+        imagePosition="top-[64px] right-5"
+      />
+      <MainSmallBanner
+        to="/PostList/project"
+        bgColor="bg-secondary-1"
+        bannerCaption="모집 중인 프로젝트를 찾아보세요"
+        :icon="search"
+        iconAlt="searchIcon"
+        title="프로젝트 보러가기"
+        :bannerImage="mainProjectBanner"
+        bannerAlt="mainProjectBanner"
+        imagePosition="top-[68px] right-5"
+      />
+      <MainSmallBanner
+        to="/service"
+        bgColor="bg-primary-5"
+        bannerCaption="홍보 중인 서비스를 구경해 보세요"
+        :icon="talk"
+        iconAlt="talkIcon"
+        title="서비스 보러가기"
+        :bannerImage="mainServiceBanner"
+        bannerAlt="mainServiceBanner"
+        imagePosition="top-[41px] right-[26px]"
+      />
     </div>
   </section>
   <section>
