@@ -1,6 +1,6 @@
 <script setup>
 import { twMerge } from 'tailwind-merge';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 
 const props = defineProps({
   value: {
@@ -19,9 +19,14 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  maxLength: {
+    type: Number,
+    default: null,
+  },
 });
 
 const emit = defineEmits(['input']);
+const isFocused = ref(false);
 
 const styleClass = computed(() =>
   twMerge(
@@ -29,6 +34,21 @@ const styleClass = computed(() =>
     props.className,
   ),
 );
+
+const handleFocus = () => {
+  isFocused.value = true;
+};
+
+const handleBlur = () => {
+  isFocused.value = false;
+};
+
+const handleInput = (event) => {
+  if (props.maxLength && event.target.value.length > props.maxLength) {
+    event.target.value = event.target.value.slice(0, props.maxLength);
+  }
+  emit('input', event.target.value);
+};
 </script>
 <template>
   <div :class="styleClass">
@@ -38,7 +58,9 @@ const styleClass = computed(() =>
       :type="props.type"
       :placeholder="props.placeholder"
       class="w-full text-gray-80 placeholder:text-gray-40 bg-transparent"
-      @input="($event) => emit('input', $event)"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
     />
     <slot name="rightIcon"></slot>
   </div>

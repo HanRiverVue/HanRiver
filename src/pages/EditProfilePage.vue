@@ -30,18 +30,26 @@ const skillsBySelectedPosition = computed(() => {
 // TODO: 유저 정보를 받아서 초기화
 // TODO: 링크의 경우, id 삽입한 객체 배열로 변경
 
-const handleIntroduceInput = ($event) => {
-  introduce.value = $event.target.value;
+const handleNickNameInput = (value) => {
+  nickname.value = value;
+};
+
+const handleShortIntroduceInput = (value) => {
+  shortIntroduce.value = value;
+};
+
+const handleIntroduceInput = (event) => {
+  introduce.value = event.target.value;
 };
 
 const handleAddLinkClick = () => {
   links.push({ id: Date.now(), value: '' });
 };
 
-const handleLinkInput = (event, linkId) => {
+const handleLinkInput = (value, linkId) => {
   const index = links.findIndex((link) => link.id === linkId);
   if (index > -1) {
-    links[index].value = event.target.value;
+    links[index].value = value;
   }
 };
 
@@ -91,8 +99,14 @@ onMounted(() => {
         </div>
         <div class="grow">
           <section class="mb-6">
-            <h3 class="h4-b text-gray-80 mb-2.5">닉네임을 입력해주세요.</h3>
-            <BaseInput :value="nickname" placeholder="닉네임" className="pr-2 py-2">
+            <h3 class="h3-b text-gray-80 mb-2.5">닉네임을 입력해주세요.</h3>
+            <BaseInput
+              :value="nickname"
+              placeholder="닉네임"
+              :maxLength="MAX_NICKNAME_LENGTH"
+              className="pr-2 py-2"
+              @input="handleNickNameInput"
+            >
               <template #rightIcon>
                 <button
                   type="button"
@@ -108,8 +122,13 @@ onMounted(() => {
             </div>
           </section>
           <section>
-            <h3 class="h4-b text-gray-80 mb-2.5">간단하게 본인을 소개해주세요.</h3>
-            <BaseInput :value="shortIntroduce" placeholder="한 줄 소개" />
+            <h3 class="h3-b text-gray-80 mb-2.5">간단하게 본인을 소개해주세요.</h3>
+            <BaseInput
+              :value="shortIntroduce"
+              placeholder="한 줄 소개"
+              :maxLength="MAX_SHORT_INTRODUCE_LENGTH"
+              @input="handleShortIntroduceInput"
+            />
             <p class="body-r text-gray-50 justify-self-end mt-1">
               {{ shortIntroduce.length }}/{{ MAX_SHORT_INTRODUCE_LENGTH }}
             </p>
@@ -151,8 +170,10 @@ onMounted(() => {
             placeholder="포트폴리오, 구글 드라이브 파일 등 업무 성과를 보여줄 수 있는 링크가 있다면 추가해 주세요"
             @input="handleLinkInput($event, link.id)"
           >
-            <template #leftIcon>
-              <LinkIcon className="w-5 h-5 text-gray-50" />
+            <template #leftIcon="{ isFocused }">
+              <LinkIcon
+                :className="isFocused ? 'w-5 h-5 text-primary-3' : 'w-5 h-5 text-gray-50'"
+              />
             </template>
             <template #rightIcon>
               <button type="button" @click="handleRemoveLinkClick(link.id)">
