@@ -20,7 +20,7 @@ const router = createRouter({
         {
           path: 'MyPage',
           name: 'MyPage',
-          component: () => import('@/pages/MyPage.vue'),
+          component: () => import('@/pages/Mypage/MyPage.vue'),
           meta: { bg_color: 'bg-secondary-2' },
         },
         {
