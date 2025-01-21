@@ -21,8 +21,8 @@ const props = defineProps({
 const emit = defineEmits(['click']);
 
 const sizeClass = {
-  large: 'py-2.5 px-8',
-  small: 'py-[6px] px-6',
+  large: 'px-3 py-2.5 flex-1 basis-0 max-w-[95px] min-w-fit',
+  small: 'px-6 py-1.5',
 };
 
 const activeClass = {
@@ -32,7 +32,7 @@ const activeClass = {
 
 const styleClass = computed(() =>
   twMerge(
-    'border input-shadow w-full rounded-[10px] body-large-m',
+    'border input-shadow w-full rounded-[10px] body-large-m whitespace-nowrap',
     sizeClass[props.size],
     props.isSelected ? activeClass.selected : activeClass.nonSelected,
     props.className,

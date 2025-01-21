@@ -27,3 +27,17 @@
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.07);
   }
 }
+
+@layer components {
+  .primary-button {
+    @apply bg-primary-1 text-white border border-primary-1 rounded-md;
+    @apply hover:bg-primary-hover hover:border-primary-hover disabled:bg-gray-30;
+    @apply transition-colors duration-200;
+  }
+
+  .secondary-button {
+    @apply bg-white text-primary-1 border border-primary-1 rounded-md;
+    @apply hover:bg-white/50 disabled:bg-gray-30 disabled:text-white disabled:border-transparent;
+    @apply transition-colors duration-200;
+  }
+}

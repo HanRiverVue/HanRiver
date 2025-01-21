@@ -26,7 +26,7 @@ const router = createRouter({
           path: 'EditProfile',
           name: 'EditProfilePage',
           component: () => import('@/pages/EditProfilePage/EditProfilePage.vue'),
-          meta: { showScrollTop: true },
+          meta: { showScrollTop: true, bg_color: 'bg-secondary-3' },
         },
         {
           path: 'UserPage',

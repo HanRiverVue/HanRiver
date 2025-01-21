@@ -31,6 +31,8 @@ const buttonClass = computed(() => {
       return `${baseClass} ${additionalClass} bg-gray-30 text-white`;
     case 'disabled2':
       return `${baseClass} ${additionalClass} bg-white text-gray-30 border border-solid border-gray-30`;
+    default:
+      return null;
   }
 });
 </script>
