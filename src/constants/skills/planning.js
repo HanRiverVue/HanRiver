@@ -1,10 +1,12 @@
-import miro_logo from '@/assets/skills/skills-logo-miro.png';
-import asana_logo from '@/assets/skills/skills-logo-asana.png';
-import aha_logo from '@/assets/skills/skills-logo-aha.png';
-import productboard_logo from '@/assets/skills/skills-logo-productboard.png';
-import trello_logo from '@/assets/skills/skills-logo-trello.png';
-import figma_logo from '@/assets/skills/skills-logo-figma.png';
-import xd_logo from '@/assets/skills/skills-logo-xd.png';
+import {
+  aha_logo,
+  asana_logo,
+  figma_logo,
+  miro_logo,
+  productboard_logo,
+  trello_logo,
+  xd_logo,
+} from '@/assets/skills';
 
 export const PLANNING_SKILLS = [
   { name: 'Miro', image: miro_logo },

@@ -1,8 +1,10 @@
-import zeplin_logo from '@/assets/skills/skills-logo-zeplin.png';
-import figma_logo from '@/assets/skills/skills-logo-figma.png';
-import photoshop_logo from '@/assets/skills/skills-logo-photoshop.png';
-import illustrator_logo from '@/assets/skills/skills-logo-illustrator.png';
-import xd_logo from '@/assets/skills/skills-logo-xd.png';
+import {
+  figma_logo,
+  illustrator_logo,
+  photoshop_logo,
+  xd_logo,
+  zeplin_logo,
+} from '@/assets/skills';
 
 export const DESIGN_SKILLS = [
   { name: 'Zeplin', image: zeplin_logo },

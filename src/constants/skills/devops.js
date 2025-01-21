@@ -1,9 +1,11 @@
-import docker_logo from '@/assets/skills/skills-logo-docker.png';
-import kubernetes_logo from '@/assets/skills/skills-logo-kubernetes.png';
-import aws_logo from '@/assets/skills/skills-logo-aws.png';
-import jest_logo from '@/assets/skills/skills-logo-jest.png';
-import jenkins_logo from '@/assets/skills/skills-logo-jenkins.png';
-import github_actions_logo from '@/assets/skills/skills-logo-github-actions.png';
+import {
+  aws_logo,
+  docker_logo,
+  github_actions_logo,
+  jenkins_logo,
+  jest_logo,
+  kubernetes_logo,
+} from '@/assets/skills';
 
 export const DEVOPS_SKILLS = [
   { name: 'Docker', image: docker_logo },

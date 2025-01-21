@@ -1,8 +1,10 @@
-import swift_logo from '@/assets/skills/skills-logo-swift.png';
-import swiftui_logo from '@/assets/skills/skills-logo-swiftui.png';
-import reactnative_logo from '@/assets/skills/skills-logo-reactnative.png';
-import flutter_logo from '@/assets/skills/skills-logo-flutter.png';
-import git_logo from '@/assets/skills/skills-logo-git.png';
+import {
+  flutter_logo,
+  git_logo,
+  reactnative_logo,
+  swift_logo,
+  swiftui_logo,
+} from '@/assets/skills';
 
 export const IOS_SKILLS = [
   { name: 'Swift', image: swift_logo },

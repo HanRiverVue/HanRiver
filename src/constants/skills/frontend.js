@@ -1,12 +1,14 @@
-import javascript_logo from '@/assets/skills/skills-logo-javascript.png';
-import typescript_logo from '@/assets/skills/skills-logo-typescript.png';
-import react_logo from '@/assets/skills/skills-logo-react.png';
-import vue_logo from '@/assets/skills/skills-logo-vue.png';
-import svelte_logo from '@/assets/skills/skills-logo-svelte.png';
-import nextjs_logo from '@/assets/skills/skills-logo-nextjs.png';
-import jest_logo from '@/assets/skills/skills-logo-jest.png';
-import graphql_logo from '@/assets/skills/skills-logo-graphql.png';
-import git_logo from '@/assets/skills/skills-logo-git.png';
+import {
+  git_logo,
+  graphql_logo,
+  javascript_logo,
+  jest_logo,
+  nextjs_logo,
+  react_logo,
+  svelte_logo,
+  typescript_logo,
+  vue_logo,
+} from '@/assets/skills';
 
 export const FRONTEND_SKILLS = [
   { name: 'JavaScript', image: javascript_logo },

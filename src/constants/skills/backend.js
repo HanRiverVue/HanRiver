@@ -1,18 +1,20 @@
-import java_logo from '@/assets/skills/skills-logo-java.png';
-import python_logo from '@/assets/skills/skills-logo-python.png';
-import go_logo from '@/assets/skills/skills-logo-go.png';
-import spring_logo from '@/assets/skills/skills-logo-spring.png';
-import express_logo from '@/assets/skills/skills-logo-express.png';
-import nodejs_logo from '@/assets/skills/skills-logo-nodejs.png';
-import nestjs_logo from '@/assets/skills/skills-logo-nestjs.png';
-import jest_logo from '@/assets/skills/skills-logo-jest.png';
-import firebase_logo from '@/assets/skills/skills-logo-firebase.png';
-import graphql_logo from '@/assets/skills/skills-logo-graphql.png';
-import php_logo from '@/assets/skills/skills-logo-php.png';
-import django_logo from '@/assets/skills/skills-logo-django.png';
-import mongodb_logo from '@/assets/skills/skills-logo-mongodb.png';
-import mysql_logo from '@/assets/skills/skills-logo-mysql.png';
-import git_logo from '@/assets/skills/skills-logo-git.png';
+import {
+  django_logo,
+  express_logo,
+  firebase_logo,
+  git_logo,
+  go_logo,
+  graphql_logo,
+  java_logo,
+  jest_logo,
+  mongodb_logo,
+  mysql_logo,
+  nestjs_logo,
+  nodejs_logo,
+  php_logo,
+  python_logo,
+  spring_logo,
+} from '@/assets/skills';
 
 export const BACKEND_SKILLS = [
   { name: 'Java', image: java_logo },
