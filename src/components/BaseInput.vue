@@ -25,7 +25,7 @@ const emit = defineEmits(['input']);
 
 const styleClass = computed(() =>
   twMerge(
-    'input-shadow rounded-lg flex gap-1.5 items-center border border-transparent focus-within:border-primary-3 px-4 py-3',
+    'input-shadow rounded-lg flex gap-1.5 items-center border border-transparent focus-within:border-primary-3 px-4 py-3 bg-white',
     props.className,
   ),
 );
@@ -37,7 +37,7 @@ const styleClass = computed(() =>
       :value="props.value"
       :type="props.type"
       :placeholder="props.placeholder"
-      class="w-full text-gray-80 placeholder:text-gray-40"
+      class="w-full text-gray-80 placeholder:text-gray-40 bg-transparent"
       @input="($event) => emit('input', $event)"
     />
     <slot name="rightIcon"></slot>

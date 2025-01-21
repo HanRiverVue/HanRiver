@@ -12,6 +12,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  className: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['click']);
@@ -31,6 +35,7 @@ const styleClass = computed(() =>
     'border input-shadow w-full rounded-[10px] body-large-m',
     sizeClass[props.size],
     props.isSelected ? activeClass.selected : activeClass.nonSelected,
+    props.className,
   ),
 );
 </script>
