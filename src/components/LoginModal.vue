@@ -26,7 +26,7 @@ const signInProviders = [
 ];
 </script>
 <template>
-  <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
     <div
       class="relative flex flex-col justify-center items-center bg-secondary-2 rounded-[20px] w-[500px] h-[540px]"
     >
