@@ -52,7 +52,7 @@ const handleInput = (event) => {
 </script>
 <template>
   <div :class="styleClass">
-    <slot name="leftIcon"></slot>
+    <slot name="leftIcon" :isFocused="isFocused"></slot>
     <input
       :value="props.value"
       :type="props.type"
@@ -62,6 +62,6 @@ const handleInput = (event) => {
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <slot name="rightIcon"></slot>
+    <slot name="rightIcon" :isFocused="isFocused"></slot>
   </div>
 </template>
