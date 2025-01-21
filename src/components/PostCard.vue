@@ -1,47 +1,73 @@
 <script setup>
-import PositionSmallBadge from './PositionSmallBadge.vue';
+import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
+import cheeringIcon from '@/assets/icons/cheering-icon.svg';
+import bookmark from '@/assets/icons/bookmark.svg';
+
+const props = defineProps({
+  userImage: {
+    type: String,
+    required: true,
+  },
+  userName: {
+    type: String,
+    required: true,
+  },
+  projectTitle: {
+    type: String,
+    required: true,
+  },
+  skills: {
+    type: Array,
+    default: () => [],
+  },
+  position: {
+    type: String,
+    required: true,
+  },
+  applicationDeadline: {
+    type: String,
+    required: true,
+  },
+});
+
+const getSkillsLogoImageUrl = (name) => {
+  return new URL(`../assets/images/${name}`, import.meta.url).href;
+};
 </script>
+
 <template>
-  <div class="w-[258px] h-[295px] py-6 px-6 rounded-lg text-gray-80 input-shadow">
+  <div class="w-[258px] py-6 px-6 rounded-lg text-gray-80 input-shadow">
     <div>
       <div class="flex justify-between mb-[15px]">
         <div class="flex items-center gap-[10px]">
           <div class="w-[33px] h-[33px] bg-cover">
-            <img src="../assets/images/postcard-user-image.png" alt="" />
+            <img :src="userImage" alt="" />
           </div>
-          <span class="body-b">파파고</span>
+          <span class="body-b">{{ userName }}</span>
         </div>
         <div class="flex gap-[6px]">
           <button class="w-6 h-6">
-            <img src="../assets/icons/cheering-icon.svg" alt="" />
+            <img :src="cheeringIcon" alt="" />
           </button>
           <button class="w-6 h-6">
-            <img src="../assets/icons/bookmark.svg" alt="" />
+            <img :src="bookmark" alt="" />
           </button>
         </div>
       </div>
-      <p class="mb-4 body-r text-ellipsis">
-        멋진프로젝트를 만들어봅시다 주제는 파파고 api를 이용한 어쩌고입니다
-        모집합니다모집합니다모집합니다모집... 모집...
+      <p class="mb-4 body-r line-clamp-3">
+        {{ projectTitle }}
       </p>
     </div>
     <div>
       <ul class="flex gap-1 mb-[13px]">
-        <li class="w-7 h-7"><img src="../assets/icons/skills-logo-go.svg" alt="" /></li>
-        <li class="w-7 h-7"><img src="../assets/icons/skills-logo-go.svg" alt="" /></li>
-        <li class="w-7 h-7"><img src="../assets/icons/skills-logo-go.svg" alt="" /></li>
-        <li class="w-7 h-7"><img src="../assets/icons/skills-logo-go.svg" alt="" /></li>
-        <li class="w-7 h-7"><img src="../assets/icons/skills-logo-go.svg" alt="" /></li>
-        <li class="w-7 h-7"><img src="../assets/icons/skills-logo-go.svg" alt="" /></li>
+        <li v-for="(skill, index) in skills" :key="index" class="w-7 h-7">
+          <img :src="getSkillsLogoImageUrl(skill)" alt="Skill logo" />
+        </li>
       </ul>
       <div class="mb-[10px]">
-        <PositionSmallBadge position="프론트엔드" />
+        <PositionSmallBadge :position="position" />
       </div>
-      <p class="caption-r text-gray-50">
-        <span>마감일 |</span>
-        <span>2025.01.29</span>
-      </p>
+      <p class="caption-r text-gray-50">마감일 | {{ applicationDeadline }}</p>
     </div>
   </div>
 </template>
-<style scoped></style>
