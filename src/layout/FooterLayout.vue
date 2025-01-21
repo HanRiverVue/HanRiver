@@ -3,9 +3,9 @@ import github_gray from '@/assets/icons/github_gray.svg';
 
 const members = [
   { name: 'wldnjs990', href: 'https://github.com/wldnjs990' },
-  { name: 'yoo-nji', href: 'https://github.com/yoo-nji/yoo-nji' },
-  { name: 'kodingzz', href: 'https://github.com/kodingzz/kodingzz' },
-  { name: 'AAminha', href: 'https://github.com/AAminha/AAminha' },
+  { name: 'yoo-nji', href: 'https://github.com/yoo-nji' },
+  { name: 'kodingzz', href: 'https://github.com/kodingzz' },
+  { name: 'AAminha', href: 'https://github.com/AAminha' },
   { name: 'y-yeji', href: 'https://github.com/y-yeji' },
   { name: 'SeungHyeon-web', href: 'https://github.com/SeungHyeon-web' },
 ];
@@ -17,6 +17,7 @@ const members = [
       <a
         href="https://github.com/HanRiverVue/HanRiver"
         target="_blank"
+        rel="noopener noreferrer"
         class="flex gap-[10px] items-center justify-center mb-5"
       >
         <img :src="github_gray" alt="회색 깃허브 아이콘" />
@@ -32,7 +33,7 @@ const members = [
       </ul>
       <article class="w-full flex justify-center">
         <span class="caption-r text-gray-40">
-          Created with passion by the Merge team | © 2025 Merge
+          Created with passion by the Mergi team | © 2025 Mergi
         </span>
       </article>
     </article>

@@ -47,10 +47,15 @@ const router = createRouter({
           meta: { showScrollTop: true },
         },
         {
-          path: 'PostList',
+          path: 'PostList/:type',
           name: 'PostListPage',
           component: () => import('@/pages/PostListPage.vue'),
           meta: { showFooter: true },
+        },
+        {
+          path: 'service',
+          name: 'servicePage',
+          component: () => import('@/pages/ServicePage.vue'),
         },
       ],
     },
