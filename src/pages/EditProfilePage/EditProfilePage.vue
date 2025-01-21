@@ -14,6 +14,7 @@ import BaseInput from '@/components/BaseInput.vue';
 import { CancelIcon, LinkIcon, PencilIcon, PlusIcon } from '@/assets/icons';
 
 import TEMP_IMAGE from '@/assets/images/temp-profile.png';
+import DropdownMenu from '@/components/DropdownMenu.vue';
 
 const nickname = ref('');
 const shortIntroduce = ref('');
@@ -26,6 +27,21 @@ const skillsBySelectedPosition = computed(() => {
     skills: POSITION_SKILLS[position],
   }));
 });
+const isDropdownOpen = ref(false);
+const dropdownList = reactive([
+  {
+    label: '이미지 변경하기',
+    action: () => {
+      console.log('프로필 사진 변경');
+    },
+  },
+  {
+    label: '이미지 삭제하기',
+    action: () => {
+      console.log('프로필 삭제');
+    },
+  },
+]);
 
 // TODO: 유저 정보를 받아서 초기화
 // TODO: 링크의 경우, id 삽입한 객체 배열로 변경
@@ -68,6 +84,11 @@ const handleSelectPosition = (position) => {
   }
 };
 
+const toggleDropdown = () => {
+  console.log('test');
+  isDropdownOpen.value = !isDropdownOpen.value;
+};
+
 onMounted(() => {
   if (links.length === 0) {
     // 초기 링크 2개 추가
@@ -88,14 +109,23 @@ onMounted(() => {
     <section class="p-6 card-shadow rounded-lg">
       <h2 class="text-gray-80 h2-b mb-2">기본 정보</h2>
       <div class="flex gap-[70px] items-center px-12">
-        <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden">
-          <button
-            type="button"
-            class="absolute w-[190px] h-[190px] bg-black/60 hidden group-hover:flex items-center justify-center"
-          >
-            <PencilIcon class="text-white w-6 h-6" />
-          </button>
-          <img :src="TEMP_IMAGE" alt="임시 프로필 이미지" />
+        <div class="relative">
+          <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden">
+            <button
+              type="button"
+              class="absolute w-[190px] h-[190px] bg-black/60 hidden group-hover:flex items-center justify-center"
+              @click="toggleDropdown"
+            >
+              <PencilIcon class="text-white w-6 h-6" />
+            </button>
+            <img :src="TEMP_IMAGE" alt="임시 프로필 이미지" />
+          </div>
+          <DropdownMenu
+            :isOpen="isDropdownOpen"
+            :dropdownList="dropdownList"
+            class="top-1/2 -translate-y-1/2 left-1/2 ml-6"
+            @onClose="isDropdownOpen = false"
+          />
         </div>
         <div class="grow">
           <section class="mb-6">
@@ -218,9 +248,16 @@ onMounted(() => {
         </div>
       </section>
     </section>
-    <section class="flex items-center justify-end">
-      <button type="button">취소</button>
-      <button type="button">저장</button>
+    <section class="flex items-center justify-end gap-3">
+      <button
+        type="button"
+        class="bg-white border border-primary-1 text-primary-1 px-6 py-1.5 body-m rounded-md"
+      >
+        취소
+      </button>
+      <button type="button" class="bg-primary-1 text-white px-6 py-1.5 body-m rounded-md">
+        저장
+      </button>
     </section>
   </div>
 </template>
