@@ -7,10 +7,10 @@ const route = useRoute();
 
 const headerNavStore = useHeaderNavStore();
 
-const changeNavigate = () => {
-  headerNavStore.setNavigate(route.params.type);
+const changeNavigate = (target) => {
+  headerNavStore.setNavigate(target);
 };
-watch(route, changeNavigate, { immediate: true });
+watch(route, changeNavigate('service'), { immediate: true });
 
 onBeforeUnmount(() => {
   changeNavigate('');
@@ -18,5 +18,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>글 목록 페이지</div>
+  <div>준비중입니다...</div>
 </template>
