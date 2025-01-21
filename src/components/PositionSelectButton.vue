@@ -21,8 +21,8 @@ const props = defineProps({
 const emit = defineEmits(['click']);
 
 const sizeClass = {
-  large: 'px-3 py-2.5 flex-1 basis-0 max-w-[95px] min-w-fit',
-  small: 'px-6 py-1.5',
+  small: 'px-3 py-1.5 flex-1 basis-0 max-w-[100px] min-w-fit',
+  large: 'py-2.5 px-8',
 };
 
 const activeClass = {

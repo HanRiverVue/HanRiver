@@ -23,7 +23,6 @@ const emit = defineEmits(['updatePositions']);
         :key="name"
         size="small"
         :isSelected="props.selectedPositions.includes(name)"
-        className="whitespace-nowrap flex-1 basis-0 px-3 max-w-[95px] min-w-fit"
         @click="emit('updatePositions', name)"
       >
         {{ name }}
