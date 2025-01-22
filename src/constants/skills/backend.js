@@ -17,6 +17,7 @@ import {
 } from '@/assets/images/skills';
 
 export const BACKEND_SKILLS = [
+  { name: 'Git', image: git_logo },
   { name: 'Java', image: java_logo },
   { name: 'Python', image: python_logo },
   { name: 'Go', image: go_logo },
@@ -31,5 +32,4 @@ export const BACKEND_SKILLS = [
   { name: 'PHP', image: php_logo },
   { name: 'MongoDB', image: mongodb_logo },
   { name: 'MySQL', image: mysql_logo },
-  { name: 'Git', image: git_logo },
 ];

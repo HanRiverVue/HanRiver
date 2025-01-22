@@ -38,6 +38,10 @@ export default {
         },
       },
     },
+    fontFamily: {
+      jalnan: ['yg-jalnan', 'sans-serif'],
+      pretendard: ['Pretendard', 'sans-serif'],
+    },
     animation: {
       'fade-in-500': 'fadeIn .5s linear',
     },

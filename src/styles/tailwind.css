@@ -9,6 +9,7 @@
 
   body {
     font-family: 'Pretendard', sans-serif;
+    font-synthesis: none;
   }
 
   .card-shadow {
@@ -39,5 +40,24 @@
     @apply bg-white text-primary-1 border border-primary-1 rounded-md;
     @apply hover:bg-white/50 disabled:bg-gray-30 disabled:text-white disabled:border-transparent;
     @apply transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .dropdown-scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+  .dropdown-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+  }
+  .dropdown-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-20;
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+  .dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-4;
   }
 }

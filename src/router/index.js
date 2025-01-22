@@ -48,13 +48,18 @@ const router = createRouter({
         {
           path: 'PostList/:type',
           name: 'PostListPage',
-          component: () => import('@/pages/PostListPage.vue'),
-          meta: { showFooter: true },
+          component: () => import('@/pages/PostListPage/PostListPage.vue'),
+          meta: { showFooter: true, bg_color: 'bg-secondary-2' },
         },
         {
           path: 'service',
           name: 'servicePage',
           component: () => import('@/pages/ServicePage.vue'),
+        },
+        {
+          path: '/:pathMatch(.*)*',
+          name: 'ErrorPage',
+          component: ErrorPage,
         },
       ],
     },
@@ -67,11 +72,6 @@ const router = createRouter({
       path: '/test',
       name: 'testage',
       component: () => import('@/pages/test_api_page_hw/LoginAndUserTest.vue'),
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'ErrorPage',
-      component: ErrorPage,
     },
   ],
 });

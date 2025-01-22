@@ -50,11 +50,11 @@ const getSkillsLogoImageUrl = (name) => {
 </script>
 
 <template>
-  <div class="w-[258px] py-6 px-6 rounded-lg text-gray-80 input-shadow">
+  <div class="w-[258px] py-6 px-6 rounded-lg text-gray-80 input-shadow bg-white">
     <div>
       <div class="flex justify-between mb-[15px]">
         <div class="flex items-center gap-[10px]">
-          <div class="w-[33px] h-[33px] bg-cover">
+          <div class="w-8 h-8 bg-cover rounded-full overflow-hidden shrink-0">
             <img :src="userImage" alt="" />
           </div>
           <span class="body-b">{{ userName }}</span>

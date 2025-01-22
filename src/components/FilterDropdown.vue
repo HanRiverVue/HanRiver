@@ -1,14 +1,12 @@
 <script setup>
-import { computed, ref } from 'vue';
-import dropdownArrow from '@/assets/icons/dropdown_arrow.svg';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { twMerge } from 'tailwind-merge';
+import { dropdown_arrow_icon } from '@/assets/icons';
 
 const props = defineProps({
   items: {
     type: Array,
     required: true,
-    validator(value) {
-      return value.every((item) => 'id' in item && 'name' in item);
-    },
   },
   defaultText: {
     type: String,
@@ -18,68 +16,87 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  class: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['click:select']);
 
-// 임시 데이터
-// const items = [
-//   { id: 1, name: '서울특별시' },
-//   { id: 2, name: '인천광역시' },
-//   { id: 3, name: '대전광역시' },
-// ];
+const isDropdownOpen = ref(false); // 드롭다운 상태
+const selectedItem = ref(null); // 선택한 아이템
+const dropdownRef = ref(null);
 
-// 드롭다운 상태
-const isDropdownOpen = ref(false);
 const handleDropdownClick = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-// 선택한 아이템
-const selected = ref(null);
-const handleSelectClick = (item) => {
-  if (selected.value === item) {
-    selected.value = null;
+const handleSelectClick = (itemName) => {
+  if (selectedItem.value === itemName) {
+    selectedItem.value = null;
     emit('click:select', null);
     return;
   } else {
-    selected.value = item;
-    emit('click:select', item); // 부모로 선택된 값 전달
+    selectedItem.value = itemName;
+    emit('click:select', itemName); // 부모로 선택된 값 전달
     isDropdownOpen.value = false;
   }
 };
+
+const selectContainerStyle = computed(() =>
+  twMerge('w-full relative min-w-[126px] body-r', props.class),
+);
+
+const selectBoxButtonStyle = computed(() =>
+  twMerge(
+    'flex items-center justify-between w-full py-1 pl-3 pr-1.5 rounded-lg bg-white input-shadow text-gray-50 border border-transparent',
+    selectedItem.value && 'border-primary-3 text-primary-3',
+  ),
+);
+
+const getSelectItemClass = (itemName) =>
+  twMerge(
+    'px-4 py-1 hover:bg-secondary-1 cursor-pointer',
+    selectedItem.value === itemName && 'text-primary-3 body-b',
+  );
+
+const handleOutsideClick = (e) => {
+  if (!dropdownRef.value || !dropdownRef.value.contains(e.target)) {
+    isDropdownOpen.value = false;
+  }
+};
+
+onMounted(() => {
+  if (props.selected) selectedItem.value = props.selected;
+  document.addEventListener('click', handleOutsideClick);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleOutsideClick);
+});
 </script>
 <template>
-  <div class="w-inherit">
-    <div class="relative">
-      <!-- 셀렉트 박스 버튼 -->
-      <button
-        :class="[
-          'flex items-center justify-between min-w-[126px] w-full py-1 pl-3 pr-[6px] rounded-lg bg-white input-shadow body-r text-gray-50',
-          { 'border border-primary-3 text-primary-3': selected },
-        ]"
-        @click="handleDropdownClick"
-      >
-        <span>{{ selected || defaultText }}</span>
-        <img class="w-6 h-6" :src="dropdownArrow" alt="드롭다운 화살표" />
-      </button>
-      <!-- 드롭다운 메뉴 -->
-      <ul
-        v-if="isDropdownOpen"
-        class="absolute flex flex-col min-w-[126px] w-full my-1 rounded-lg bg-white input-shadow body-r text-gray-50 top top-[38px]"
-      >
+  <div ref="dropdownRef" :class="selectContainerStyle">
+    <!-- 셀렉트 박스 버튼 -->
+    <button :class="selectBoxButtonStyle" @click="handleDropdownClick">
+      <span>{{ selectedItem || defaultText }}</span>
+      <img :src="dropdown_arrow_icon" alt="드롭다운 화살표" class="w-6 h-6" />
+    </button>
+
+    <!-- 드롭다운 메뉴 -->
+    <div
+      v-if="isDropdownOpen"
+      class="absolute w-full my-2 py-1 bg-white rounded-lg card-shadow text-gray-50 overflow-hidden"
+    >
+      <ul class="flex flex-col max-h-[182px] overflow-auto dropdown-scrollbar">
         <li
-          v-for="item in items"
-          :class="[
-            'px-4 py-1 hover:bg-secondary-3',
-            {
-              'text-primary-3': selected === item.name,
-            },
-          ]"
-          :key="item.id"
-          @click="handleSelectClick(item.name)"
+          v-for="(item, index) in items"
+          :key="index"
+          :class="getSelectItemClass(item)"
+          @click="handleSelectClick(item)"
         >
-          {{ item.name }}
+          {{ item }}
         </li>
       </ul>
     </div>

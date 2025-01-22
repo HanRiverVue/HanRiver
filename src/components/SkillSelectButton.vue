@@ -18,7 +18,7 @@ const activeClass = {
 
 const styleClass = computed(() =>
   twMerge(
-    'w-fit flex items-center gap-1.5 p-1.5 pr-2.5 rounded-full border',
+    'w-fit flex items-center gap-1.5 p-1.5 pr-2.5 rounded-full border hover:bg-secondary-1',
     props.isSelected ? activeClass.selected : activeClass.nonSelected,
   ),
 );
