@@ -158,16 +158,16 @@ export const getPostsByUser = async (userId) => {
     if (error) {
       throw new Error(error);
     }
-    // const totalData = await Promise.all(
-    //   data.map(async (item) => {
-    //     return {
-    //       ...item,
-    //       // positions: await getPostPositions(item.id),
-    //       // techStacks: await getPostTechStacks(item.id),
-    //     };
-    //   }),
-    // );
-    return data;
+    const totalData = await Promise.all(
+      data.map(async (item) => {
+        return {
+          ...item,
+          positions: await getPostPositions(item.id),
+          techStacks: await getPostTechStacks(item.id),
+        };
+      }),
+    );
+    return totalData;
   } catch (error) {
     console.error(error);
   }

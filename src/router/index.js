@@ -40,7 +40,7 @@ const router = createRouter({
           meta: { showScrollTop: true },
         },
         {
-          path: 'RecruitPostDetail',
+          path: 'RecruitPostDetail/:postId',
           name: 'RecruitPostDetailPage',
           component: () => import('@/pages/RecruitPostDetailPage.vue'),
           meta: { showScrollTop: true },
