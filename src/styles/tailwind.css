@@ -41,3 +41,22 @@
     @apply transition-colors duration-200;
   }
 }
+
+@layer utilities {
+  .dropdown-scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+  .dropdown-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 10px;
+  }
+  .dropdown-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-20;
+    border-radius: 10px;
+    background-clip: padding-box;
+    border: 3px solid transparent;
+  }
+  .dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-4;
+  }
+}
