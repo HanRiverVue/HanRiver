@@ -48,8 +48,8 @@ const router = createRouter({
         {
           path: 'PostList/:type',
           name: 'PostListPage',
-          component: () => import('@/pages/PostListPage.vue'),
-          meta: { showFooter: true },
+          component: () => import('@/pages/PostListPage/PostListPage.vue'),
+          meta: { showFooter: true, bg_color: 'bg-secondary-2' },
         },
         {
           path: 'service',
