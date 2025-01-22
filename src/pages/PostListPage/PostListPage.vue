@@ -54,7 +54,7 @@ const handleSelectSkill = (skill) => {
 
 <template>
   <div class="pt-12 pb-20 flex flex-col items-center">
-    <section class="flex items-center justify-between mb-6">
+    <section class="flex items-center justify-between mb-6 w-full">
       <div class="flex gap-4">
         <SkillFilterDropdown
           :selected="selectedSkills"
@@ -68,7 +68,7 @@ const handleSelectSkill = (skill) => {
       </div>
       <SearchInput />
     </section>
-    <section class="flex flex-wrap justify-between gap-x-3 gap-y-6 mb-12">
+    <section class="flex flex-wrap justify-between gap-x-3 gap-y-6 mb-12 w-full">
       <PostCard v-for="(item, index) in listItems" :key="index" v-bind="item" />
     </section>
     <PostPagination :currentPage="currentPage" :totalPage="totalPage" @change="handleChangePage" />
