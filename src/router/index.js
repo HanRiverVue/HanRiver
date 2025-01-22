@@ -56,6 +56,11 @@ const router = createRouter({
           name: 'servicePage',
           component: () => import('@/pages/ServicePage.vue'),
         },
+        {
+          path: '/:pathMatch(.*)*',
+          name: 'ErrorPage',
+          component: ErrorPage,
+        },
       ],
     },
     {
@@ -67,11 +72,6 @@ const router = createRouter({
       path: '/test',
       name: 'testage',
       component: () => import('@/pages/test_api_page_hw/LoginAndUserTest.vue'),
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'ErrorPage',
-      component: ErrorPage,
     },
   ],
 });
