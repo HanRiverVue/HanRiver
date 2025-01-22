@@ -6,7 +6,8 @@ import FilterDropdown from '@/components/FilterDropdown.vue';
 import SkillFilterDropdown from './components/SkillFilterDropdown.vue';
 import { METHOD, RECRUITMENT_STATUS, REGION } from '@/constants/filter';
 import { POSITION } from '@/constants';
-import { reactive } from 'vue';
+import { ref, reactive } from 'vue';
+import PostPagination from './components/PostPagination.vue';
 
 const postCardData = {
   userImage: TEMP,
@@ -36,7 +37,14 @@ const regionFilterList = ['전체', ...REGION];
 const methodFilterList = ['전체', ...METHOD];
 const recruitmentStatusFilterList = ['전체', ...RECRUITMENT_STATUS];
 
+const currentPage = ref(1);
+const totalPage = ref(20);
 const selectedSkills = reactive([]);
+
+const handleChangePage = (page) => {
+  currentPage.value = page;
+};
+
 const handleSelectSkill = (skill) => {
   const index = selectedSkills.findIndex((selectedSkill) => selectedSkill === skill);
   if (index > -1) selectedSkills.splice(index, 1);
@@ -45,7 +53,7 @@ const handleSelectSkill = (skill) => {
 </script>
 
 <template>
-  <div class="pt-12 pb-20">
+  <div class="pt-12 pb-20 flex flex-col items-center">
     <section class="flex items-center justify-between mb-6">
       <div class="flex gap-4">
         <SkillFilterDropdown
@@ -60,9 +68,9 @@ const handleSelectSkill = (skill) => {
       </div>
       <SearchInput />
     </section>
-    <section class="flex flex-wrap justify-between gap-x-3 gap-y-6">
+    <section class="flex flex-wrap justify-between gap-x-3 gap-y-6 mb-12">
       <PostCard v-for="(item, index) in listItems" :key="index" v-bind="item" />
     </section>
-    <section>페이지네이션</section>
+    <PostPagination :currentPage="currentPage" :totalPage="totalPage" @change="handleChangePage" />
   </div>
 </template>
