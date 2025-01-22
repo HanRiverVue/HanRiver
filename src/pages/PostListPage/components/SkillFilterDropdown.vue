@@ -38,18 +38,6 @@ const selectBoxButtonStyle = computed(() =>
   ),
 );
 
-/* const handleSelectClick = (itemName) => {
-  if (selected.value === itemName) {
-    selected.value = null;
-    emit('click:select', null);
-    return;
-  } else {
-    selected.value = itemName;
-    emit('click:select', itemName); // 부모로 선택된 값 전달
-    isDropdownOpen.value = false;
-  }
-}; */
-
 const getSelectTabClass = (tabName) =>
   twMerge(
     'border-b-2 border-transparent cursor-pointer',
