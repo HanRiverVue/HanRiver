@@ -3,6 +3,8 @@ import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { ref } from 'vue';
 import AppButton from '@/components/AppButton.vue';
+import * as logos from '@/assets/images/skills/index';
+
 const props = defineProps({
   projectTitle: {
     type: String,
@@ -35,10 +37,6 @@ if (props.status === 'success') {
 } else if (props.status === 'warning') {
   text.value = '수락 대기중';
 }
-
-const getSkillsLogoImageUrl = (name) => {
-  return new URL(`../../../assets/images/skills/${name}.png`, import.meta.url).href;
-};
 </script>
 
 <template>
@@ -55,7 +53,7 @@ const getSkillsLogoImageUrl = (name) => {
     <div class="flex flex-col gap-3">
       <ul class="flex gap-1">
         <li v-for="(skill, index) in skills" :key="index" class="w-7 h-7">
-          <img :src="getSkillsLogoImageUrl(skill)" alt="Skill logo" />
+          <img :src="logos[`${skill}_logo`]" alt="Skill logo" />
         </li>
       </ul>
       <ul class="flex items-center gap-2">
