@@ -3,7 +3,7 @@ import SearchInput from '@/pages/PostListPage/components/SearchInput.vue';
 import TEMP from '@/assets/images/temp-profile.png';
 import PostCard from '@/components/PostCard.vue';
 import FilterDropdown from '@/components/FilterDropdown.vue';
-import SkillFilterDropdown from './SkillFilterDropdown.vue';
+import SkillFilterDropdown from './components/SkillFilterDropdown.vue';
 import { METHOD, RECRUITMENT_STATUS, REGION } from '@/constants/filter';
 import { POSITION } from '@/constants';
 import { reactive } from 'vue';
