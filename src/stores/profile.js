@@ -44,6 +44,13 @@ export const useProfileStore = defineStore('profile', () => {
       positionWithSkills[position] = [];
     }
   };
+  const toggleSkill = (position, skill) => {
+    const index = positionWithSkills[position].findIndex(
+      (selectedSkill) => selectedSkill === skill,
+    );
+    if (index > -1) positionWithSkills[position].splice(index, 1);
+    else positionWithSkills[position].push(skill);
+  };
 
   return {
     isCheckNickname,
@@ -62,5 +69,6 @@ export const useProfileStore = defineStore('profile', () => {
     updateLink,
     deleteLink,
     togglePosition,
+    toggleSkill,
   };
 });
