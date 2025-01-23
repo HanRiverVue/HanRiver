@@ -1,5 +1,5 @@
 import { POSITION } from '.';
-import { POSITION_SKILLS } from './skill';
+import { POSITION_SKILLS } from './position';
 
 export const REGION = [
   '서울특별시',
