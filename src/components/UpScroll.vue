@@ -8,7 +8,7 @@ const scrollToTop = () => {
 
 <template>
   <article class="w-full flex justify-end animate-fade-in-500" @click="scrollToTop()">
-    <button class="fixed bottom-10 rounded-full shadow-md">
+    <button class="fixed bottom-10 right-10 rounded-full shadow-md">
       <article
         class="w-10 h-10 p-2 rounded-full bg-primary-3 opacity-70 duration-300 hover:opacity-100 flex items-center justify-center"
       >
