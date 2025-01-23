@@ -8,7 +8,7 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: [{ id: '', name: '' }],
+    default: [''],
   },
   defaultText: {
     type: String,

@@ -324,20 +324,18 @@ const postUpdateUserStacks = async (insertObject, position) => {
 export const getAllUserInfo = async () => {
   const { data: lists, error } = await supabase.from('user_list').select('*');
 
-  const listsArr = lists.map((list) => {
-    return { ...list, link: list.link.split('*') };
-  });
+  const listsArr = lists.map((list) => ({ ...list, link: list.link.split('*') }));
 
   const result = [];
-  listsArr.map(async (list) => {
+  for (const list of listsArr) {
     const { data: positions, error } = await supabase
       .from('user_list_positions')
       .select()
       .eq('profile_id', list.id);
 
     const positionsArr = [];
-    positions.map(async (position) => {
-      const { data: stacks, err } = await supabase //
+    for (const position of positions) {
+      const { data: stacks, err } = await supabase
         .from('user_list_stacks')
         .select()
         .eq('position_id', position.id)
@@ -347,8 +345,8 @@ export const getAllUserInfo = async () => {
         position: position.position,
         stacks: stacks.stacks.split('/'),
       });
-    });
+    }
     result.push({ ...list, positions: positionsArr });
-  });
+  }
   return result;
 };
