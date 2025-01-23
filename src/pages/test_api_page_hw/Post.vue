@@ -11,15 +11,15 @@ const postDetails = ref(null);
 const postsByUser = ref(null);
 
 onMounted(async () => {
-  fetchAllPosts();
+  // fetchAllPosts();
   fetchFilteredPosts();
-  fetchPostDetails();
-  fetchPostsByUser();
+  // fetchPostDetails();
+  // fetchPostsByUser();
 });
 
 const fetchAllPosts = async () => {
   allPosts.value = await getAllPosts();
-  // console.log(allPosts.value);
+  console.log(allPosts.value);
 };
 
 const fetchPostDetails = async () => {
@@ -39,7 +39,7 @@ const fetchFilteredPosts = async () => {
     recruitType: null,
     onOffline: null,
   });
-  // console.log(filterdPosts.value);
+  console.log(filterdPosts.value);
 };
 </script>
 <template>
@@ -61,9 +61,9 @@ const fetchFilteredPosts = async () => {
     <div>postsByUser: {{ postsByUser }}</div>
   </div> -->
 
-  <!-- <div>
+  <div>
     <h1 class="text-3xl">필터링에 따른 게시물 가져오기</h1>
     <div>{{ filterdPosts }}</div>
-  </div> -->
+  </div>
 </template>
 <style scoped></style>

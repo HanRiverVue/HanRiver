@@ -1,7 +1,7 @@
 <script setup>
 import basicProfoile from '@/assets/icons/basic_profile.svg';
 import TabMenu from '@/components/TabMenu.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import MyInfo from './components/MyInfo.vue';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import MyRecruitmentList from './components/MyRecruitmentList.vue';
@@ -98,8 +98,8 @@ const router = useRouter();
       <!-- 탭 내용 -->
       <div>
         <div v-if="activeIndex === 0"><MyInfo :userInfo="dummyObj" /></div>
-        <div v-else-if="activeIndex === 1"><MyRecruitmentList :userInfo="dummyObj" /></div>
-        <div v-else-if="activeIndex === 2"><MyRequestList :userInfo="dummyObj" /></div>
+        <div v-else-if="activeIndex === 1"><MyRecruitmentList /></div>
+        <div v-else-if="activeIndex === 2"><MyRequestList /></div>
         <div v-else-if="activeIndex === 3"><MyBookmark :userInfo="dummyObj" /></div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import dropdown_arrow_up from '@/assets/icons/dropdown_arrow_up.svg';
 
 import linkIcon from '@/assets/icons/link_icon.svg';
 import SkillBadge from '@/components/SkillBadge.vue';
-import { POSITION_SKILLS } from '@/constants/skills';
+import { SKILLS } from '@/constants/skill';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -63,14 +63,7 @@ const toggle = ref(true);
             <div v-for="stack in position.stacks" :key="stack.id">
               <SkillBadge>
                 <template #icon="{ className }">
-                  <img
-                    :src="
-                      POSITION_SKILLS[`${position.position}`].find((item) => item.name === stack)
-                        .image
-                    "
-                    alt="기술 스택 로고"
-                    :class="className"
-                  />
+                  <img alt="기술 스택 로고" :src="SKILLS[stack]" :class="className" />
                   <span class="text-gray-80">{{ stack }}</span>
                 </template>
               </SkillBadge>

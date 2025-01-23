@@ -3,7 +3,9 @@ import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { ref } from 'vue';
 import AppButton from '@/components/AppButton.vue';
-import * as logos from '@/assets/images/skills/index';
+import BaseModal from '@/components/BaseModal.vue';
+import { deleteApplicationHandle } from '@/api/supabase/apply';
+import { SKILLS } from '@/constants/skill';
 
 const props = defineProps({
   projectTitle: {
@@ -26,16 +28,41 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  postId: {
+    type: String,
+    required: true,
+  },
 });
 
+const showModal = ref(false);
+
+const handleClose = () => {
+  showModal.value = false;
+};
+const handleSubmit = async () => {
+  // ... 신청취소 API 호출
+
+  await deleteApplicationHandle(props.postId);
+  showModal.value = false;
+};
+
+const handleClickCancel = () => {
+  showModal.value = true;
+};
+
+// 게시물의 신청 상태에 따른 신청 상태,버튼 종류 설정
 const text = ref('');
+const type = ref('');
 
 if (props.status === 'success') {
   text.value = '수락 완료';
+  type.value = '';
 } else if (props.status === 'done') {
   text.value = '모집 마감';
+  type.value = 'disabled2';
 } else if (props.status === 'warning') {
   text.value = '수락 대기중';
+  type.value = 'cancel';
 }
 </script>
 
@@ -53,7 +80,7 @@ if (props.status === 'success') {
     <div class="flex flex-col gap-3">
       <ul class="flex gap-1">
         <li v-for="(skill, index) in skills" :key="index" class="w-7 h-7">
-          <img :src="logos[`${skill}_logo`]" alt="Skill logo" />
+          <img :src="SKILLS[skill]" alt="Skill logo" />
         </li>
       </ul>
       <ul class="flex items-center gap-2">
@@ -63,8 +90,19 @@ if (props.status === 'success') {
       </ul>
       <div class="flex items-center justify-between">
         <p class="caption-r text-gray-50">마감일 | {{ applicationDeadline }}</p>
-        <AppButton type="cancel" text="신청 취소" class="px-3 py-1.5 body-r rounded-[4px]" />
+        <AppButton
+          v-if="type"
+          :type="type"
+          text="신청취소"
+          :disabled="status === 'done'"
+          class="px-3 py-1.5 body-r rounded-[4px]"
+          @click="handleClickCancel"
+        />
       </div>
     </div>
   </div>
+  <!-- 신청취소 버튼 클릭시 띄워줄 모달 -->
+  <BaseModal v-if="showModal" @cancel="handleClose" @submit="handleSubmit"
+    >신청을 취소 하시겠어요?</BaseModal
+  >
 </template>
