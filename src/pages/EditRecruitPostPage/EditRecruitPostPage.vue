@@ -6,6 +6,7 @@ import EditDetailInfo from './components/thirdInfo/EditDetailInfo.vue';
 import { onMounted, reactive, ref } from 'vue';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import { editPositionAndSkills } from '@/pages/EditRecruitPostPage/index';
+import { postCreatePost, postUploadPostImage } from '@/api/supabase/post_editor';
 
 const userInfo = ref({
   author: '',
@@ -25,26 +26,73 @@ const userInfo = ref({
 });
 const positionAndSkills = reactive(editPositionAndSkills);
 
-const sendData = () => {
-  console.log('userInfo :', userInfo.value);
+const sendData = async (userInfo, positionAndSkills) => {
+  console.log('userInfo :', userInfo);
   console.log('positionAndSkills', positionAndSkills);
+  // 이미지 변환
+  console.log(userInfo.post_img_path);
+  let filePath;
+  if (userInfo.post_img_path === '') {
+    // 선택된 이미지 없으면 기본이미지 제공
+    filePath =
+      'https://hfrulsqohffbfxdsozkk.supabase.co/storage/v1/object/public/post_images/programmers.png';
+  } else {
+    filePath = await postUploadPostImage(userInfo.post_img_path);
+  }
+  console.log(filePath);
+
+  // 최종 전송할 데이터
   const positions = [];
-  const techStacks = [];
+  let techStacks = [];
+
+  switch (true) {
+    case userInfo.author === '':
+      return alert('오류 : 유저 로그인 정보가 없습니다.');
+    case userInfo.recruit_type === '':
+      return alert('모집 구분 선택을 완료해주세요');
+    case userInfo.recruit_count === '':
+      return alert('모집 인원 선택을 완료해주세요');
+    case userInfo.recruit_deadline === null:
+      return alert('모집 마감일 선택을 완료해주세요');
+    case userInfo.on_offline === '':
+      return alert('진행 방식 선택을 완료해주세요');
+    case userInfo.start_date === '':
+      return alert('진행 기간 선택을 완료해주세요');
+    case userInfo.end_date === '':
+      return alert('진행 기간 선택을 완료해주세요');
+    case userInfo.call_method === '':
+      return alert('연락 방법 선택을 완료해주세요');
+    case userInfo.call_link === '':
+      return alert('연락처 선택을 완료해주세요');
+    case userInfo.title === '':
+      return alert('글 제목 작성을 완료해주세요');
+    case userInfo.body === '':
+      return alert('글 내용 작성을 완료해주세요');
+    default:
+      break;
+  }
 
   const selected = positionAndSkills.filter((data) => {
     return data.positionSelected;
   });
+  if (selected.length === 0) return alert('전송 실패(포지션 선택을 완료해주세요.)');
   for (let i = 0; i < selected.length; i++) {
     positions.push(selected[i].position);
     if (selected[i].selectedSkills.length > 0) {
       techStacks = [...techStacks, ...selected[i].selectedSkills];
     } else {
       techStacks = [];
-      return;
+      return alert('전송 실패(기술스택 선택을 완료해주세요.)');
     }
   }
-  if (positions.length === 0) return alert('전송 실패(포지션 선택을 안했습니다.)');
-  if (techStacks.length === 0) return alert('전송 실패(기술스택 선택을 안했습니다.)');
+  const setTechStacks = new Set(techStacks);
+  techStacks = [...setTechStacks];
+
+  const resultUserInfo = { ...userInfo, post_img_path: filePath };
+  console.log(resultUserInfo, positions, techStacks);
+
+  await postCreatePost(resultUserInfo, positions, techStacks);
+  alert('전송완료!');
   console.log(positions);
   console.log(techStacks);
 };
@@ -75,7 +123,7 @@ onMounted(async () => {
         type="default"
         text="글 등록"
         class="px-3 py-1.5 bg-primary-1 text-white rounded-lg body-m"
-        @click="sendData"
+        @click="sendData(userInfo, positionAndSkills)"
       />
     </article>
   </section>

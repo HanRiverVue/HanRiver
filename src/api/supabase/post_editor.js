@@ -85,13 +85,24 @@ export const postUploadPostImage = async (file) => {
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }
-    const { data, error } = await supabase.storage.from('post_images').upload(file.name, file, {
-      cacheControl: '3600',
-      upsert: false,
+    const encodedFileName = encodeURIComponent(file.name).replace(/%/g, '');
+    const exist_files = await supabase.storage.from('post_images').list('');
+    let addData = true;
+    exist_files.data.map((e) => {
+      if (e.name === encodedFileName) {
+        addData = false;
+      }
     });
-
-    if (error) {
-      throw new Error(error);
+    if (addData) {
+      const { data, error } = await supabase.storage
+        .from('post_images')
+        .upload(encodedFileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+      if (error) {
+        throw new Error(error);
+      }
     }
     const { data: publicURL, error: urlError } = supabase.storage
       .from('post_images')
@@ -99,7 +110,6 @@ export const postUploadPostImage = async (file) => {
     if (urlError) {
       console.error(urlError);
     }
-
     return publicURL.publicUrl;
   } catch (error) {
     console.error(error);
