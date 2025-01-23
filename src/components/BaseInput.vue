@@ -23,6 +23,10 @@ const props = defineProps({
     type: Number,
     default: null,
   },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['input']);
@@ -57,6 +61,7 @@ const handleInput = (event) => {
       :value="props.value"
       :type="props.type"
       :placeholder="props.placeholder"
+      :readonly="props.readonly"
       class="w-full text-gray-80 placeholder:text-gray-40 bg-transparent"
       @input="handleInput"
       @focus="handleFocus"

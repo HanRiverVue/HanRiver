@@ -14,7 +14,6 @@ onMounted(() => {
 // 내 북마크 목록 불러오기
 const fetchMyBookmarkPosts = async () => {
   myBookmarkPosts.value = await getBookmarkedPostsHandle();
-  console.log(myBookmarkPosts.value);
   loading.value = false;
 };
 </script>

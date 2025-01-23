@@ -12,7 +12,7 @@ const postsByUser = ref(null);
 
 onMounted(async () => {
   // fetchAllPosts();
-  fetchFilteredPosts();
+  // fetchFilteredPosts();
   // fetchPostDetails();
   // fetchPostsByUser();
 });

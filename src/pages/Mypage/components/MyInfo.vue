@@ -5,19 +5,19 @@ import dropdown_arrow_up from '@/assets/icons/dropdown_arrow_up.svg';
 import linkIcon from '@/assets/icons/link_icon.svg';
 import SkillBadge from '@/components/SkillBadge.vue';
 import { SKILLS } from '@/constants/skill';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   userInfo: {
     type: Object,
-    require: true,
+    required: true,
   },
 });
 
 const positions = props.userInfo.positions;
 const links = props.userInfo.link;
 
-const toggle = ref(true);
+const introduceToggle = ref(true);
 </script>
 <template>
   <div class="flex flex-col gap-11 px-10">
@@ -25,22 +25,22 @@ const toggle = ref(true);
     <div class="text-gray-80">
       <div class="flex items-center gap-2.5 mb-2.5">
         <span class="h3-b">자기소개</span>
-        <button @click="toggle = !toggle">
-          <Transition name="toggle">
-            <img v-if="toggle" :src="dropdown_arrow" alt="토글 버튼" />
-            <img v-else-if="!toggle" :src="dropdown_arrow_up" alt="토글 버튼" />
+        <button @click="introduceToggle = !introduceToggle">
+          <Transition name="introduceToggle">
+            <img v-if="introduceToggle" :src="dropdown_arrow" alt="토글 버튼" />
+            <img v-else-if="!introduceToggle" :src="dropdown_arrow_up" alt="토글 버튼" />
           </Transition>
         </button>
       </div>
       <Transition>
-        <p v-if="toggle" class="p-6 bg-secondary-3 rounded-lg input-shadow body-r">
+        <p v-if="introduceToggle" class="p-6 bg-secondary-3 rounded-lg input-shadow body-r">
           {{ props.userInfo.long_introduce }}
         </p>
       </Transition>
     </div>
 
     <!-- 링크 -->
-    <div class="flex flex-col gap-2.5">
+    <div v-if="links.length > 0" class="flex flex-col gap-2.5">
       <span class="h3-b text-gray-80">링크</span>
       <ul class="flex flex-col gap-2.5">
         <a :href="link" rel="noopener noreferrer" v-for="(link, index) in links" :key="index">

@@ -33,22 +33,10 @@ const props = defineProps({
     required: true,
   },
 });
+// 전달받은 포스트 카드 클릭이벤트
+const emit = defineEmits(['click']);
 
 const showModal = ref(false);
-
-const handleClose = () => {
-  showModal.value = false;
-};
-const handleSubmit = async () => {
-  // ... 신청취소 API 호출
-
-  await deleteApplicationHandle(props.postId);
-  showModal.value = false;
-};
-
-const handleClickCancel = () => {
-  showModal.value = true;
-};
 
 // 게시물의 신청 상태에 따른 신청 상태,버튼 종류 설정
 const text = ref('');
@@ -64,10 +52,24 @@ if (props.status === 'success') {
   text.value = '수락 대기중';
   type.value = 'cancel';
 }
+
+const handleClose = () => {
+  showModal.value = false;
+};
+const handleSubmit = async () => {
+  // ... 신청취소 API 호출
+  await deleteApplicationHandle(props.postId);
+  showModal.value = false;
+};
+
+// 모달창에서 돌아가기 버튼 클릭
+const handleOpenModal = () => {
+  showModal.value = true;
+};
 </script>
 
 <template>
-  <div class="w-[522px] py-6 px-6 rounded-lg text-gray-80 input-shadow">
+  <div class="w-[522px] py-6 px-6 rounded-lg text-gray-80 input-shadow" @click="$emit('click')">
     <!-- 제목 & 상태   -->
     <div class="flex justify-between items-center mb-[14px]">
       <p class="body-large-b text-gray-80 line-clamp-3">
@@ -96,7 +98,7 @@ if (props.status === 'success') {
           text="신청취소"
           :disabled="status === 'done'"
           class="px-3 py-1.5 body-r rounded-[4px]"
-          @click="handleClickCancel"
+          @click.stop="handleOpenModal"
         />
       </div>
     </div>

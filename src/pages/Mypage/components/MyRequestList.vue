@@ -10,6 +10,8 @@ import { getPostDetails } from '@/api/supabase/post';
 const skills = ['React', 'Vue', 'Spring'];
 const position = ['프론트엔드', '백엔드'];
 
+const router = useRouter();
+
 const myApplicationPosts = ref([]);
 const loading = ref(true);
 
@@ -23,8 +25,10 @@ onMounted(async () => {
 // 내가 신청한 목록 불러오기
 const fetMyApplicationPosts = async () => {
   myApplicationPosts.value = await getMyApplicationsListHandle();
-  console.log(myApplicationPosts.value);
   loading.value = false;
+};
+const handleGetStatus = (value) => {
+  status.value = value;
 };
 
 // 포스트별 세부 내용 불러오기
@@ -51,9 +55,9 @@ const fetMyApplicationPosts = async () => {
     <!-- 드롭다운 -->
     <div class="max-w-[126px]">
       <FilterDropdown
-        :items="['수락 완료', '수락 대기중', '모집 마감']"
+        :items="['전체', '수락 완료', '수락 대기중', '모집 마감']"
         default-text="수락 상태"
-        @click:select="(value) => (status = value)"
+        @click:select="handleGetStatus"
       />
     </div>
 
@@ -70,35 +74,40 @@ const fetMyApplicationPosts = async () => {
           />
         </RouterLink>
       </div> -->
-      <RouterLink :to="`/RecruitPostDetail/${83}`">
-        <LargePostCard
-          v-if="!status || status === '수락 완료'"
-          project-title="모집모집모집"
-          :skills="skills"
-          :position="position"
-          application-deadline="2025.01.29"
-          status="success"
-          post-id="83"
-        />
-      </RouterLink>
+
+      <!--상태가 전체 or 초기 상태 or ...  -->
 
       <LargePostCard
-        v-if="!status || status === '수락 대기중'"
+        v-if="status === '전체' || !status || status === '수락 완료'"
+        project-title="모집모집모집"
+        :skills="skills"
+        :position="position"
+        application-deadline="2025.01.29"
+        status="success"
+        post-id="83"
+        @click="router.push(`/RecruitPostDetail/${83}`)"
+      />
+
+      <LargePostCard
+        v-if="status === '전체' || !status || status === '수락 대기중'"
         project-title="모집모집모집2"
         :skills="skills"
         :position="position"
         application-deadline="2025.01.29"
         status="warning"
         post-id="84"
+        @click="router.push(`/RecruitPostDetail/${83}`)"
       />
+
       <LargePostCard
-        v-if="!status || status === '모집 마감'"
+        v-if="status === '전체' || !status || status === '모집 마감'"
         project-title="모집모집모집3"
         :skills="skills"
         :position="position"
         application-deadline="2025.01.29"
         status="done"
         post-id="85"
+        @click="router.push(`/RecruitPostDetail/${83}`)"
       />
     </div>
   </div>
