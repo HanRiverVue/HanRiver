@@ -80,10 +80,7 @@ onMounted(() => {
         @removeLink="handleRemoveLink"
         @updateLink="handleUpdateLink"
       />
-      <ProfilePositions
-        :selectedPositions="selectedPositions"
-        @updatePositions="handleSelectPositions"
-      />
+      <ProfilePositions />
       <ProfileSkills :selectedPositions="selectedPositions" />
     </section>
     <section class="flex items-center justify-end gap-3">

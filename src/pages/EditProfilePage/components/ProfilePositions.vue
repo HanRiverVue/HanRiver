@@ -1,15 +1,20 @@
 <script setup>
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
 import { MAX_POSITION_COUNT, POSITION } from '@/constants';
+import { useProfileStore } from '@/stores/profile';
+import { computed } from 'vue';
 
-const props = defineProps({
+const profileStore = useProfileStore();
+
+/* defineProps({
   selectedPositions: {
     type: Array,
     required: true,
   },
 });
 
-const emit = defineEmits(['updatePositions']);
+const emit = defineEmits(['updatePositions']); */
+const positions = computed(() => Object.keys(profileStore.positionWithSkills));
 </script>
 <template>
   <section>
@@ -22,8 +27,8 @@ const emit = defineEmits(['updatePositions']);
         v-for="name in POSITION"
         :key="name"
         size="small"
-        :isSelected="props.selectedPositions.includes(name)"
-        @click="emit('updatePositions', name)"
+        :isSelected="positions.includes(name)"
+        @click="profileStore.togglePosition(name)"
       >
         {{ name }}
       </PositionSelectButton>
