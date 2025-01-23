@@ -7,23 +7,14 @@ import ProfilePositions from './components/ProfilePositions.vue';
 import ProfileIntroduction from './components/ProfileIntroduction.vue';
 import ProfileSkills from './components/ProfileSkills.vue';
 import DefaultInformation from './components/DefaultInformation.vue';
+import { useRouter } from 'vue-router';
 
-const nickname = ref('');
-const shortIntroduction = ref('');
+const router = useRouter();
+
 const introduction = ref('');
 const links = ref([]);
 const selectedPositions = reactive([]);
-
-// TODO: 유저 정보를 받아서 초기화
-// TODO: 링크의 경우, id 삽입한 객체 배열로 변경
-
-const handleNickNameInput = (value) => {
-  nickname.value = value;
-};
-
-const handleShortIntroduction = (value) => {
-  shortIntroduction.value = value;
-};
+const selectedSkills = reactive([]);
 
 const handleUpdateIntroduction = (value) => {
   introduction.value = value;
@@ -46,14 +37,27 @@ const handleRemoveLink = (targetIndex) => {
 const handleSelectPositions = (position) => {
   if (selectedPositions.includes(position)) {
     if (selectedPositions.length === 1) return;
-    selectedPositions.splice(selectedPositions.indexOf(position), 1);
+
+    const index = selectedPositions.indexOf(position);
+    selectedPositions.splice(index, 1);
+    selectedSkills.splice(index, 1);
   } else {
     if (selectedPositions.length === MAX_POSITION_COUNT) return;
     selectedPositions.push(position);
+    selectedSkills.push([]);
   }
 };
 
+const handleCancel = () => router.push('/MyPage');
+
+const handleSubmit = () => {
+  // 닉네임 중복 체크 여부 확인해야 함
+};
+
 onMounted(() => {
+  // TODO: 유저 정보를 받아서 초기화
+  // TODO: 링크의 경우, id 삽입한 객체 배열로 변경
+
   if (links.value.length === 0) {
     // 초기 링크 2개 추가
     handleAddLink();
@@ -69,14 +73,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-10 pt-12 pb-20">
+  <form class="flex flex-col gap-10 pt-12 pb-20" @submit.prevent="handleSubmit">
     <section class="p-6 card-shadow rounded-lg bg-white">
-      <DefaultInformation
-        :nickname="nickname"
-        :shortIntroduction="shortIntroduction"
-        @updateNickName="handleNickNameInput"
-        @updateShortIntroduction="handleShortIntroduction"
-      />
+      <DefaultInformation />
     </section>
     <section class="bg-white card-shadow p-6 gap-11 flex flex-col rounded-lg">
       <ProfileIntroduction
@@ -96,8 +95,10 @@ onMounted(() => {
       <ProfileSkills :selectedPositions="selectedPositions" />
     </section>
     <section class="flex items-center justify-end gap-3">
-      <button type="button" class="secondary-button px-6 py-1.5 body-m">취소</button>
-      <button type="button" class="primary-button px-6 py-1.5 body-m">저장</button>
+      <button type="button" class="secondary-button px-6 py-1.5 body-m" @click="handleCancel">
+        취소
+      </button>
+      <button type="submit" class="primary-button px-6 py-1.5 body-m">저장</button>
     </section>
-  </div>
+  </form>
 </template>
