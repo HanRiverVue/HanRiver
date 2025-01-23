@@ -11,17 +11,17 @@ import { ref } from 'vue';
 //  예시
 const recruit_type = ref('프로젝트');
 const count = ref(5);
-const area = ref('대전 광역시');
+const area = ref('부산 광역시');
 const startDate = ref(new Date('2025-01-20').toISOString().split('T')[0]); // '2025-01-20'
 const endDate = ref(new Date('2025-06-11').toISOString().split('T')[0]); // '2025-06-11'
 const method = ref('online');
 const deadline = ref(new Date('2025-01-20').toISOString().split('T')[0]); // '2025-01-20'
 const callMethod = ref('이메일');
 const callLink = ref('https://kakao/openChat/...');
-const stack = ref(['Swfit', 'Figma']);
-const position = ref(['IOS 개발자', '디자이너']);
-const title = ref('IOS 개발자, 디자이너 모집합니다.');
-const body = ref('주제는 개발자 커뮤니티입니다!');
+const stack = ref(['React Native', 'Kotlin', 'React']);
+const position = ref(['AOS', '프론트엔드']);
+const title = ref('AOS 개발자, 프론트엔드 개발자 모집합니다.');
+const body = ref('주제는 주제를 추천해주는 커뮤니티입니다!');
 const imgPath = ref('');
 
 // --------------
@@ -30,14 +30,16 @@ const post = ref(null);
 
 const updatedPost = ref(null);
 
-let file = null;
+const preview = ref(null);
 
 const handleChange = async (e) => {
-  file = e.target.files[0];
-  imgPath.value = await postUploadPostImage(file); // 이미지 업로드가 완료될 때까지 기다립니다.
+  preview.value = e.target.files[0];
 };
 
 const handleSubmit = async () => {
+  imgPath.value = await postUploadPostImage(preview.value); // 이미지 업로드가 완료될 때까지 기다립니다.
+
+  if (!imgPath.value) return;
   post.value = await postCreatePost(
     {
       recruit_type: recruit_type.value,

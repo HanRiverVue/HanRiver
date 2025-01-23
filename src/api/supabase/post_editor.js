@@ -81,18 +81,32 @@ const postAddTechStack = async (postId, stacks) => {
 // event.target.files[0]의 값을 아래 매개변수에 넣어 나온 반환값을  게시물 생성 API의 post_img_path에 넣어줘야함!
 export const postUploadPostImage = async (file) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }
-    const { data, error } = await supabase.storage.from('post_images').upload(file.name, file, {
-      cacheControl: '3600',
-      upsert: false,
+    const encodedFileName = encodeURIComponent(file.name).replace(/%/g, '');
+    const exist_files = await supabase.storage.from('post_images').list('');
+    let addData = true;
+    exist_files.data.map((e) => {
+      if (e.name === encodedFileName) {
+        addData = false;
+      }
     });
 
-    if (error) {
-      throw new Error(error);
+    if (addData) {
+      const { data, error } = await supabase.storage
+        .from('post_images')
+        .upload(encodedFileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+      if (error) {
+        throw new Error(error);
+      }
     }
+
     const { data: publicURL, error: urlError } = supabase.storage
       .from('post_images')
       .getPublicUrl(file.name);
