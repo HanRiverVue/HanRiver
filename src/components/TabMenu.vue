@@ -10,7 +10,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:activeIndex']);
+const emit = defineEmits(['updateIndex']);
 </script>
 <template>
   <div class="w-full flex flex-col justify-center items-center h-[50px] py-[18px] bg-secondary-1">
@@ -20,7 +20,7 @@ const emit = defineEmits(['update:activeIndex']);
           v-for="(item, index) in props.menuItems"
           :key="index"
           class="cursor-pointer"
-          @click="emit('update:activeIndex', index)"
+          @click="emit('updateIndex', index)"
           :class="props.activeIndex === index && 'text-primary-2'"
         >
           {{ item }}
