@@ -1,6 +1,7 @@
 <script setup>
 import SkillSelectButton from '@/components/SkillSelectButton.vue';
-import { POSITION_SKILLS } from '@/constants/skills';
+import { POSITION_SKILLS } from '@/constants/position';
+import { SKILLS } from '@/constants/skill';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -26,9 +27,9 @@ const skillsBySelectedPositions = computed(() => {
         <div class="flex flex-wrap gap-x-4 gap-y-3">
           <SkillSelectButton v-for="skill in selected.skills" :key="skill">
             <template #icon="{ className }">
-              <img :src="skill.image" :alt="skill.name" :class="className" />
+              <img :src="SKILLS[skill]" :alt="skill" :class="className" />
             </template>
-            {{ skill.name }}
+            {{ skill }}
           </SkillSelectButton>
         </div>
       </div>

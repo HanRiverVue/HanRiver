@@ -71,7 +71,7 @@ const router = createRouter({
     {
       path: '/OnBoard',
       name: 'OnBoardPage',
-      component: () => import('@/pages/OnboardPage.vue'),
+      component: () => import('@/pages/OnboardPage/OnboardPage.vue'),
     },
     {
       path: '/test',
