@@ -19,6 +19,7 @@ const route = useRoute();
 const router = useRouter();
 
 const userInfo = ref(null);
+
 onMounted(async () => {
   userInfo.value = await getUserInfo();
   console.log(userInfo);
@@ -26,8 +27,9 @@ onMounted(async () => {
   loading.value = false;
 
   // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
-  if (route.query.tabIndex > items.value.length) {
+  if (route.query.tabIndex > items.value.length || !route.query.tabIndex) {
     activeIndex.value = 0;
+    router.push({ query: { tabIndex: activeIndex.value } });
     return;
   }
   activeIndex.value = parseInt(route.query.tabIndex);

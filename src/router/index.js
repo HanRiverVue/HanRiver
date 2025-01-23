@@ -28,11 +28,11 @@ const router = createRouter({
           component: () => import('@/pages/EditProfilePage/EditProfilePage.vue'),
           meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
         },
-        {
-          path: 'UserPage',
-          name: 'UserPage',
-          component: () => import('@/pages/UserPage.vue'),
-        },
+        // {
+        //   path: 'UserPage/:userId',
+        //   name: 'UserPage',
+        //   component: () => import('@/pages/UserPage/UserPage.vue'),
+        // },
         {
           path: 'EditRecruitPost',
           name: 'EditRecruitPostPage',
