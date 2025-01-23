@@ -81,7 +81,7 @@ const postAddTechStack = async (postId, stacks) => {
 // event.target.files[0]의 값을 아래 매개변수에 넣어 나온 반환값을  게시물 생성 API의 post_img_path에 넣어줘야함!
 export const postUploadPostImage = async (file) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }

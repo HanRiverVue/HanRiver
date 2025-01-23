@@ -1,4 +1,5 @@
 <script setup>
+import LoginModal from '@/components/LoginModal.vue';
 import UpScroll from '@/components/UpScroll.vue';
 import FooterLayout from '@/layout/FooterLayout.vue';
 import HeaderLayout from '@/layout/header/HeaderLayout.vue';
@@ -23,8 +24,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main :class="`${$route.meta.bg_color} min-h-[calc(100vh-80px)]`">
-    <section class="max-w-[1200px] px-10 mx-auto mt-20">
+  <LoginModal />
+  <main :class="`${$route.meta.bg_color} min-h-[calc(100vh-72px)]`">
+    <section class="max-w-[1200px] px-10 mx-auto mt-[72px]">
       <HeaderLayout />
       <RouterView></RouterView>
       <UpScroll v-if="isScrollTopShow" />
