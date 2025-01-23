@@ -1,5 +1,6 @@
 import { ref, reactive } from 'vue';
 import { defineStore } from 'pinia';
+import { MAX_POSITION_COUNT } from '@/constants';
 
 export const useProfileStore = defineStore('profile', () => {
   const isCheckNickname = ref(false);
@@ -7,6 +8,7 @@ export const useProfileStore = defineStore('profile', () => {
   const nickname = ref('기본닉');
   const shortIntroduction = ref('안녕하세요!');
   const longIntroduction = ref('안녕하세요!\n\n저는 개발자입니다.');
+  const links = ref(['', '']);
   const positionWithSkills = reactive({
     PM: [],
   });
@@ -23,10 +25,22 @@ export const useProfileStore = defineStore('profile', () => {
   const setLongIntroduction = (newLongIntroduction) => {
     longIntroduction.value = newLongIntroduction;
   };
+  const addLink = () => {
+    links.value = [...links.value, ''];
+  };
+  const updateLink = (targetIndex, value) => {
+    links.value = links.value.map((link, index) => (targetIndex === index ? value : link));
+  };
+  const deleteLink = (targetIndex) => {
+    links.value = links.value.filter((_, index) => targetIndex !== index);
+  };
   const togglePosition = (position) => {
+    const selectedCount = Object.keys(positionWithSkills).length;
     if (positionWithSkills[position]) {
+      if (selectedCount === 1) return;
       delete positionWithSkills[position];
     } else {
+      if (selectedCount === MAX_POSITION_COUNT) return;
       positionWithSkills[position] = [];
     }
   };
@@ -37,12 +51,16 @@ export const useProfileStore = defineStore('profile', () => {
     nickname,
     shortIntroduction,
     longIntroduction,
+    links,
     positionWithSkills,
 
     setIsCheckNickname,
     setNickname,
     setShortIntroduction,
     setLongIntroduction,
+    addLink,
+    updateLink,
+    deleteLink,
     togglePosition,
   };
 });

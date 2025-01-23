@@ -1,6 +1,6 @@
 <script setup>
 import { MAX_POSITION_COUNT, POSITION } from '@/constants';
-import { ref, reactive, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
 
 import ProfileLinks from './components/ProfileLinks.vue';
 import ProfilePositions from './components/ProfilePositions.vue';
@@ -11,23 +11,8 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const links = ref([]);
 const selectedPositions = reactive([]);
 const selectedSkills = reactive([]);
-
-const handleAddLink = () => {
-  links.value = [...links.value, { id: Date.now(), value: '' }];
-};
-
-const handleUpdateLink = (targetIndex, value) => {
-  links.value = links.value.map((link, index) =>
-    targetIndex === index ? { ...link, value } : link,
-  );
-};
-
-const handleRemoveLink = (targetIndex) => {
-  links.value = links.value.filter((_, index) => index !== targetIndex);
-};
 
 const handleSelectPositions = (position) => {
   if (selectedPositions.includes(position)) {
@@ -53,12 +38,6 @@ onMounted(() => {
   // TODO: 유저 정보를 받아서 초기화
   // TODO: 링크의 경우, id 삽입한 객체 배열로 변경
 
-  if (links.value.length === 0) {
-    // 초기 링크 2개 추가
-    handleAddLink();
-    handleAddLink();
-  }
-
   // TODO: 수파베이스 연결 시, 삭제해야 할 코드
   // 절대 아무것도 없는 케이스를 안 만들기 위한 임시 로직
   if (selectedPositions.length === 0) {
@@ -74,12 +53,7 @@ onMounted(() => {
     </section>
     <section class="bg-white card-shadow p-6 gap-11 flex flex-col rounded-lg">
       <ProfileIntroduction />
-      <ProfileLinks
-        :links="links"
-        @addLink="handleAddLink"
-        @removeLink="handleRemoveLink"
-        @updateLink="handleUpdateLink"
-      />
+      <ProfileLinks />
       <ProfilePositions />
       <ProfileSkills :selectedPositions="selectedPositions" />
     </section>

@@ -5,15 +5,6 @@ import { useProfileStore } from '@/stores/profile';
 import { computed } from 'vue';
 
 const profileStore = useProfileStore();
-
-/* defineProps({
-  selectedPositions: {
-    type: Array,
-    required: true,
-  },
-});
-
-const emit = defineEmits(['updatePositions']); */
 const positions = computed(() => Object.keys(profileStore.positionWithSkills));
 </script>
 <template>
