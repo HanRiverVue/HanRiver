@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import MainPage from '@/pages/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
-
+import { supabase } from '@/config/supabase';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -55,6 +55,11 @@ const router = createRouter({
           path: 'service',
           name: 'servicePage',
           component: () => import('@/pages/ServicePage.vue'),
+        },
+        {
+          path: 'testhw',
+          name: 'testhw',
+          component: () => import('@/pages/test_api_page_hw/Post.vue'),
         },
         {
           path: '/:pathMatch(.*)*',
