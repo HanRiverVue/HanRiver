@@ -22,7 +22,7 @@ const emit = defineEmits(['click']);
 
 const sizeClass = {
   small: 'px-3 py-1.5 flex-1 basis-0 max-w-[100px] min-w-fit',
-  large: 'py-2.5 px-8',
+  large: 'py-2.5 px-8 w-[120px] h-11',
 };
 
 const activeClass = {
