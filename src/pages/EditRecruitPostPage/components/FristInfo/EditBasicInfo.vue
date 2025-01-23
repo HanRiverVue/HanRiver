@@ -20,7 +20,6 @@ const selectedPositions = reactive([]);
 
 const handlePositionButtonClick = (PIndex) => {
   if (!props.positionAndSkills[PIndex].positionSelected) {
-    if (selectedPositions.length >= 3) return;
     props.positionAndSkills[PIndex].positionSelected = true;
     selectedPositions.push(props.positionAndSkills[PIndex]);
   } else {
