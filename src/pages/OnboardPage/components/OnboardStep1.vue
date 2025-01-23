@@ -4,16 +4,36 @@ import BaseInput from '@/components/BaseInput.vue';
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
 import { MAX_SHORT_INTRODUCE_LENGTH, MAX_NICKNAME_LENGTH, POSITION } from '@/constants';
 
+const emit = defineEmits(['update']);
+
 const nickname = ref(''); //닉네임
 const shortIntroduce = ref(''); //한 줄 소개
 const selectedPositions = reactive([]); // 포지션
 
 const handleNickNameInput = (value) => {
   nickname.value = value;
+  emit('update', { name: value });
 };
 
 const handleShortIntroduceInput = (value) => {
   shortIntroduce.value = value;
+  emit('update', { short_introduce: value });
+};
+const handlePositionsSelect = (value) => {
+  console.log(value);
+  if (selectedPositions.includes(value)) {
+    // 이미 선택된 포지션이면 제거
+    const index = selectedPositions.indexOf(value);
+    selectedPositions.splice(index, 1);
+  } else if (selectedPositions.length < 3) {
+    // 선택 가능 개수를 초과하지 않으면 추가
+    selectedPositions.push(value);
+  } else {
+    alert('최대 3개의 포지션만 선택 가능합니다.');
+  }
+
+  // 배열 형태로 업데이트 이벤트 발행
+  emit('update', { position: [...selectedPositions] });
 };
 </script>
 
@@ -63,7 +83,13 @@ const handleShortIntroduceInput = (value) => {
           <div class="caption-r text-gray-50">최대 3개 선택</div>
         </div>
         <div class="flex flex-wrap gap-[18px]">
-          <PositionSelectButton v-for="name in POSITION" :key="name" size="large">
+          <PositionSelectButton
+            v-for="name in POSITION"
+            :key="name"
+            size="large"
+            :isSelected="selectedPositions.includes(name)"
+            @click="handlePositionsSelect(name)"
+          >
             {{ name }}
           </PositionSelectButton>
         </div>
