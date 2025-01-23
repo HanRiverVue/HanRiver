@@ -15,7 +15,7 @@ const insertNotification = async (receiverId, senderId, postId, type, message) =
   if (error) {
     console.error('알림 생성 중 오류 발생:', error);
   } else {
-    console.log('알림 생성 완료:', data);
+    // console.log('알림 생성 완료:', data);
   }
 };
 
@@ -45,7 +45,7 @@ const getNotifications = async (userId) => {
       throw error;
     }
 
-    console.log('알림 목록:', data);
+    // console.log('알림 목록:', data);
     return data;
   } catch (error) {
     console.error('알림을 가져오는 중 오류 발생:', error);

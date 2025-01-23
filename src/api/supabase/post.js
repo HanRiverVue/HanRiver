@@ -1,5 +1,6 @@
 import { supabase } from '@/config/supabase';
 import { getPostComments } from '@/api/supabase/comment';
+import { getUserInfoToUserId } from './user';
 
 // 전체 게시물을 보여주는 API ( 페이지네이션 x)
 export const getAllPosts = async () => {
@@ -14,8 +15,12 @@ export const getAllPosts = async () => {
 
     const totalData = await Promise.all(
       data.map(async (item) => {
+        const userInfo = await getUserInfoToUserId(item.author);
+
         return {
           ...item,
+          name: userInfo.name,
+          profile_img_path: userInfo.profile_img_path,
           positions: await getPostPositions(item.id),
           techStacks: await getPostTechStacks(item.id),
         };
@@ -49,7 +54,7 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     }
 
     // 쿼리 체이닝 방식을 사용시 await을 마지막에 단 한번 실행
-    // post_positions 테이블을  post 테이블과 inner join
+    // post_positions 테이블을 post 테이블과 inner join
     let query = supabase
       .from('post')
       .select(`*,post_positions!inner(position)`, { count: 'exact' })
@@ -78,7 +83,20 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     }
     const totalPage = Math.ceil((count || 0) / pageSize);
 
-    return { data, totalPost: count, page, totalPage };
+    const totalData = await Promise.all(
+      data.map(async (item) => {
+        const userInfo = await getUserInfoToUserId(item.author);
+
+        return {
+          ...item,
+          name: userInfo.name,
+          profile_img_path: userInfo.profile_img_path,
+          positions: await getPostPositions(item.id),
+          techStacks: await getPostTechStacks(item.id),
+        };
+      }),
+    );
+    return { data: totalData, totalPost: count, page, totalPage };
   } catch (error) {
     console.error(error);
     return { data: [], totalPost: 0, page, totalPage: 0 };
