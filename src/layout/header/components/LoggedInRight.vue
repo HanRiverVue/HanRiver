@@ -4,12 +4,16 @@ import PostEditSvg from '@/assets/icons/PostEditSvg.vue';
 import NotificationSvg from '@/assets/icons/NotificationSvg.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import DropdownButton from '@/components/DropdownButton.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const dropdownList = [
   {
     label: '마이페이지',
     action: () => {
       console.log('마이페이지로 이동');
+      router.push('/MyPage');
     },
   },
   {

@@ -31,7 +31,7 @@ const handleDropdownItemClick = (item) => {
 </script>
 <template>
   <section v-if="props.isOpen" :class="styleClass" ref="menuRef">
-    <ul class="flex flex-col gap-2.5">
+    <ul class="flex flex-col gap-2.5 items-center">
       <li v-for="(item, index) in props.dropdownList" :key="index">
         <button
           type="button"
