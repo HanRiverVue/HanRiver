@@ -27,13 +27,13 @@ const signInProviders = [
 ];
 </script>
 <template>
-  <div class="fixed inset-0 z-10 flex items-center justify-center bg-black/50">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
     <div
       class="relative flex flex-col justify-center items-center bg-secondary-2 rounded-[20px] w-[500px] h-[540px]"
     >
       <!-- TODO: (임시)-->
       <div class="absolute top-7 right-7"><img :src="githubIcon" alt="닫기 버튼" /></div>
-      <RouterLink to="/onBoard" class="px-[22px]">
+      <RouterLink to="/" class="px-[22px]">
         <img :src="logo" alt="mergi 로고 아이콘" class="min-w-[96px]" />
       </RouterLink>
       <div class="mt-5 mb-[22px] text-gray-80 text-center">
