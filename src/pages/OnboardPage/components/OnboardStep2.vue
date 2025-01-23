@@ -2,7 +2,9 @@
 import { ref } from 'vue';
 import OnboardTab from './OnboardTab.vue';
 import SkillSelectButton from '@/components/SkillSelectButton.vue';
-import { POSITION_SKILLS } from '@/constants/skills';
+import { POSITION_SKILLS } from '@/constants/position';
+import { SKILLS } from '@/constants/skill';
+console.log(POSITION_SKILLS);
 
 const activeIndex = ref(0);
 
@@ -26,9 +28,10 @@ const positionString = positions.join(', ');
     <div class="flex flex-wrap gap-3">
       <SkillSelectButton v-for="skill in POSITION_SKILLS[positions[activeIndex]]" :key="skill">
         <template #icon="{ className }">
-          <img :src="skill.image" :alt="skill.name" :class="className" />
+          <img :src="SKILLS[skill]" :alt="skill.name" :class="className" />
+          {{ skill.name }}
         </template>
-        {{ skill.name }}
+        {{ skill }}
       </SkillSelectButton>
     </div>
   </div>
