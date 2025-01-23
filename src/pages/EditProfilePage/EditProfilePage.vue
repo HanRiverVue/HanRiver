@@ -11,14 +11,9 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const introduction = ref('');
 const links = ref([]);
 const selectedPositions = reactive([]);
 const selectedSkills = reactive([]);
-
-const handleUpdateIntroduction = (value) => {
-  introduction.value = value;
-};
 
 const handleAddLink = () => {
   links.value = [...links.value, { id: Date.now(), value: '' }];
@@ -78,10 +73,7 @@ onMounted(() => {
       <DefaultInformation />
     </section>
     <section class="bg-white card-shadow p-6 gap-11 flex flex-col rounded-lg">
-      <ProfileIntroduction
-        :introduction="introduction"
-        @updateIntroduction="handleUpdateIntroduction"
-      />
+      <ProfileIntroduction />
       <ProfileLinks
         :links="links"
         @addLink="handleAddLink"
