@@ -21,6 +21,8 @@ const router = useRouter();
 const userInfo = ref(null);
 onMounted(async () => {
   userInfo.value = await getUserInfo();
+  console.log(userInfo);
+
   loading.value = false;
 
   // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
