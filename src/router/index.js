@@ -77,7 +77,7 @@ const router = createRouter({
     {
       path: '/testhw',
       name: 'testhw',
-      component: () => import('@/pages/test_api_page_hw/PostEdit.vue'),
+      component: () => import('@/pages/test_api_page_hw/Post.vue'),
     },
   ],
 });
