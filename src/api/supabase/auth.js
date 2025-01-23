@@ -4,10 +4,8 @@ import { supabase } from '@/config/supabase';
 export const signInWithGithub = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
-    options: {
-      redirectTo: '/',
-    },
   });
+  console.log(data);
 
   if (error) {
     console.log(error);
@@ -18,9 +16,6 @@ export const signInWithGithub = async () => {
 export const signInWithKakao = async () => {
   let { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'kakao',
-    options: {
-      redirectTo: '/',
-    },
   });
   if (error) {
     console.log(error);
@@ -31,10 +26,8 @@ export const signInWithKakao = async () => {
 export const signInWithGoogle = async () => {
   let { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: '/',
-    },
   });
+  console.log(data);
   if (error) {
     console.log(error);
   }
@@ -54,6 +47,5 @@ export const getUserLoggedIn = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
   return user;
 };
