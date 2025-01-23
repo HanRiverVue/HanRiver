@@ -49,7 +49,7 @@ const updatingUserProfile = {
   short_introduce: '안녕하세요 테스트 하고 있어요dn.',
   long_introduce: '달디달고달디단밤양갱',
   profile_img_path: '22이미지 주소',
-  link: 'https://github.comm',
+  link: ['https://github.com', 'https://naver.com'],
 };
 const updatingUserPositions = [
   { position: '프론트엔드', stacks: ['react', 'vue'] },
