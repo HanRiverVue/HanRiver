@@ -3,7 +3,17 @@ import { POSITION } from '.';
 const PLANNING_SKILLS = ['Miro', 'Asana', 'Aha', 'ProductBoard', 'Trello', 'Figma', 'Adobe XD'];
 const MARKETING_SKILLS = ['Google Analytics', 'Google Ads', 'Firebase'];
 const DESIGN_SKILLS = ['Zeplin', 'Figma', 'Photoshop', 'Illustrator', 'Adobe XD'];
-const FRONTEND_SKILLS = [];
+const FRONTEND_SKILLS = [
+  'JavaScript',
+  'TypeScript',
+  'React',
+  'Vue',
+  'Svelte',
+  'Next.js',
+  'Jest',
+  'GraphQL',
+  'Git',
+];
 const AOS_SKILLS = ['React Native', 'Kotlin', 'Flutter', 'Git'];
 const IOS_SKILLS = ['Swift', 'SwiftUI', 'React Native', 'Flutter', 'Git'];
 const BACKEND_SKILLS = [
