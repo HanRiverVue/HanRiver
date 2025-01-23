@@ -23,8 +23,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main :class="`${$route.meta.bg_color} min-h-[calc(100vh-80px)]`">
-    <section class="max-w-[1200px] px-10 mx-auto mt-20">
+  <main :class="`${$route.meta.bg_color} min-h-[calc(100vh-72px)]`">
+    <section class="max-w-[1200px] px-10 mx-auto mt-[72px]">
       <HeaderLayout />
       <RouterView></RouterView>
       <UpScroll v-if="isScrollTopShow" />
