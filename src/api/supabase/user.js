@@ -124,8 +124,10 @@ export const getUserInfo = async () => {
       return { id: position.id, position: position.position, stacks: stacks.stacks.split('/') };
     }),
   );
-  // console.log({ ...getProfile, positions: positions });
-  return { ...getProfile, positions: positions };
+
+  const realProfile = { ...getProfile, link: getProfile.link.split('*') };
+  console.log({ ...realProfile, positions: positions });
+  return { ...realProfile, positions: positions };
 };
 
 // 다른 사용자 유저 정보 getAPI(API 조합 키트) - 파라미터에 찾으려는 유저의 user_id값을 넣으면 됩니다.
@@ -136,7 +138,7 @@ export const getUserInfoToUserId = async (user_id) => {
     console.log('해당 유저의 유저 정보가 없습니다.');
     return null;
   }
-
+  const realProfile = { ...getProfile, link: getProfile.link.split('*') };
   const getPositions = await getUserPositions(getProfile.id);
   const positions = await Promise.all(
     getPositions.map(async (position) => {
@@ -144,8 +146,8 @@ export const getUserInfoToUserId = async (user_id) => {
       return { ...position, stacks: stacks.stacks.split('/') };
     }),
   );
-  // console.log({ ...getProfile, positions: positions });
-  return { ...getProfile, positions: positions };
+  console.log({ ...realProfile, positions: positions });
+  return { ...realProfile, positions: positions };
 };
 
 // 유저 프로필 get API
@@ -205,7 +207,7 @@ const updatingUserProfile = {
   short_introduce: '안녕하세요 테스트 하고 있어요요.',
   long_introduce: '달디달고달디단밤양갱',
   profile_img_path: '22이미지 주소',
-  link: 'https://github.comm',
+  link: ['https://github.com', 'https://naver.com'],
 };
 const updatingUserPositions = [
   { position: '프론트엔드', stacks: ['react', 'vue'] },
@@ -216,7 +218,11 @@ const updatingUserPositions = [
 export const putUserInfo = async (updatingUserProfile, updatingUserPositions) => {
   const user = await getUserLoggedIn();
 
-  const userList = await putUserProfile(updatingUserProfile, user.id);
+  const realLink = updatingUserProfile.link.join('*');
+  const realUpdatingUserProfile = { ...updatingUserProfile, link: realLink };
+  console.log(realLink, realUpdatingUserProfile);
+
+  const userList = await putUserProfile(realUpdatingUserProfile, user.id);
 
   if (userList === 'name_error') {
     return console.log(`중복된 닉네임이 존재해 수정 요청을 종료합니다. 에러명 ${userList}`);
@@ -247,7 +253,8 @@ export const putUserInfo = async (updatingUserProfile, updatingUserPositions) =>
     positionsArr.push(positions);
   }
 
-  return { ...userList, positions: positionsArr };
+  const realUserList = { ...userList, link: userList.link.split('*') };
+  return { ...realUserList, positions: positionsArr };
 };
 
 // 유저 프로필 put(사실상 update) API
@@ -317,27 +324,29 @@ const postUpdateUserStacks = async (insertObject, position) => {
 export const getAllUserInfo = async () => {
   const { data: lists, error } = await supabase.from('user_list').select('*');
 
+  const listsArr = lists.map((list) => ({ ...list, link: list.link.split('*') }));
+
   const result = [];
-  lists.map(async (list) => {
+  for (const list of listsArr) {
     const { data: positions, error } = await supabase
       .from('user_list_positions')
       .select()
       .eq('profile_id', list.id);
 
-    const rowArr = [];
-    positions.map(async (position) => {
-      const { data: stacks, err } = await supabase //
+    const positionsArr = [];
+    for (const position of positions) {
+      const { data: stacks, err } = await supabase
         .from('user_list_stacks')
         .select()
         .eq('position_id', position.id)
         .single();
-      rowArr.push({
+      positionsArr.push({
         id: position.id,
         position: position.position,
         stacks: stacks.stacks.split('/'),
       });
-    });
-    result.push({ ...list, positions: rowArr });
-  });
+    }
+    result.push({ ...list, positions: positionsArr });
+  }
   return result;
 };

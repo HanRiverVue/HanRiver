@@ -20,13 +20,13 @@ const router = createRouter({
           path: 'MyPage',
           name: 'MyPage',
           component: () => import('@/pages/Mypage/MyPage.vue'),
-          meta: { bg_color: 'bg-secondary-2' },
+          meta: { bg_color: 'bg-secondary-2', requiredAuth: true },
         },
         {
           path: 'EditProfile',
           name: 'EditProfilePage',
           component: () => import('@/pages/EditProfilePage/EditProfilePage.vue'),
-          meta: { showScrollTop: true, bg_color: 'bg-secondary-3' },
+          meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
         },
         {
           path: 'UserPage',
@@ -36,8 +36,8 @@ const router = createRouter({
         {
           path: 'EditRecruitPost',
           name: 'EditRecruitPostPage',
-          component: () => import('@/pages/EditRecruitPostPage.vue'),
-          meta: { showScrollTop: true },
+          component: () => import('@/pages/EditRecruitPostPage/EditRecruitPostPage.vue'),
+          meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
         },
         {
           path: 'RecruitPostDetail/:postId',
@@ -80,6 +80,23 @@ const router = createRouter({
       component: () => import('@/pages/test_api_page_hw/Post.vue'),
     },
   ],
+});
+
+// 로그인 페이지 이동제어
+router.beforeEach(async (to, from, next) => {
+  // const isAuthenticated = await getSession();
+  //console.log(isAuthenticated);
+  if (to.meta?.requiredAuth) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      alert('로그인이 필요합니다.');
+      next(from.path);
+      return;
+    }
+  }
+  next();
 });
 
 export default router;
