@@ -16,6 +16,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['click']);
+
 const baseClass = 'rounded-md text-sm';
 
 const buttonClass = computed(() => {
@@ -32,11 +34,11 @@ const buttonClass = computed(() => {
     case 'disabled2':
       return `${baseClass} ${additionalClass} bg-white text-gray-30 border border-solid border-gray-30`;
     default:
-      return null;
+      return `${additionalClass}`;
   }
 });
 </script>
 
 <template>
-  <button :class="buttonClass">{{ text }}</button>
+  <button :class="buttonClass" @click="emit('click')">{{ text }}</button>
 </template>

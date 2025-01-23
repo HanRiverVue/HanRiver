@@ -20,6 +20,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  useToPost: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['click:select']);
@@ -52,6 +56,7 @@ const selectBoxButtonStyle = computed(() =>
   twMerge(
     'flex items-center justify-between w-full py-1 pl-3 pr-1.5 rounded-lg bg-white input-shadow text-gray-50 border border-transparent',
     selectedItem.value && 'border-primary-3 text-primary-3',
+    props.useToPost && 'py-3',
   ),
 );
 
@@ -87,7 +92,7 @@ onBeforeUnmount(() => {
     <!-- 드롭다운 메뉴 -->
     <div
       v-if="isDropdownOpen"
-      class="absolute w-full my-2 py-1 bg-white rounded-lg card-shadow text-gray-50 overflow-hidden"
+      class="absolute w-full my-2 py-1 bg-white rounded-lg card-shadow text-gray-50 overflow-hidden z-10"
     >
       <ul class="flex flex-col max-h-[182px] overflow-auto dropdown-scrollbar">
         <li
