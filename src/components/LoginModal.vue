@@ -4,6 +4,13 @@ import googleIcon from '@/assets/icons/google_icon.svg';
 import githubIcon from '@/assets/icons/github_icon.svg';
 import kakaoIcon from '@/assets/icons/kakao_icon.svg';
 import logo from '@/assets/icons/logo.svg';
+import { CancelIcon } from '@/assets/icons';
+import { useLoginModalStore } from '@/stores/loginModal';
+
+const loginModalStore = useLoginModalStore();
+const closeLoginModal = () => {
+  loginModalStore.setLoginModal(false);
+};
 
 const signInProviders = [
   {
@@ -27,15 +34,19 @@ const signInProviders = [
 ];
 </script>
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+  <div
+    v-if="loginModalStore.loginModal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    @click="closeLoginModal"
+  >
     <div
       class="relative flex flex-col justify-center items-center bg-secondary-2 rounded-[20px] w-[500px] h-[540px]"
+      @click.stop
     >
-      <!-- TODO: (임시)-->
-      <div class="absolute top-7 right-7"><img :src="githubIcon" alt="닫기 버튼" /></div>
-      <RouterLink to="/" class="px-[22px]">
+      <CancelIcon className=" absolute top-7 right-7 w-6 h-6" @click="closeLoginModal" />
+      <div class="px-[22px]">
         <img :src="logo" alt="mergi 로고 아이콘" class="min-w-[96px]" />
-      </RouterLink>
+      </div>
       <div class="mt-5 mb-[22px] text-gray-80 text-center">
         <h2 class="h2-b mb-[17px]">머지에서 머하지?</h2>
         <h4 class="h4-b">
