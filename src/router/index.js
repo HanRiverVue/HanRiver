@@ -29,9 +29,9 @@ const router = createRouter({
           meta: { showScrollTop: true, bg_color: 'bg-secondary-3' },
         },
         {
-          path: 'UserPage',
+          path: 'UserPage/:userId',
           name: 'UserPage',
-          component: () => import('@/pages/UserPage.vue'),
+          component: () => import('@/pages/UserPage/UserPage.vue'),
         },
         {
           path: 'EditRecruitPost',
