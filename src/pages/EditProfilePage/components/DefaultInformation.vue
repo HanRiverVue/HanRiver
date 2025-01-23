@@ -5,7 +5,7 @@ import {
   MAX_SHORT_INTRODUCE_LENGTH,
   NICKNAME_MESSAGE_STATUS,
 } from '@/constants';
-import { ref, computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import TEMP_IMAGE from '@/assets/images/temp-profile.png';
 import { twMerge } from 'tailwind-merge';
@@ -16,12 +16,9 @@ import DropdownMenu from '@/components/DropdownMenu.vue';
 
 // TODO: 이미지 삭제 및 업로드 기능 추가
 const profileStore = useProfileStore();
-const { isCheckNickname, nicknameMessageStatus, nickname, shortIntroduction } =
+const { isCheckNickname, nicknameMessageStatus, newNickname, shortIntroduction } =
   storeToRefs(profileStore);
-const { setIsCheckNickname, setNickname, setShortIntroduction } = profileStore;
-
-const newNickname = ref('');
-const messageType = ref('default');
+const { updateNewNickname, validateNickname, updateShortIntroduction } = profileStore;
 const dropdownList = reactive([
   {
     label: '이미지 변경하기',
@@ -39,55 +36,28 @@ const dropdownList = reactive([
 const nicknameMessage = computed(() => NICKNAME_MESSAGE_STATUS[nicknameMessageStatus.value]);
 const nicknameMessageStyleClass = computed(() =>
   twMerge(
-    (nicknameMessageStatus.value === 'symbol' || nicknameMessageStatus.value === 'duplicate') &&
+    (nicknameMessageStatus.value === 'symbol' ||
+      nicknameMessageStatus.value === 'duplicate' ||
+      nicknameMessageStatus.value === 'blank') &&
       'text-accent-error',
     nicknameMessageStatus.value === 'success' && 'text-primary-3',
   ),
 );
 
 const handleNickNameInput = (value) => {
-  newNickname.value = value;
-  if (newNickname.value === nickname.value) {
-    messageType.value = 'success';
-    setIsCheckNickname(true);
-  } else {
-    messageType.value = 'default';
-    setIsCheckNickname(false);
-  }
+  updateNewNickname(value);
 };
 
 const handleShortIntroductionInput = (value) => {
-  setShortIntroduction(value);
+  updateShortIntroduction(value);
 };
 
 const handleCheckNickname = () => {
-  if (newNickname.value.trim() === '') {
-    nicknameMessageStatus.value = 'blank';
-    setIsCheckNickname(false);
-    return;
-  }
-
-  if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣]*$/.test(newNickname.value)) {
-    nicknameMessageStatus.value = 'symbol';
-    setIsCheckNickname(false);
-    return;
-  }
-
-  // TODO: 닉네임 중복 확인 API 호출
-  // 만약 닉네임 중복에 문제가 없을 경우
-  messageType.value = 'success';
-  setIsCheckNickname(true);
-  setNickname(newNickname.value);
-
-  // 만약 닉네임 중복에 문제가 있을 경우
-  // nicknameMessageStatus.value = 'duplicate';
-  // setIsCheckNickname(false);
+  validateNickname(newNickname.value.trim());
 };
 
 onMounted(() => {
-  newNickname.value = nickname.value;
-  messageType.value = 'success';
-  setIsCheckNickname(true);
+  // TODO: profileStore 초기화
 });
 </script>
 <template>
