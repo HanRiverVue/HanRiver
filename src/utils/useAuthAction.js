@@ -22,7 +22,7 @@ export function useAuthAction() {
   //   console.log('Auth state changed:', newValue);
   // });
 
-  // 모달 관련 함수수
+  // 모달 관련 함수
   const openLoginModal = () => {
     showLoginModal.value = true;
   };

@@ -9,10 +9,10 @@ defineProps({
   posts: Array,
   likedPosts: Set,
   bookmarkedPosts: Set,
-  isAuthenticated: Boolean, // 이 prop을 추가해야 합니다.
+  isAuthenticated: Boolean,
 });
 
-defineEmits(['toggleLike', 'toggleBookmark', 'clickUserProfileimage', 'openLoginModal']); // openLoginModal 이벤트 추가
+defineEmits(['toggleLike', 'toggleBookmark', 'clickUserProfileimage', 'openLoginModal']);
 </script>
 
 <template>

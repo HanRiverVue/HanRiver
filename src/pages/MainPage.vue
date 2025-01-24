@@ -37,8 +37,6 @@ const { showLoginModal, closeLoginModal, handleAuthAction, isAuthenticated } = u
 // isAuthenticated를 computed 속성으로 변경
 const isUserAuthenticated = computed(() => isAuthenticated.value);
 
-console.log('MainPage - isUserAuthenticated:', isUserAuthenticated.value);
-
 // API에서 받아온 데이터 매핑
 const mapPostData = (post) => ({
   id: post.id,
@@ -91,19 +89,24 @@ const handleToggleLike = async (postId) => {
   if (isUserAuthenticated.value) {
     await toggleLikeHandle(postId);
     await fetchLikedAndBookmarkedPosts();
+
     // 여기서 해당 포스트의 좋아요 상태를 직접 업데이트
     const hotPostIndex = hotPosts.value.findIndex((post) => post.id === postId);
     if (hotPostIndex !== -1) {
       hotPosts.value[hotPostIndex].isLiked = !hotPosts.value[hotPostIndex].isLiked;
     }
-    const nowPostIndex = hotPosts.value.findIndex((post) => post.id === postId);
-    if (nowPostIndex !== -1) {
-      hotPosts.value[nowPostIndex].isLiked = !hotPosts.value[nowPostIndex].isLiked;
+    console.log('hot:', hotPostIndex);
+    const deadlinePostIndex = deadlinePosts.value.findIndex((post) => post.id === postId);
+    if (deadlinePostIndex !== -1) {
+      deadlinePosts.value[deadlinePostIndex].isLiked =
+        !deadlinePosts.value[deadlinePostIndex].isLiked;
     }
-    const newPostIndex = hotPosts.value.findIndex((post) => post.id === postId);
+    console.log('deadline:', deadlinePostIndex);
+    const newPostIndex = newPosts.value.findIndex((post) => post.id === postId);
     if (newPostIndex !== -1) {
-      hotPosts.value[newPostIndex].isLiked = !hotPosts.value[newPostIndex].isLiked;
+      newPosts.value[newPostIndex].isLiked = !newPosts.value[newPostIndex].isLiked;
     }
+    console.log('new:', newPostIndex);
   } else {
     setLoginModal(true);
   }
@@ -118,9 +121,10 @@ const handleToggleBookmark = async (postId) => {
     if (hotPostIndex !== -1) {
       hotPosts.value[hotPostIndex].isBookmarked = !hotPosts.value[hotPostIndex].isBookmarked;
     }
-    const nowPostIndex = newPosts.value.findIndex((post) => post.id === postId);
-    if (nowPostIndex !== -1) {
-      newPosts.value[nowPostIndex].isBookmarked = !newPosts.value[nowPostIndex].isBookmarked;
+    const deadlinePostIndex = deadlinePosts.value.findIndex((post) => post.id === postId);
+    if (deadlinePostIndex !== -1) {
+      newPosts.value[deadlinePostIndex].isBookmarked =
+        !deadlinePosts.value[deadlinePostIndex].isBookmarked;
     }
     const newPostIndex = newPosts.value.findIndex((post) => post.id === postId);
     if (newPostIndex !== -1) {
