@@ -64,15 +64,14 @@ const handleGetStatus = (value) => {
     <!-- 신청 목록 -->
     <div class="flex justify-between items-start content-start self-stretch gap-y-5 flex-wrap">
       <!-- <div v-for="(post, index) in myApplicationPosts" :key="index">
-        <RouterLink :to="`/RecruitPostDetail/${postId}`">
           <LargePostCard
             :project-title="post.title"
             :skills="post.techStack"
             :position="post.position"
             :application-deadline="post.recruit_deadline"
             :status="post.accepted ? 'success' : post.finished ? 'done' : 'warning'"
+            @click="router.push(`/RecruitPostDetail/${post.id}`)"
           />
-        </RouterLink>
       </div> -->
 
       <!--상태가 전체 or 초기 상태 or ...  -->

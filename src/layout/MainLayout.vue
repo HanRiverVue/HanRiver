@@ -1,8 +1,10 @@
 <script setup>
+import BaseModal from '@/components/BaseModal.vue';
 import LoginModal from '@/components/LoginModal.vue';
 import UpScroll from '@/components/UpScroll.vue';
 import FooterLayout from '@/layout/FooterLayout.vue';
 import HeaderLayout from '@/layout/header/HeaderLayout.vue';
+import { useBaseModalStore } from '@/stores/baseModal';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterView } from 'vue-router';
 
@@ -21,10 +23,29 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', handlePageScroll);
 });
+
+const baseModal = useBaseModalStore();
+
+const handleConfirm = () => {
+  baseModal.onConfirm();
+  baseModal.hideModal();
+};
+const handleCancel = () => {
+  baseModal.hideModal();
+};
 </script>
 
 <template>
   <LoginModal />
+  <!-- 공통 모달창 -->
+  <BaseModal
+    v-if="baseModal.isVisible"
+    :title="baseModal.title"
+    :confirmText="baseModal.confirmText"
+    :cancelText="baseModal.cancelText"
+    @confirm="handleConfirm"
+    @cancel="handleCancel"
+  />
   <main :class="`${$route.meta.bg_color} min-h-[calc(100vh-72px)]`">
     <section class="max-w-[1200px] px-10 mx-auto mt-[72px]">
       <HeaderLayout />

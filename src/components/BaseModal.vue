@@ -1,34 +1,38 @@
 <script setup>
 const props = defineProps({
+  title: {
+    type: String,
+    required: true,
+  },
   cancelText: {
     type: String,
     default() {
       return '취소하기';
     },
   },
-  sumbitText: {
+  confirmText: {
     type: String,
     default() {
       return '완료하기';
     },
   },
 });
-const emits = defineEmits(['cancel', 'submit']);
+const emits = defineEmits(['cancel', 'confirm']);
 
 // 신청 취소를 취소할 경우
 const handleCancel = () => {
   emits('cancel');
 };
 
-const handleSubmit = () => {
-  emits('submit');
+const handleConfirm = () => {
+  emits('confirm');
 };
 </script>
 
 <template>
   <!-- 흐린 배경 -->
   <div
-    class="w-full h-full fixed top-0 left-0 flex justify-center items-center"
+    class="w-full h-full fixed top-0 left-0 flex justify-center items-center z-50"
     style="background-color: rgba(0, 0, 0, 0.5)"
   >
     <!-- 모달창 (opacity 적용 안됨) -->
@@ -37,7 +41,7 @@ const handleSubmit = () => {
     >
       <div class="flex flex-col items-center gap-4 self-stretch">
         <p class="h4-b text-gray-70">
-          <slot></slot>
+          {{ title }}
         </p>
         <div class="flex gap-4 w-full mt-4">
           <button
@@ -48,9 +52,9 @@ const handleSubmit = () => {
           </button>
           <button
             class="body-r bg-primary-1 modal-button-shadow text-white p-2 rounded-lg flex-grow opacity-80"
-            @click="handleSubmit"
+            @click="handleConfirm"
           >
-            {{ sumbitText }}
+            {{ confirmText }}
           </button>
         </div>
       </div>
