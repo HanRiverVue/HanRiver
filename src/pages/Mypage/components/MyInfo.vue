@@ -16,6 +16,7 @@ const props = defineProps({
 
 const positions = props.userInfo.positions;
 const links = props.userInfo.link;
+console.log(links);
 
 const introduceToggle = ref(true);
 </script>
@@ -40,7 +41,7 @@ const introduceToggle = ref(true);
     </div>
 
     <!-- 링크 -->
-    <div v-if="links.length > 0" class="flex flex-col gap-2.5">
+    <div v-if="links !== ''" class="flex flex-col gap-2.5">
       <span class="h3-b text-gray-80">링크</span>
       <ul class="flex flex-col gap-2.5">
         <a :href="link" rel="noopener noreferrer" v-for="(link, index) in links" :key="index">
