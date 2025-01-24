@@ -29,6 +29,14 @@ watch(
 const handleBaseInputInput = (value) => {
   props.userInfo.title = value;
 };
+
+const editerRef = ref(null);
+const handleEditorFocusKeydown = (event) => {
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    editerRef.value.quill.focus();
+  }
+};
 </script>
 
 <template>
@@ -43,8 +51,9 @@ const handleBaseInputInput = (value) => {
         placeholder="제목을 작성해주세요"
         className="h3-b"
         @input="handleBaseInputInput"
+        @keydown="handleEditorFocusKeydown"
       />
-      <Editor v-model="localBody" editorStyle="height: 320px" />
+      <Editor v-model="localBody" editorStyle="height: 440px" ref="editerRef" />
     </article>
   </article>
 </template>

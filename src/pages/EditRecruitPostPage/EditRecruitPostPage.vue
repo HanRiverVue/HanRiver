@@ -3,9 +3,9 @@ import AppButton from '@/components/AppButton.vue';
 import EditBasicInfo from './components/FristInfo/EditBasicInfo.vue';
 import EditPostImageInfo from './components/SecondInfo/EditPostImageInfo.vue';
 import EditDetailInfo from './components/thirdInfo/EditDetailInfo.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, onUnmounted, reactive, ref } from 'vue';
 import { getUserLoggedIn } from '@/api/supabase/auth';
-import { editPositionAndSkills } from '@/pages/EditRecruitPostPage/index';
+import { editPositionAndSkills, resetPositionAndSkills } from '@/pages/EditRecruitPostPage/index';
 import { postCreatePost, postUploadPostImage } from '@/api/supabase/post_editor';
 
 const userInfo = ref({
@@ -56,10 +56,10 @@ const sendData = async (userInfo, positionAndSkills) => {
       return alert('모집 마감일 선택을 완료해주세요');
     case userInfo.on_offline === '':
       return alert('진행 방식 선택을 완료해주세요');
-    case userInfo.start_date === '':
+    case userInfo.start_date === null:
       return alert('진행 기간 선택을 완료해주세요');
-    case userInfo.end_date === '':
-      return alert('진행 기간 선택을 완료해주세요');
+    case userInfo.end_date === null:
+      return alert('진행 기간 선택을 완료해주세요(종료 날짜가 선택되지 않았습니다)');
     case userInfo.call_method === '':
       return alert('연락 방법 선택을 완료해주세요');
     case userInfo.call_link === '':
@@ -104,6 +104,14 @@ onMounted(async () => {
   } else {
     console.log('유저정보가 담기지 않았습니다.');
     return;
+  }
+});
+
+// positionAndSkills reactive 모든값 초기화
+onBeforeUnmount(() => {
+  for (let i = 0; i < positionAndSkills.length; i++) {
+    positionAndSkills[i].positionSelected = false;
+    positionAndSkills[i].selectedSkills = [];
   }
 });
 </script>
