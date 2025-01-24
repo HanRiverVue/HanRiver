@@ -32,11 +32,11 @@ export const getAllPosts = async () => {
   }
 };
 
-// 특정 페이지의 게시물을 보여주는 API
+// 특정 페이지의 게시물을 보여주는 API (1페이지당 12개 보여주기)
 export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12) => {
   try {
     const from = (page - 1) * pageSize;
-    const to = page * pageSize;
+    const to = page * pageSize - 1;
 
     // 기술 스택 요소를 포함하는 post_id를 담을 배열
     let matchingPostIds = [];
@@ -67,26 +67,32 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
       query = query.ilike('post_positions.position', `%${filters.position}%`);
     }
     if (filters.recruitArea) {
-      query = query.is('recruit_area', `%${filters.recruitArea}%`);
+      query = query.ilike('recruit_area', `%${filters.recruitArea}%`); // 수정된 부분
     }
     if (filters.recruitType) {
-      query = query.is('recruit_type', filters.recruitType);
+      query = query.ilike('recruit_type', filters.recruitType);
     }
     if (filters.onOffline) {
-      query = query.is('on_offline', `%${filters.onOffline}%`);
+      query = query.ilike('on_offline', `%${filters.onOffline}%`); // 수정된 부분
     }
-    query = query.range(from, to);
+    //like, is 연산자는 문자열 비교에만 사용된다.
+    //  boolean 타입은  eq로 비교해야한다.
+    if (typeof filters.finished === 'boolean' && filters.finished) {
+      query = query.eq('finished', filters.finished); // 수정된 부분
+    }
 
-    const { data, error2, count } = await query;
-    if (error2) {
-      throw new Error(error2);
+    query = query.range(from, to);
+    const { data, error, count } = await query; // 수정된 부분
+
+    if (error) {
+      throw new Error(error);
     }
+
     const totalPage = Math.ceil((count || 0) / pageSize);
 
     const totalData = await Promise.all(
       data.map(async (item) => {
         const userInfo = await getUserInfoToUserId(item.author);
-
         return {
           ...item,
           name: userInfo.name,
@@ -96,6 +102,7 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
         };
       }),
     );
+
     return { data: totalData, totalPost: count, page, totalPage };
   } catch (error) {
     console.error(error);
