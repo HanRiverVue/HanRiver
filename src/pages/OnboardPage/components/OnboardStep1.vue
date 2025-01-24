@@ -1,18 +1,30 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, reactive } from 'vue';
 import BaseInput from '@/components/BaseInput.vue';
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
 import { MAX_SHORT_INTRODUCE_LENGTH, MAX_NICKNAME_LENGTH, POSITION } from '@/constants';
-import { getAllUserInfo } from '@/api/supabase/user';
+import { checkDuplicateNickname } from '@/api/supabase/user';
+import ProgressBar from './ProgressBar.vue';
+import AppButton from '@/components/AppButton.vue';
+import { twMerge } from 'tailwind-merge';
 
 const props = defineProps({
   registerData: {
     type: Object,
   },
+  step: {
+    type: Number,
+    required: true,
+  },
+  maxPage: {
+    type: Number,
+    required: true,
+  },
 });
-const emit = defineEmits(['update', 'positionsSelect']);
+
+const emit = defineEmits(['setRegisterData', 'nextStep']);
 const baseInputRef = ref(null);
-const localRegisterData = ref({ ...props.registerData });
+const localRegisterData = reactive({ ...props.registerData });
 
 const NicknameStatus = {
   EMPTY: 'EMPTY', // 공백일 경우
@@ -41,113 +53,152 @@ const nicknameCheckResult = ref(NicknameStatus.INITIAL); // 닉네임 상태
 const NicknameMessage = computed(() => NicknameMessages[nicknameCheckResult.value]);
 const NicknameMessageStyle = computed(() => NicknameMessageStyles[nicknameCheckResult.value]);
 
-// const handleLocalRegisterDataInput = (newData) => {
-//   Object.assign(localRegisterData, newData);
-//   console.log('localRegisterData',JSON.stringify(registerData));
-// };
-
 const handleNickNameInput = (value) => {
-  localRegisterData.value.name = value;
-  emit('update', { name: value });
+  const trimmedValue = value.trim();
+  nicknameCheckResult.value = NicknameStatus.INITIAL;
+  localRegisterData.name = trimmedValue;
+  emit('setRegisterData', { name: trimmedValue });
 };
 
 const handleShortIntroduceInput = (value) => {
-  localRegisterData.value.short_introduce = value;
-  emit('update', { short_introduce: value });
+  const trimmedValue = value.trim();
+  localRegisterData.short_introduce = trimmedValue;
+  emit('setRegisterData', { short_introduce: trimmedValue });
 };
 
+// 선택된 포지션
 const handlePositionsSelect = (value) => {
-  localRegisterData.value.positionsSelect = value;
-  emit('positionsSelect', value);
+  if (localRegisterData.position.includes(value)) {
+    // 이미 선택된 포지션이면 제거
+    const index = localRegisterData.position.indexOf(value);
+    localRegisterData.position.splice(index, 1);
+  } else if (localRegisterData.position.length < 3) {
+    // 선택 가능 개수를 초과하지 않으면 추가
+    localRegisterData.position.push(value);
+    console.log(localRegisterData.position);
+  } else {
+    alert('최대 3개의 포지션만 선택 가능합니다.');
+  }
 };
 
 // 닉네임 유효성 검사
-//TODO: 앞부분 공백인 경우도 있음... 예) `  3` 이럴 경우 앞부분 공백을 지워줘야 함
 const nicknameValidationStatus = async (nickname) => {
-  console.log(nickname);
-  if (!nickname.trim()) {
+  // 앞뒤 공백 제거
+  const trimmedNickname = nickname.trim();
+  // 공백일 경우
+  if (!trimmedNickname) {
     baseInputRef.value.focus();
-    localRegisterData.value.name = '';
-    // 공백일 경우
+    localRegisterData.name = '';
     nicknameCheckResult.value = NicknameStatus.EMPTY;
     return;
   }
-  const allUserInfo = await getAllUserInfo(); // 모든 유저 정보 가져오기
-  const isDuplicate = allUserInfo.some((user) => user.name === nickname);
-  if (isDuplicate) {
+  const result = await checkDuplicateNickname(trimmedNickname); // 중복 확인
+  if (result) {
     nicknameCheckResult.value = NicknameStatus.DUPLICATE;
-  } else if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣\s]*$/.test(nickname)) {
+  } else if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣\s]*$/.test(trimmedNickname)) {
     // 특수문자 체크
     nicknameCheckResult.value = NicknameStatus.INVALID;
   } else {
     nicknameCheckResult.value = NicknameStatus.VALID; // 유효한 닉네임
   }
 };
+
+// 폼 유효성 검사
+const isFormValid = computed(() => {
+  return (
+    props.registerData.name.length > 0 &&
+    nicknameCheckResult.value === 'VALID' &&
+    props.registerData.short_introduce.length > 0 &&
+    props.registerData.position.length > 0
+  );
+});
+
+// 버튼 타입 결정
+const buttonType = computed(() => {
+  return isFormValid.value ? 'primary' : 'disabled';
+});
+
+const buttonStyle = computed(() => {
+  return twMerge('py-[14px] body-large-m rounded-lg', !isFormValid.value && 'cursor-not-allowed');
+});
+
+// 다음 단계로 이동
+const nextStep = () => {
+  if (!isFormValid.value) return;
+  emit('nextStep');
+};
 </script>
 
 <template>
-  <div class="flex flex-col w-full">
-    <article class="flex flex-col w-full gap-7">
-      <!-- 닉네임 입력 -->
-      <section>
-        <h3 class="h4-b text-gray-80 mb-[10px]">닉네임을 입력해주세요.</h3>
-        <BaseInput
-          ref="baseInputRef"
-          :value="localRegisterData.name"
-          placeholder="닉네임"
-          :maxLength="MAX_NICKNAME_LENGTH"
-          className="pr-2 py-2"
-          @input="handleNickNameInput"
-        >
-          <template #rightIcon>
-            <button
-              type="button"
-              class="primary-button px-3 py-1.5 shrink-0 body-r"
-              @click="nicknameValidationStatus(localRegisterData.name)"
+  <div class="flex flex-col justify-between w-[574px] h-full bg-white/85 z-10 p-5 rounded">
+    <div class="flex flex-col gap-7">
+      <ProgressBar :currentPage="step" :maxPage="maxPage" />
+      <div class="flex flex-col w-full">
+        <article class="flex flex-col w-full gap-7">
+          <!-- 닉네임 입력 -->
+          <section>
+            <h3 class="h4-b text-gray-80 mb-[10px]">닉네임을 입력해주세요.</h3>
+            <BaseInput
+              ref="baseInputRef"
+              :value="localRegisterData.name"
+              placeholder="닉네임"
+              :maxLength="MAX_NICKNAME_LENGTH"
+              className="pr-2 py-2"
+              @input="handleNickNameInput"
             >
-              중복확인
-            </button>
-          </template>
-        </BaseInput>
-        <div class="flex justify-between gap-3 mt-1 caption-r text-gray-50">
-          <p :class="NicknameMessageStyle">{{ NicknameMessage }}</p>
-          <p>{{ localRegisterData.name.length }}/{{ MAX_NICKNAME_LENGTH }}</p>
-        </div>
-      </section>
+              <template #rightIcon>
+                <button
+                  type="button"
+                  class="primary-button px-3 py-1.5 shrink-0 body-r"
+                  @click="nicknameValidationStatus(localRegisterData.name)"
+                >
+                  중복확인
+                </button>
+              </template>
+            </BaseInput>
+            <div class="flex justify-between gap-3 mt-1 caption-r text-gray-50">
+              <p :class="NicknameMessageStyle">{{ NicknameMessage }}</p>
+              <p>{{ localRegisterData.name.length }}/{{ MAX_NICKNAME_LENGTH }}</p>
+            </div>
+          </section>
 
-      <!-- 한 줄 소개 -->
-      <section>
-        <h3 class="h4-b text-gray-80 mb-[10px]">간단하게 본인을 소개해주세요.</h3>
-        <BaseInput
-          :value="localRegisterData.short_introduce"
-          placeholder="한 줄 소개"
-          :maxLength="MAX_SHORT_INTRODUCE_LENGTH"
-          @input="handleShortIntroduceInput"
-        />
-        <div class="mt-1 body-r text-gray-50 justify-self-end">
-          <p>{{ localRegisterData.short_introduce.length }}/{{ MAX_SHORT_INTRODUCE_LENGTH }}</p>
-        </div>
-      </section>
+          <!-- 한 줄 소개 -->
+          <section>
+            <h3 class="h4-b text-gray-80 mb-[10px]">간단하게 본인을 소개해주세요.</h3>
+            <BaseInput
+              :value="localRegisterData.short_introduce"
+              placeholder="한 줄 소개"
+              :maxLength="MAX_SHORT_INTRODUCE_LENGTH"
+              @input="handleShortIntroduceInput"
+            />
+            <div class="mt-1 body-r text-gray-50 justify-self-end">
+              <p>{{ localRegisterData.short_introduce.length }}/{{ MAX_SHORT_INTRODUCE_LENGTH }}</p>
+            </div>
+          </section>
 
-      <!-- 포지션 -->
-      <section>
-        <div class="flex justify-between w-full">
-          <h3 class="h4-b text-gray-80 mb-[10px]">희망하는 포지션을 선택해주세요.</h3>
-          <div class="caption-r text-gray-50">최대 3개 선택</div>
-        </div>
-        <div class="flex flex-wrap gap-[18px]">
-          <PositionSelectButton
-            v-for="name in POSITION"
-            :key="name"
-            size="large"
-            :isSelected="props.registerData.position.includes(name)"
-            @click="handlePositionsSelect(name)"
-          >
-            {{ name }}
-          </PositionSelectButton>
-        </div>
-      </section>
-    </article>
+          <!-- 포지션 -->
+          <section>
+            <div class="flex justify-between w-full">
+              <h3 class="h4-b text-gray-80 mb-[10px]">희망하는 포지션을 선택해주세요.</h3>
+              <div class="caption-r text-gray-50">최대 3개 선택</div>
+            </div>
+            <div class="flex flex-wrap gap-[18px]">
+              <PositionSelectButton
+                v-for="name in POSITION"
+                :key="name"
+                size="large"
+                :isSelected="props.registerData.position.includes(name)"
+                @click="handlePositionsSelect(name)"
+              >
+                {{ name }}
+              </PositionSelectButton>
+            </div>
+          </section>
+        </article>
+      </div>
+    </div>
+    <!-- 버튼 -->
+    <AppButton :type="buttonType" text="다음" :class="buttonStyle" @click="nextStep" />
   </div>
 </template>
 
