@@ -110,6 +110,20 @@ export const useProfileStore = defineStore('profile', () => {
     else positionWithSkills[position].push(skill);
   };
 
+  const getNewProfile = () => ({
+    name: newNickname.value,
+    short_introduce: shortIntroduction.value,
+    long_introduce: longIntroduction.value,
+    profile_img_path: profileImage.value,
+    link: links.value.filter((link) => link !== ''),
+  });
+  const getNewPositions = () => {
+    return Object.keys(positionWithSkills).map((position) => ({
+      position,
+      stacks: positionWithSkills[position],
+    }));
+  };
+
   return {
     isCheckNickname,
     nicknameMessageStatus,
@@ -133,5 +147,7 @@ export const useProfileStore = defineStore('profile', () => {
     deleteLink,
     togglePosition,
     toggleSkill,
+    getNewProfile,
+    getNewPositions,
   };
 });

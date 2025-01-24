@@ -8,7 +8,7 @@ import ProfileSkills from './components/ProfileSkills.vue';
 import DefaultInformation from './components/DefaultInformation.vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
-import { getUserInfo } from '@/api/supabase/user';
+import { getUserInfo, putUserInfo } from '@/api/supabase/user';
 import { ref } from 'vue';
 
 const router = useRouter();
@@ -22,6 +22,11 @@ const getMyProfile = async () => {
   profileStore.initialize(res);
 };
 
+const putUserInfoHandler = async (newProfile, newPositions) => {
+  const res = await putUserInfo(newProfile, newPositions);
+  if (res) router.push('/MyPage');
+};
+
 const handleCancel = () => {
   router.push('/MyPage');
 };
@@ -33,6 +38,11 @@ const handleSubmit = ($event) => {
     alert('닉네임 중복 확인을 해주세요.');
     return;
   }
+
+  const newProfile = profileStore.getNewProfile();
+  const newPositions = profileStore.getNewPositions();
+  console.log(newPositions);
+  putUserInfoHandler(newProfile, newPositions);
 };
 
 onMounted(() => {
