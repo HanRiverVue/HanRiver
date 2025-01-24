@@ -1,31 +1,17 @@
 <script setup>
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  cancelText: {
-    type: String,
-    default() {
-      return '취소하기';
-    },
-  },
-  confirmText: {
-    type: String,
-    default() {
-      return '완료하기';
-    },
-  },
-});
-const emits = defineEmits(['cancel', 'confirm']);
+import { useBaseModalStore } from '@/stores/baseModal';
+import { storeToRefs } from 'pinia';
 
-// 신청 취소를 취소할 경우
-const handleCancel = () => {
-  emits('cancel');
-};
+const baseModal = useBaseModalStore();
+
+const { title, confirmText, cancelText } = storeToRefs(baseModal);
 
 const handleConfirm = () => {
-  emits('confirm');
+  baseModal.onConfirm();
+  baseModal.hideModal();
+};
+const handleCancel = () => {
+  baseModal.hideModal();
 };
 </script>
 
@@ -35,7 +21,6 @@ const handleConfirm = () => {
     class="w-full h-full fixed top-0 left-0 flex justify-center items-center z-50"
     style="background-color: rgba(0, 0, 0, 0.5)"
   >
-    <!-- 모달창 (opacity 적용 안됨) -->
     <div
       class="py-8 px-12 w-[330px] max-w-[330px] flex flex-col items-start gap-[10px] absolute top-1/2 left-1/2 rounded-[20px] transform: -translate-x-1/2 -translate-y-1/2 bg-secondary-2"
     >
