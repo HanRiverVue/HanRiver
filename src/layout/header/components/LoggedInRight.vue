@@ -2,17 +2,18 @@
 import default_user_img from '@/assets/images/default_user_img.png';
 import PostEditSvg from '@/assets/icons/PostEditSvg.vue';
 import NotificationSvg from '@/assets/icons/NotificationSvg.vue';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
+import DropdownButton from '@/components/DropdownButton.vue';
+import { useRouter } from 'vue-router';
 
-const isDropdownOpen = ref(false);
-const targetElement = ref(null);
+const router = useRouter();
 
 const dropdownList = [
   {
     label: '마이페이지',
     action: () => {
       console.log('마이페이지로 이동');
+      router.push('/MyPage');
     },
   },
   {
@@ -22,24 +23,6 @@ const dropdownList = [
     },
   },
 ];
-
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value;
-};
-
-const handleOutsideClick = (event) => {
-  if (isDropdownOpen.value && targetElement.value && !targetElement.value.contains(event.target)) {
-    isDropdownOpen.value = false;
-  }
-};
-
-onMounted(() => {
-  document.addEventListener('click', handleOutsideClick);
-});
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleOutsideClick);
-});
 </script>
 
 <template>
@@ -54,22 +37,22 @@ onBeforeUnmount(() => {
         <NotificationSvg />
       </button>
     </li>
-    <li class="flex flex-col justify-center items-e relative" ref="targetElement">
-      <button @click="toggleDropdown">
-        <img
-          :src="default_user_img"
-          ref="closeTargetElement"
-          alt="유저 기본 이미지 아이콘"
-          class="w-10 rounded-full"
-        />
-      </button>
-      <!-- <HeaderDropdown v-model="isDropdownOpen" /> -->
-      <DropdownMenu
-        :isOpen="isDropdownOpen"
-        :dropdown-list="dropdownList"
-        class="right-0 bottom-0 mt-1.5 top-full"
-        @onClose="isDropdownOpen = false"
-      />
+    <li class="flex flex-col justify-center items-end" ref="targetElement">
+      <DropdownButton>
+        <template #trigger="{ toggleDropdown }">
+          <button @click="toggleDropdown">
+            <img :src="default_user_img" alt="유저 기본 이미지 아이콘" class="w-10 rounded-full" />
+          </button>
+        </template>
+        <template #menu="{ isOpen, closeDropdown }">
+          <DropdownMenu
+            :isOpen="isOpen"
+            :dropdown-list="dropdownList"
+            class="right-0 bottom-0 mt-1.5 top-full"
+            @onClose="closeDropdown"
+          />
+        </template>
+      </DropdownButton>
     </li>
   </ul>
 </template>

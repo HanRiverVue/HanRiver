@@ -1,5 +1,4 @@
 <script setup>
-import basicProfoile from '@/assets/icons/basic_profile.svg';
 import TabMenu from '@/components/TabMenu.vue';
 import { onMounted, ref } from 'vue';
 import MyInfo from './components/MyInfo.vue';
@@ -19,6 +18,10 @@ const route = useRoute();
 const router = useRouter();
 
 const userInfo = ref(null);
+
+const handleEditProfile = () => {
+  router.push('/EditProfile');
+};
 
 onMounted(async () => {
   userInfo.value = await getUserInfo();
@@ -73,7 +76,7 @@ const handleUpdateIndex = (index = 0) => {
               @click="router.push('/EditProfile')"
             >
               <img :src="ProfileEdit_icon" alt="프로필 편집 아이콘(톱니바퀴)" class="w-4 h-4" />
-              <button class="text-white caption-r">프로필 수정</button>
+              <button class="text-white caption-r" @click="handleEditProfile">프로필 수정</button>
             </div>
           </div>
         </div>
