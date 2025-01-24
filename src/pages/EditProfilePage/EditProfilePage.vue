@@ -8,9 +8,19 @@ import ProfileSkills from './components/ProfileSkills.vue';
 import DefaultInformation from './components/DefaultInformation.vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
+import { getUserInfo } from '@/api/supabase/user';
+import { ref } from 'vue';
 
 const router = useRouter();
 const profileStore = useProfileStore();
+
+const result = ref(null);
+
+const getMyProfile = async () => {
+  const res = await getUserInfo();
+  result.value = res;
+  profileStore.initialize(res);
+};
 
 const handleCancel = () => {
   router.push('/MyPage');
@@ -26,10 +36,7 @@ const handleSubmit = ($event) => {
 };
 
 onMounted(() => {
-  // TODO: 유저 정보를 받아서 초기화
-  // TODO: 링크의 경우, id 삽입한 객체 배열로 변경
-  // TODO: 수파베이스 연결 시, 삭제해야 할 코드
-  // 절대 아무것도 없는 케이스를 안 만들기 위한 임시 로직
+  getMyProfile();
 });
 </script>
 

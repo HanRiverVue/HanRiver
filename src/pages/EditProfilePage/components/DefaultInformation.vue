@@ -14,12 +14,17 @@ import { PencilIcon } from '@/assets/icons';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 
 const profileStore = useProfileStore();
-const { isCheckNickname, nicknameMessageStatus, newNickname, shortIntroduction } =
+const { isCheckNickname, nicknameMessageStatus, newNickname, profileImage, shortIntroduction } =
   storeToRefs(profileStore);
-const { updateNewNickname, validateNickname, updateShortIntroduction } = profileStore;
+const {
+  updateNewNickname,
+  validateNickname,
+  updateProfileImage,
+  deleteProfileImage,
+  updateShortIntroduction,
+} = profileStore;
 
 const fileInputRef = ref(null);
-const profileImage = ref(null);
 const dropdownList = reactive([
   {
     label: '이미지 변경하기',
@@ -32,7 +37,7 @@ const dropdownList = reactive([
     label: '이미지 삭제하기',
     action: () => {
       console.log('프로필 삭제');
-      profileImage.value = null;
+      deleteProfileImage();
     },
   },
 ]);
@@ -66,7 +71,7 @@ const handleFileChange = (event) => {
   if (!file) return;
 
   const fileURL = URL.createObjectURL(file);
-  profileImage.value = fileURL;
+  updateProfileImage(fileURL);
 };
 
 onMounted(() => {

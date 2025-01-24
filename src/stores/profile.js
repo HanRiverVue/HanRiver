@@ -3,16 +3,29 @@ import { defineStore } from 'pinia';
 import { MAX_POSITION_COUNT } from '@/constants';
 
 export const useProfileStore = defineStore('profile', () => {
-  const isCheckNickname = ref(true);
-  const nicknameMessageStatus = ref('success');
-  const nickname = ref('기본닉');
-  const newNickname = ref('기본닉');
-  const shortIntroduction = ref('안녕하세요!');
-  const longIntroduction = ref('안녕하세요!\n\n저는 개발자입니다.');
-  const links = ref(['', '']);
-  const positionWithSkills = reactive({
-    PM: [],
-  });
+  const isCheckNickname = ref(false);
+  const nicknameMessageStatus = ref('default');
+  const nickname = ref('');
+  const newNickname = ref('');
+  const profileImage = ref('');
+  const shortIntroduction = ref('');
+  const longIntroduction = ref('');
+  const links = ref([]);
+  const positionWithSkills = reactive({});
+
+  const initialize = (myProfile) => {
+    isCheckNickname.value = true;
+    nicknameMessageStatus.value = 'success';
+    nickname.value = myProfile.name;
+    newNickname.value = myProfile.name;
+    profileImage.value = myProfile.profile_img_path;
+    shortIntroduction.value = myProfile.short_introduce;
+    longIntroduction.value = myProfile.long_introduce;
+    links.value = myProfile.link.length === 0 ? [''] : myProfile.link;
+    myProfile.positions.forEach((data) => {
+      positionWithSkills[data.position] = data.stacks;
+    });
+  };
 
   const setIsCheckNickname = (value) => {
     isCheckNickname.value = value;
@@ -55,6 +68,13 @@ export const useProfileStore = defineStore('profile', () => {
     // setIsCheckNickname(false);
   };
 
+  const updateProfileImage = (fileURL) => {
+    profileImage.value = fileURL;
+  };
+  const deleteProfileImage = () => {
+    profileImage.value = '';
+  };
+
   const updateShortIntroduction = (newShortIntroduction) => {
     shortIntroduction.value = newShortIntroduction;
   };
@@ -95,13 +115,17 @@ export const useProfileStore = defineStore('profile', () => {
     nicknameMessageStatus,
     nickname,
     newNickname,
+    profileImage,
     shortIntroduction,
     longIntroduction,
     links,
     positionWithSkills,
 
+    initialize,
     updateNewNickname,
     validateNickname,
+    updateProfileImage,
+    deleteProfileImage,
     updateShortIntroduction,
     setLongIntroduction,
     addLink,
