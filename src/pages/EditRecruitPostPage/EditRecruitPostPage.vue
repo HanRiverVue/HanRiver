@@ -29,7 +29,7 @@ const sendData = () => {
   console.log('userInfo :', userInfo.value);
   console.log('positionAndSkills', positionAndSkills);
   const positions = [];
-  const techStacks = [];
+  let techStacks = [];
 
   const selected = positionAndSkills.filter((data) => {
     return data.positionSelected;
