@@ -7,6 +7,13 @@ import {
   signOut,
 } from '@/api/supabase/auth';
 import {
+  getUserBookmarks,
+  getUserBookmarksWithDetails,
+  getUserLikes,
+  toggleBookmark,
+  toggleLike,
+} from '@/api/supabase/like_and_bookmark';
+import {
   getAllUserInfo,
   getUserInfo,
   getUserInfoToUserId,
@@ -128,6 +135,26 @@ onMounted(async () => {
   <div>
     <button @click="getAllUserInfoHandler()">모든 유저 온보드 가져오기</button>
     <p v-for="user of allUserInfo">{{ user }}</p>
+  </div>
+
+  <div>
+    <button @click="toggleLike(93)">좋아요 보내기</button>
+  </div>
+
+  <div>
+    <button @click="getUserLikes()">사용자 게시글 좋아요 정보 가져오기</button>
+  </div>
+
+  <div>
+    <button @click="toggleBookmark(93)">북마크 담기</button>
+  </div>
+
+  <div>
+    <button @click="getUserBookmarks()">사용자 북마크 정보 가져오기</button>
+  </div>
+
+  <div>
+    <button @click="getUserBookmarksWithDetails()">사용자가 북마크한 글 상세 가져오기</button>
   </div>
 </template>
 
