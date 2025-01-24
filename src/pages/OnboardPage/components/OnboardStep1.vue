@@ -62,6 +62,7 @@ const handlePositionsSelect = (value) => {
 };
 
 // 닉네임 유효성 검사
+//TODO: 앞부분 공백인 경우도 있음... 예) `  3` 이럴 경우 앞부분 공백을 지워줘야 함
 const nicknameValidationStatus = async (nickname) => {
   console.log(nickname);
   if (!nickname.trim()) {

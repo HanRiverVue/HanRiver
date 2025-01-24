@@ -1,16 +1,53 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import OnboardTab from './OnboardTab.vue';
 import SkillSelectButton from '@/components/SkillSelectButton.vue';
 import { POSITION_SKILLS } from '@/constants/position';
 import { SKILLS } from '@/constants/skill';
-console.log(POSITION_SKILLS);
 
+const props = defineProps({
+  registerData: {
+    type: Object,
+  },
+});
+
+const emit = defineEmits(['update']);
+
+// 탭 인덱스
 const activeIndex = ref(0);
 
-// TODO: 유저가 선택한 값으로 받아서 변경
-const positions = ['프론트엔드', '백엔드', '마케팅'];
+// 선택한 포지션
+const positions = reactive([...props.registerData.position]);
 const positionString = positions.join(', ');
+
+// 선택한 스킬
+const skills = reactive([]);
+
+// 포지션과 스택 초기화
+const formattedData = reactive(
+  positions.map((position) => ({
+    position,
+    stacks: [], // 초기 스택
+  })),
+);
+
+const handleSkillSelect = (skill) => {
+  const currentPosition = formattedData[activeIndex.value]; // 현재 탭 포지션 데이터
+  if (currentPosition.stacks.includes(skill)) {
+    // 이미 선택된 스킬이면 제거
+    const index = currentPosition.stacks.indexOf(skill);
+    currentPosition.stacks.splice(index, 1);
+  } else {
+    // 선택된 스킬 추가
+    currentPosition.stacks.push(skill);
+  }
+  console.log('Updated formattedData:', formattedData);
+};
+
+// 포지션 + 스킬 데이터 업데이트
+const handleUserPositionsSelect = () => {
+  emit('update', { position: formattedData });
+};
 </script>
 
 <template>
@@ -26,7 +63,12 @@ const positionString = positions.join(', ');
 
     <!-- 탭 내용 -->
     <div class="flex flex-wrap gap-3">
-      <SkillSelectButton v-for="skill in POSITION_SKILLS[positions[activeIndex]]" :key="skill">
+      <SkillSelectButton
+        v-for="skill in POSITION_SKILLS[positions[activeIndex]]"
+        :key="skill"
+        :isSelected="formattedData[activeIndex].stacks.includes(skill)"
+        @click="handleSkillSelect(skill)"
+      >
         <template #icon="{ className }">
           <img :src="SKILLS[skill]" :alt="skill.name" :class="className" />
           {{ skill.name }}
