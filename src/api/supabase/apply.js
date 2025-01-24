@@ -1,4 +1,6 @@
 import { supabase } from '@/config/supabase';
+import { getPostDetails, getPostPositions, getPostTechStacks } from './post';
+import { getUserInfo } from './user';
 
 // 신청하기 함수
 const postApplication = async (postId, postTitle, hostId) => {
@@ -36,6 +38,9 @@ const postApplication = async (postId, postTitle, hostId) => {
 
     const proposerName = userProfile?.name || '이름 없음';
 
+    const userInfo = await getUserInfo();
+    const userPositions = userInfo.positions.map((item) => item.position).join('/');
+
     // 신청 데이터 생성
     const { data, error } = await supabase
       .from('post_apply_list')
@@ -48,6 +53,7 @@ const postApplication = async (postId, postTitle, hostId) => {
           post_title: postTitle,
           accepted: false,
           finished: false,
+          proposer_positions: userPositions,
         },
       ])
       .select();
@@ -57,7 +63,7 @@ const postApplication = async (postId, postTitle, hostId) => {
       return;
     }
 
-    console.log('신청이 완료되었습니다:', data);
+    // console.log('신청이 완료되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 처리 중 오류 발생:', error);
@@ -89,7 +95,7 @@ const deleteApplication = async (postId) => {
       return;
     }
 
-    console.log('신청이 취소되었습니다:', data);
+    // console.log('신청이 취소되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 취소 처리 중 오류 발생:', error);
@@ -111,7 +117,7 @@ const getMyApplicationsList = async () => {
 
     const { data, error } = await supabase
       .from('post_apply_list')
-      .select('post_id, post_title, accepted, finished')
+      .select()
       .eq('proposer_id', user.id);
 
     if (error) {
@@ -119,8 +125,16 @@ const getMyApplicationsList = async () => {
       return;
     }
 
-    console.log('내가 신청한 목록:', data);
-    return data;
+    // post_apply_list 정보 + 해당 post 상세정보
+    const newData = data.map(async (item) => {
+      const postId = item.post_id;
+      const post = await getPostDetails(postId);
+      const positionArr = item.proposer_positions.split('/');
+      return { ...item, proposer_positions: positionArr, ...post };
+    });
+
+    // console.log('내가 신청한 목록:', newData);
+    return newData;
   } catch (error) {
     console.error('내가 신청한 목록 처리 중 오류 발생:', error);
   }
@@ -149,7 +163,7 @@ const getApplicationsForMyPosts = async () => {
       return;
     }
 
-    console.log('내가 작성한 글에 대한 신청 목록:', data);
+    // console.log('내가 작성한 글에 대한 신청 목록:', data);
     return data;
   } catch (error) {
     console.error('내가 작성한 글에 대한 신청 목록 처리 중 오류 발생:', error);

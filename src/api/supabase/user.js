@@ -42,7 +42,7 @@ export const postUserInfoOnboard = async (userProfile, userPositions) => {
   const result = { ...userList, positions: positionArr };
 
   alert('온보드 데이터 전송 완료');
-  console.log('결과', result);
+  // console.log('결과', result);
   return result;
 };
 
@@ -69,7 +69,7 @@ const postUserProfile = async (insertObject) => {
       return 'other_error';
     }
   }
-  console.log('data', data);
+  // console.log('data', data);
   return data;
 };
 

@@ -1,3 +1,30 @@
+<script setup>
+const props = defineProps({
+  cancelText: {
+    type: String,
+    default() {
+      return '취소하기';
+    },
+  },
+  sumbitText: {
+    type: String,
+    default() {
+      return '완료하기';
+    },
+  },
+});
+const emits = defineEmits(['cancel', 'submit']);
+
+// 신청 취소를 취소할 경우
+const handleCancel = () => {
+  emits('cancel');
+};
+
+const handleSubmit = () => {
+  emits('submit');
+};
+</script>
+
 <template>
   <!-- 흐린 배경 -->
   <div
@@ -13,13 +40,17 @@
           <slot></slot>
         </p>
         <div class="flex gap-4 w-full mt-4">
-          <button class="body-r bg-white text-gray-70 modal-button-shadow p-2 rounded-lg flex-grow">
-            돌아가기
+          <button
+            class="body-r bg-white text-gray-70 modal-button-shadow p-2 rounded-lg flex-grow"
+            @click="handleCancel"
+          >
+            {{ cancelText }}
           </button>
           <button
             class="body-r bg-primary-1 modal-button-shadow text-white p-2 rounded-lg flex-grow opacity-80"
+            @click="handleSubmit"
           >
-            완료하기
+            {{ sumbitText }}
           </button>
         </div>
       </div>
