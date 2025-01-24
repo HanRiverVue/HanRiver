@@ -37,15 +37,9 @@ const handleDropdownClick = () => {
 };
 
 const handleSelectClick = (itemName) => {
-  if (selectedItem.value === itemName) {
-    selectedItem.value = null;
-    emit('click:select', null);
-    return;
-  } else {
-    selectedItem.value = itemName;
-    emit('click:select', itemName); // 부모로 선택된 값 전달
-    isDropdownOpen.value = false;
-  }
+  selectedItem.value = itemName;
+  emit('click:select', itemName); // 부모로 선택된 값 전달
+  isDropdownOpen.value = false;
 };
 
 const selectContainerStyle = computed(() =>

@@ -1,6 +1,6 @@
 <script setup>
 import { twMerge } from 'tailwind-merge';
-import { defineProps, defineEmits, computed } from 'vue';
+import { defineProps, ref, computed } from 'vue';
 
 const props = defineProps({
   isOpen: {
@@ -17,7 +17,9 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits('onClose');
+const emit = defineEmits(['onClose']);
+
+const menuRef = ref(null);
 
 const styleClass = computed(() =>
   twMerge('absolute rounded bg-secondary-3 px-4 py-1.5 input-shadow w-fit h-fit', props.class),
@@ -29,8 +31,8 @@ const handleDropdownItemClick = (item) => {
 };
 </script>
 <template>
-  <section v-if="props.isOpen" :class="styleClass">
-    <ul class="flex flex-col gap-2.5">
+  <section v-if="props.isOpen" :class="styleClass" ref="menuRef">
+    <ul class="flex flex-col gap-2.5 items-center">
       <li v-for="(item, index) in props.dropdownList" :key="index">
         <button
           type="button"

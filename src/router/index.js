@@ -3,7 +3,6 @@ import MainPage from '@/pages/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
 import { supabase } from '@/config/supabase';
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -30,9 +29,9 @@ const router = createRouter({
           meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
         },
         {
-          path: 'UserPage',
+          path: 'UserPage/:userId',
           name: 'UserPage',
-          component: () => import('@/pages/UserPage.vue'),
+          component: () => import('@/pages/UserPage/UserPage.vue'),
         },
         {
           path: 'EditRecruitPost',
@@ -41,7 +40,7 @@ const router = createRouter({
           meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
         },
         {
-          path: 'RecruitPostDetail',
+          path: 'RecruitPostDetail/:postId',
           name: 'RecruitPostDetailPage',
           component: () => import('@/pages/RecruitPostDetailPage.vue'),
           meta: { showScrollTop: true },
@@ -57,6 +56,7 @@ const router = createRouter({
           name: 'servicePage',
           component: () => import('@/pages/ServicePage.vue'),
         },
+
         {
           path: '/:pathMatch(.*)*',
           name: 'ErrorPage',
@@ -73,6 +73,11 @@ const router = createRouter({
       path: '/test',
       name: 'testage',
       component: () => import('@/pages/test_api_page_hw/LoginAndUserTest.vue'),
+    },
+    {
+      path: '/testhw',
+      name: 'testhw',
+      component: () => import('@/pages/test_api_page_hw/Post.vue'),
     },
   ],
 });

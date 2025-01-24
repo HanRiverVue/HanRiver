@@ -104,6 +104,7 @@ export const postUploadPostImage = async (file) => {
         throw new Error(error);
       }
     }
+
     const { data: publicURL, error: urlError } = supabase.storage
       .from('post_images')
       .getPublicUrl(file.name);

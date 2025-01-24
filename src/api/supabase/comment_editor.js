@@ -35,7 +35,7 @@ export const postCreateComment = async (requestObj) => {
     if (error2) {
       throw new Error(error2);
     }
-    console.log(data2);
+    // console.log(data2);
 
     return data2;
   } catch (error) {

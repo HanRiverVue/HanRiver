@@ -7,16 +7,23 @@ import { getPostsByUser } from '@/api/supabase/post';
 import { getUserInfo } from '@/api/supabase/user';
 import { useRouter } from 'vue-router';
 
+const props = defineProps({
+  userInfo: {
+    type: Object,
+    required: true,
+  },
+});
+console.log(props.userInfo);
+
 const router = useRouter();
-const myPosts = ref([]);
+const userPosts = ref([]);
 const loading = ref(true);
-const user = ref(null);
 
 onMounted(async () => {
-  user.value = await getUserInfo();
-  const userId = user.value.user_id;
+  const userId = props.userInfo.user_id;
+  userPosts.value = await getPostsByUser(userId);
+  console.log(userPosts.value);
 
-  myPosts.value = await getPostsByUser(userId);
   loading.value = false;
 });
 </script>
@@ -28,10 +35,10 @@ onMounted(async () => {
 
   <!-- 모집 글이 있을때 -->
   <div
-    v-else-if="myPosts.length > 0"
+    v-else-if="userPosts.length > 0"
     class="flex px-4 justify-between items-center gap-y-4 flex-wrap"
   >
-    <div v-for="post in myPosts" :key="post.id" class="cursor-pointer">
+    <div v-for="post in userPosts" :key="post.id" class="cursor-pointer">
       <RouterLink :to="`RecruitPostDetail/${post.id}`">
         <PostCard
           :user-image="baseProfile"
@@ -47,7 +54,7 @@ onMounted(async () => {
 
   <!-- 모집 글이 없을때  -->
   <div
-    v-else-if="myPosts.length === 0"
+    v-else-if="userPosts.length === 0"
     class="flex flex-col justify-center items-center gap-5 flex-1 h-[600px]"
   >
     <p class="text-center text-primary-4 h3-b">아직 작성한 모집글이 없습니다.</p>

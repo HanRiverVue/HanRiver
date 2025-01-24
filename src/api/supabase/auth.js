@@ -47,5 +47,6 @@ export const getUserLoggedIn = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // console.log(user);
   return user;
 };

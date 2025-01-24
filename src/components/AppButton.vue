@@ -37,8 +37,16 @@ const buttonClass = computed(() => {
       return `${additionalClass}`;
   }
 });
+const handleClick = (event) => {
+  if (event && event.stopPropagation) {
+    event.stopPropagation();
+  } else {
+    console.error('이벤트 에러');
+  }
+  emit('click', event);
+};
 </script>
 
 <template>
-  <button :class="buttonClass" @click="emit('click')">{{ text }}</button>
+  <button :class="buttonClass" @click="handleClick">{{ props.text }}</button>
 </template>
