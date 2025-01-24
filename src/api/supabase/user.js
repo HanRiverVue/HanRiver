@@ -350,3 +350,17 @@ export const getAllUserInfo = async () => {
   }
   return result;
 };
+
+// 닉네임 중복 여부 확인 API
+export const checkDuplicateNickname = async (nickname) => {
+  console.log(nickname);
+  const { data, error } = await supabase.rpc('check_username_duplicate', {
+    user_name: nickname,
+  });
+
+  if (error) {
+    console.error(error);
+  }
+
+  return data; // 중복이면 true, 중복이 아니면 false
+};

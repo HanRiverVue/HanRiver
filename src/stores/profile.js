@@ -1,6 +1,7 @@
 import { ref, reactive } from 'vue';
 import { defineStore } from 'pinia';
 import { MAX_POSITION_COUNT } from '@/constants';
+import { checkDuplicateNickname } from '@/api/supabase/user';
 
 export const useProfileStore = defineStore('profile', () => {
   const isCheckNickname = ref(false);
@@ -44,28 +45,29 @@ export const useProfileStore = defineStore('profile', () => {
       setIsCheckNickname(false);
     }
   };
-  const validateNickname = (newNickname) => {
+  const validateNickname = async (newNickname) => {
     if (newNickname === '') {
       setNicknameMessageStatus('blank');
       setIsCheckNickname(false);
       return;
     }
 
-    if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣]*$/.test(newNickname)) {
+    if (!/^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣]*$/.test(newNickname)) {
       setNicknameMessageStatus('symbol');
       setIsCheckNickname(false);
       return;
     }
 
     // TODO: 닉네임 중복 확인 API 호출
-    // 만약 닉네임 중복에 문제가 없을 경우
-    setNicknameMessageStatus('success');
-    setIsCheckNickname(true);
-    //setNickname(newNickname.value);
+    const result = await checkDuplicateNickname(newNickname);
 
-    // 만약 닉네임 중복에 문제가 있을 경우
-    // nicknameMessageStatus.value = 'duplicate';
-    // setIsCheckNickname(false);
+    if (result) {
+      nicknameMessageStatus.value = 'duplicate';
+      setIsCheckNickname(false);
+    } else {
+      setNicknameMessageStatus('success');
+      setIsCheckNickname(true);
+    }
   };
 
   const updateProfileImage = (fileURL) => {
