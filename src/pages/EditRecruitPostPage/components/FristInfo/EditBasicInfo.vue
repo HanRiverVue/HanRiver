@@ -1,12 +1,11 @@
 <script setup>
-import { onBeforeUnmount, reactive } from 'vue';
+import { reactive } from 'vue';
 import { selects, editPositionAndSkills } from '@/pages/EditRecruitPostPage/index';
 import EditTitle from '@/pages/EditRecruitPostPage/components/EditTitle.vue';
 import BasicInfoSelect from '@/pages/EditRecruitPostPage/components/FristInfo/BasicInfoSelect.vue';
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
 import SkillSelectButton from '@/components/SkillSelectButton.vue';
 import BasicInfoInput from './BasicInfoInput.vue';
-import DatePicker from './DatePicker.vue';
 import { SKILLS } from '@/constants/skill';
 import BasicDatePicker from './BasicDatePicker.vue';
 
