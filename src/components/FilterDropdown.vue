@@ -39,6 +39,7 @@ watch(
   },
   { immediate: true }, // 컴포넌트가 마운트될 때도 초기화
 );
+
 const handleDropdownClick = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
