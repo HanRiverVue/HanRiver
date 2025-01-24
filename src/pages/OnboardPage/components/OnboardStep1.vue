@@ -11,6 +11,8 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['update', 'positionsSelect']);
+const baseInputRef = ref(null);
+const localRegisterData = ref({ ...props.registerData });
 
 const NicknameStatus = {
   EMPTY: 'EMPTY', // 공백일 경우
@@ -19,7 +21,6 @@ const NicknameStatus = {
   DUPLICATE: 'DUPLICATE', // 중복된 닉네임
   INVALID: 'INVALID', // 특수문자 등 규칙 위반
 };
-
 const NicknameMessages = {
   EMPTY: '닉네임을 입력해주세요.',
   INITIAL: '중복된 이름ㆍ특수문자 사용불가',
@@ -27,7 +28,6 @@ const NicknameMessages = {
   DUPLICATE: '이미 사용 중인 닉네임입니다',
   INVALID: '특수문자는 사용할 수 없습니다',
 };
-
 const NicknameMessageStyles = {
   EMPTY: 'text-gray-50',
   INITIAL: 'text-gray-50',
@@ -41,21 +41,32 @@ const nicknameCheckResult = ref(NicknameStatus.INITIAL); // 닉네임 상태
 const NicknameMessage = computed(() => NicknameMessages[nicknameCheckResult.value]);
 const NicknameMessageStyle = computed(() => NicknameMessageStyles[nicknameCheckResult.value]);
 
+// const handleLocalRegisterDataInput = (newData) => {
+//   Object.assign(localRegisterData, newData);
+//   console.log('localRegisterData',JSON.stringify(registerData));
+// };
+
 const handleNickNameInput = (value) => {
+  localRegisterData.value.name = value;
   emit('update', { name: value });
 };
 
 const handleShortIntroduceInput = (value) => {
+  localRegisterData.value.short_introduce = value;
   emit('update', { short_introduce: value });
 };
 
 const handlePositionsSelect = (value) => {
+  localRegisterData.value.positionsSelect = value;
   emit('positionsSelect', value);
 };
 
 // 닉네임 유효성 검사
 const nicknameValidationStatus = async (nickname) => {
+  console.log(nickname);
   if (!nickname.trim()) {
+    baseInputRef.value.focus();
+    localRegisterData.value.name = '';
     // 공백일 경우
     nicknameCheckResult.value = NicknameStatus.EMPTY;
     return;
@@ -80,7 +91,8 @@ const nicknameValidationStatus = async (nickname) => {
       <section>
         <h3 class="h4-b text-gray-80 mb-[10px]">닉네임을 입력해주세요.</h3>
         <BaseInput
-          :value="registerData.name"
+          ref="baseInputRef"
+          :value="localRegisterData.name"
           placeholder="닉네임"
           :maxLength="MAX_NICKNAME_LENGTH"
           className="pr-2 py-2"
@@ -90,7 +102,7 @@ const nicknameValidationStatus = async (nickname) => {
             <button
               type="button"
               class="primary-button px-3 py-1.5 shrink-0 body-r"
-              @click="nicknameValidationStatus(registerData.name)"
+              @click="nicknameValidationStatus(localRegisterData.name)"
             >
               중복확인
             </button>
@@ -98,7 +110,7 @@ const nicknameValidationStatus = async (nickname) => {
         </BaseInput>
         <div class="flex justify-between gap-3 mt-1 caption-r text-gray-50">
           <p :class="NicknameMessageStyle">{{ NicknameMessage }}</p>
-          <p>{{ registerData.name.length }}/{{ MAX_NICKNAME_LENGTH }}</p>
+          <p>{{ localRegisterData.name.length }}/{{ MAX_NICKNAME_LENGTH }}</p>
         </div>
       </section>
 
@@ -106,13 +118,13 @@ const nicknameValidationStatus = async (nickname) => {
       <section>
         <h3 class="h4-b text-gray-80 mb-[10px]">간단하게 본인을 소개해주세요.</h3>
         <BaseInput
-          :value="registerData.short_introduce"
+          :value="localRegisterData.short_introduce"
           placeholder="한 줄 소개"
           :maxLength="MAX_SHORT_INTRODUCE_LENGTH"
           @input="handleShortIntroduceInput"
         />
         <div class="mt-1 body-r text-gray-50 justify-self-end">
-          <p>{{ registerData.short_introduce.length }}/{{ MAX_SHORT_INTRODUCE_LENGTH }}</p>
+          <p>{{ localRegisterData.short_introduce.length }}/{{ MAX_SHORT_INTRODUCE_LENGTH }}</p>
         </div>
       </section>
 
