@@ -5,31 +5,34 @@ import {
   MAX_SHORT_INTRODUCE_LENGTH,
   NICKNAME_MESSAGE_STATUS,
 } from '@/constants';
-import { computed, onMounted, reactive } from 'vue';
+import { ref, computed, onMounted, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
-import TEMP_IMAGE from '@/assets/images/temp-profile.png';
 import { twMerge } from 'tailwind-merge';
 import { useProfileStore } from '@/stores/profile';
 import DropdownButton from '@/components/DropdownButton.vue';
 import { PencilIcon } from '@/assets/icons';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 
-// TODO: 이미지 삭제 및 업로드 기능 추가
 const profileStore = useProfileStore();
 const { isCheckNickname, nicknameMessageStatus, newNickname, shortIntroduction } =
   storeToRefs(profileStore);
 const { updateNewNickname, validateNickname, updateShortIntroduction } = profileStore;
+
+const fileInputRef = ref(null);
+const profileImage = ref(null);
 const dropdownList = reactive([
   {
     label: '이미지 변경하기',
     action: () => {
       console.log('프로필 사진 변경');
+      fileInputRef.value.click();
     },
   },
   {
     label: '이미지 삭제하기',
     action: () => {
       console.log('프로필 삭제');
+      profileImage.value = null;
     },
   },
 ]);
@@ -56,6 +59,16 @@ const handleCheckNickname = () => {
   validateNickname(newNickname.value.trim());
 };
 
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  console.log(event.target.files, file);
+
+  if (!file) return;
+
+  const fileURL = URL.createObjectURL(file);
+  profileImage.value = fileURL;
+};
+
 onMounted(() => {
   // TODO: profileStore 초기화
 });
@@ -63,9 +76,16 @@ onMounted(() => {
 <template>
   <h2 class="text-gray-80 h2-b mb-2">기본 정보</h2>
   <div class="flex gap-[70px] items-center px-12">
+    <input
+      type="file"
+      ref="fileInputRef"
+      accept="image/*"
+      class="hidden"
+      @change="handleFileChange"
+    />
     <DropdownButton>
       <template #trigger="{ toggleDropdown }">
-        <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden">
+        <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden input-shadow">
           <button
             type="button"
             class="absolute w-[190px] h-[190px] bg-black/60 hidden group-hover:flex items-center justify-center"
@@ -73,7 +93,13 @@ onMounted(() => {
           >
             <PencilIcon class="text-white w-6 h-6" />
           </button>
-          <img :src="TEMP_IMAGE" alt="임시 프로필 이미지" />
+          <img
+            v-if="profileImage"
+            :src="profileImage"
+            alt="임시 프로필 이미지"
+            class="w-full h-full object-cover object-bottom"
+          />
+          <div else class="bg-primary-5 w-full h-full" />
         </div>
       </template>
       <template #menu="{ isOpen, closeDropdown }">

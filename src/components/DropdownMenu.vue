@@ -1,6 +1,6 @@
 <script setup>
 import { twMerge } from 'tailwind-merge';
-import { defineProps, defineEmits, ref, computed } from 'vue';
+import { defineProps, ref, computed } from 'vue';
 
 const props = defineProps({
   isOpen: {
@@ -17,7 +17,6 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits('onClose');
 const menuRef = ref(null);
 
 const styleClass = computed(() =>
@@ -26,7 +25,6 @@ const styleClass = computed(() =>
 
 const handleDropdownItemClick = (item) => {
   item.action();
-  emit('onClose');
 };
 </script>
 <template>

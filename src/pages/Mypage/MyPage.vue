@@ -8,9 +8,15 @@ import MyRecruitmentList from './components/MyRecruitmentList.vue';
 import MyRequestList from './components/MyRequestList.vue';
 import ProfileEdit_icon from '@/assets/icons/profileEdit_icon.svg';
 import MyBookmark from './components/MyBookmark.vue';
+import { useRouter } from 'vue-router';
 
 const items = ref(['내 정보', '작성한 모집글', '신청 목록', '찜 목록']);
 const activeIndex = ref(0);
+const router = useRouter();
+
+const handleEditProfile = () => {
+  router.push('/EditProfile');
+};
 </script>
 
 <template>
@@ -35,7 +41,7 @@ const activeIndex = ref(0);
               class="flex py-1.5 px-3 justify-center items-center gap-1.5 rounded-[4px] bg-primary-1 hover:bg-primary-hover cursor-pointer"
             >
               <img :src="ProfileEdit_icon" alt="프로필 편집 아이콘(톱니바퀴)" class="w-4 h-4" />
-              <button class="text-white caption-r">프로필 수정</button>
+              <button class="text-white caption-r" @click="handleEditProfile">프로필 수정</button>
             </div>
           </div>
         </div>
