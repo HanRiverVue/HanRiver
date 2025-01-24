@@ -1,6 +1,5 @@
 <script setup>
-import { onMounted } from 'vue';
-
+import { onMounted, ref } from 'vue';
 import ProfileLinks from './components/ProfileLinks.vue';
 import ProfilePositions from './components/ProfilePositions.vue';
 import ProfileIntroduction from './components/ProfileIntroduction.vue';
@@ -9,7 +8,6 @@ import DefaultInformation from './components/DefaultInformation.vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { getUserInfo, putUserInfo } from '@/api/supabase/user';
-import { ref } from 'vue';
 
 const router = useRouter();
 const profileStore = useProfileStore();
