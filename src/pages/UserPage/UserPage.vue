@@ -14,6 +14,9 @@ const items = ref(['유저 정보', '작성한 모집글', '후기/평가 목록
 const activeIndex = ref(0);
 
 const router = useRouter();
+const route = useRoute();
+
+// params로 전달받은 userId
 const userId = useRoute().params;
 
 const loading = ref(true);
@@ -21,17 +24,32 @@ const userInfo = ref(null);
 
 onMounted(() => {
   fetchUserinfo();
+
+  // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
+  if (route.query.tabIndex > items.value.length || !route.query.tabIndex) {
+    activeIndex.value = 0;
+    router.push({ query: { tabIndex: activeIndex.value } });
+    return;
+  }
+  activeIndex.value = parseInt(route.query.tabIndex);
 });
 
 const fetchUserinfo = async () => {
   const myInfo = await getUserInfo();
   // 현재 로그인한 사용자가 자신의 상세정보에 들어왔을시 마이페이지로 리다이렉트
+  // if (myInfo.user_id === '5cc3999c-3150-4072-a824-5d5ddeb3e381') {
+  //   router.push('/myPage');
+  // }
   if (myInfo.user_id === userId) {
     router.push('/myPage');
   }
   userInfo.value = await getUserInfoToUserId('5cc3999c-3150-4072-a824-5d5ddeb3e381');
-  console.log(userInfo.value);
   loading.value = false;
+};
+
+const handleUpdateIndex = (index = 0) => {
+  activeIndex.value = index;
+  router.push({ query: { tabIndex: index } });
 };
 </script>
 
@@ -49,7 +67,7 @@ const fetchUserinfo = async () => {
       <!-- 프로필 이미지 -->
       <div>
         <img
-          :src="userInfo?.profile_img_path"
+          :src="userInfo.profile_img_path"
           alt="프로필 이미지"
           class="w-[165px] h-[165px] rounded-full"
         />
@@ -79,11 +97,7 @@ const fetchUserinfo = async () => {
       class="rounded-lg bg-white card-shadow pb-10 overflow-hidden flex flex-col gap-11 mt-[52px]"
     >
       <!-- 탭 메뉴 -->
-      <TabMenu
-        :menu-items="items"
-        :activeIndex="activeIndex"
-        @update:activeIndex="activeIndex = $event"
-      />
+      <TabMenu :menu-items="items" :activeIndex="activeIndex" @update-Index="handleUpdateIndex" />
       <!-- 탭 내용 -->
       <div>
         <div v-if="activeIndex === 0"><MyInfo :userInfo="userInfo" /></div>
