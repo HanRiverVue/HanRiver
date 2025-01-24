@@ -8,7 +8,7 @@ export const useProfileStore = defineStore('profile', () => {
   const nicknameMessageStatus = ref('default');
   const nickname = ref('');
   const newNickname = ref('');
-  const profileImage = ref('');
+  const profileImage = reactive({ local: '', file: '' });
   const shortIntroduction = ref('');
   const longIntroduction = ref('');
   const links = ref([]);
@@ -19,7 +19,8 @@ export const useProfileStore = defineStore('profile', () => {
     nicknameMessageStatus.value = 'success';
     nickname.value = myProfile.name;
     newNickname.value = myProfile.name;
-    profileImage.value = myProfile.profile_img_path;
+    profileImage.local = myProfile.profile_img_path;
+    profileImage.file = myProfile.profile_img_path;
     shortIntroduction.value = myProfile.short_introduce;
     longIntroduction.value = myProfile.long_introduce;
     links.value = myProfile.link.length === 0 ? [''] : myProfile.link;
@@ -70,11 +71,13 @@ export const useProfileStore = defineStore('profile', () => {
     }
   };
 
-  const updateProfileImage = (fileURL) => {
-    profileImage.value = fileURL;
+  const updateProfileImage = (localFileURL, file) => {
+    profileImage.local = localFileURL;
+    profileImage.file = file;
   };
   const deleteProfileImage = () => {
-    profileImage.value = '';
+    profileImage.local = '';
+    profileImage.file = '';
   };
 
   const updateShortIntroduction = (newShortIntroduction) => {
@@ -116,7 +119,7 @@ export const useProfileStore = defineStore('profile', () => {
     name: newNickname.value,
     short_introduce: shortIntroduction.value,
     long_introduce: longIntroduction.value,
-    profile_img_path: profileImage.value,
+    profile_img_path: profileImage.file,
     link: links.value.filter((link) => link !== ''),
   });
   const getNewPositions = () => {

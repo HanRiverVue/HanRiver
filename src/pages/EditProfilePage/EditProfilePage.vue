@@ -8,6 +8,7 @@ import DefaultInformation from './components/DefaultInformation.vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { getUserInfo, putUserInfo } from '@/api/supabase/user';
+import { postUploadUserImage } from '@/api/supabase/imageUpload';
 
 const router = useRouter();
 const profileStore = useProfileStore();
@@ -20,17 +21,11 @@ const getMyProfile = async () => {
   profileStore.initialize(res);
 };
 
-const putUserInfoHandler = async (newProfile, newPositions) => {
-  const res = await putUserInfo(newProfile, newPositions);
-  if (res) router.push('/MyPage');
-};
-
 const handleCancel = () => {
   router.push('/MyPage');
 };
 
-const handleSubmit = ($event) => {
-  $event.preventDefault();
+const handleSubmit = async () => {
   // 닉네임 중복 체크 여부 확인해야 함
   if (!profileStore.isCheckNickname) {
     alert('닉네임 중복 확인을 해주세요.');
@@ -39,8 +34,15 @@ const handleSubmit = ($event) => {
 
   const newProfile = profileStore.getNewProfile();
   const newPositions = profileStore.getNewPositions();
-  console.log(newPositions);
-  putUserInfoHandler(newProfile, newPositions);
+
+  // 이미지의 변경이 생겼을 때만
+  if (typeof newProfile.profile_img_path === 'object') {
+    const uploadedImage = await postUploadUserImage(newProfile.profile_img_path);
+    newProfile.profile_img_path = uploadedImage;
+  }
+
+  const res = await putUserInfo(newProfile, newPositions);
+  if (res) router.push('/MyPage');
 };
 
 onMounted(() => {

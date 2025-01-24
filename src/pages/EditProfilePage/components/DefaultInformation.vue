@@ -71,7 +71,7 @@ const handleFileChange = (event) => {
   if (!file) return;
 
   const fileURL = URL.createObjectURL(file);
-  updateProfileImage(fileURL);
+  updateProfileImage(fileURL, file);
 };
 
 onMounted(() => {
@@ -99,8 +99,8 @@ onMounted(() => {
             <PencilIcon class="text-white w-6 h-6" />
           </button>
           <img
-            v-if="profileImage"
-            :src="profileImage"
+            v-if="profileImage.local"
+            :src="profileImage.local"
             alt="임시 프로필 이미지"
             class="w-full h-full object-cover object-bottom"
           />
