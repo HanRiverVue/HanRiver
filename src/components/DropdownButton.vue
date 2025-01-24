@@ -15,8 +15,6 @@ const handleOutsideClick = (event) => {
 
 onMounted(() => document.addEventListener('click', handleOutsideClick));
 onBeforeUnmount(() => document.removeEventListener('click', handleOutsideClick));
-
-defineExpose({ isOpen, closeDropdown });
 </script>
 <template>
   <div class="relative" ref="dropdownRef">
