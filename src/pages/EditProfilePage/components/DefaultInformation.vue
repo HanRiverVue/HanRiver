@@ -5,7 +5,7 @@ import {
   MAX_SHORT_INTRODUCE_LENGTH,
   NICKNAME_MESSAGE_STATUS,
 } from '@/constants';
-import { ref, computed, onMounted, reactive } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import { twMerge } from 'tailwind-merge';
 import { useProfileStore } from '@/stores/profile';
@@ -73,10 +73,6 @@ const handleFileChange = (event) => {
   const fileURL = URL.createObjectURL(file);
   updateProfileImage(fileURL, file);
 };
-
-onMounted(() => {
-  // TODO: profileStore 초기화
-});
 </script>
 <template>
   <h2 class="text-gray-80 h2-b mb-2">기본 정보</h2>
