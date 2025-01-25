@@ -156,6 +156,18 @@ watch(searchInput, (newValue) => {
 const handleInputSearch = (input) => {
   searchInput.value = input;
 };
+
+// 필터링 초기화
+const handleInitFilter = () => {
+  currentPage.value = 1;
+  selectedFilters.value.skills = [];
+  selectedFilters.value.position = '';
+  selectedFilters.value.recruitArea = '';
+  selectedFilters.value.meetingMethod = '';
+  selectedFilters.value.recruitStatus = '';
+  selectedFilters.value.searchResults = '';
+  refetch();
+};
 </script>
 
 <template>
@@ -195,7 +207,9 @@ const handleInputSearch = (input) => {
           defaultText="모집 상태"
           @click:select="handleSelectRecruitStatus"
         />
+        <!-- 초기화 버튼 -->
         <div
+          @click="handleInitFilter"
           class="cursor-pointer p-1 w-8 h-8 bg-primary-4 rounded-full input-shadow flex justify-center items-center gap-[10px]"
         >
           <img class="w-5 h-5 flex-shrink-0" :src="reset" alt="초기화 아이콘" />
