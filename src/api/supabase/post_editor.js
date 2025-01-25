@@ -93,7 +93,6 @@ export const postUploadPostImage = async (file) => {
         addData = false;
       }
     });
-
     if (addData) {
       const { data, error } = await supabase.storage
         .from('post_images')
@@ -101,7 +100,6 @@ export const postUploadPostImage = async (file) => {
           cacheControl: '3600',
           upsert: false,
         });
-
       if (error) {
         throw new Error(error);
       }
@@ -113,7 +111,6 @@ export const postUploadPostImage = async (file) => {
     if (urlError) {
       console.error(urlError);
     }
-
     return publicURL.publicUrl;
   } catch (error) {
     console.error(error);

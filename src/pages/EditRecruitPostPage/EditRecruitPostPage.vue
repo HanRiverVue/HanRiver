@@ -3,10 +3,13 @@ import AppButton from '@/components/AppButton.vue';
 import EditBasicInfo from './components/FristInfo/EditBasicInfo.vue';
 import EditPostImageInfo from './components/SecondInfo/EditPostImageInfo.vue';
 import EditDetailInfo from './components/thirdInfo/EditDetailInfo.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { getUserLoggedIn } from '@/api/supabase/auth';
-import { editPositionAndSkills } from '@/pages/EditRecruitPostPage/index';
+import { editPositionAndSkills, sendData } from '@/pages/EditRecruitPostPage/index';
+import { useBaseModalStore } from '@/stores/baseModal';
+import { useRouter } from 'vue-router';
 
+// 최종 유저 정보
 const userInfo = ref({
   author: '',
   recruit_type: '',
@@ -25,29 +28,7 @@ const userInfo = ref({
 });
 const positionAndSkills = reactive(editPositionAndSkills);
 
-const sendData = () => {
-  console.log('userInfo :', userInfo.value);
-  console.log('positionAndSkills', positionAndSkills);
-  const positions = [];
-  let techStacks = [];
-
-  const selected = positionAndSkills.filter((data) => {
-    return data.positionSelected;
-  });
-  for (let i = 0; i < selected.length; i++) {
-    positions.push(selected[i].position);
-    if (selected[i].selectedSkills.length > 0) {
-      techStacks = [...techStacks, ...selected[i].selectedSkills];
-    } else {
-      techStacks = [];
-      return;
-    }
-  }
-  if (positions.length === 0) return alert('전송 실패(포지션 선택을 안했습니다.)');
-  if (techStacks.length === 0) return alert('전송 실패(기술스택 선택을 안했습니다.)');
-  console.log(positions);
-  console.log(techStacks);
-};
+const router = useRouter();
 
 onMounted(async () => {
   const getAuthor = await getUserLoggedIn();
@@ -58,6 +39,36 @@ onMounted(async () => {
     return;
   }
 });
+// positionAndSkills reactive 모든값 초기화
+onBeforeUnmount(() => {
+  for (let i = 0; i < positionAndSkills.length; i++) {
+    positionAndSkills[i].positionSelected = false;
+    positionAndSkills[i].selectedSkills = [];
+  }
+});
+// // 페이지 나갈때 컴포넌트 가드
+// onBeforeRouteLeave((to, from, next) => {
+//   if (confirm('정말 나가시겠습니까? 작업 내용이 초기화됩니다.')) {
+//     next();
+//   } else {
+//     next(false);
+//   }
+// });
+const handleSendDataClick = (userInfo, positionAndSkills) => {
+  const res = sendData(userInfo, positionAndSkills);
+};
+
+// 베이스 모달 스토어
+const baseModalStore = useBaseModalStore();
+// showModal에 담을 파라미터
+const cancelModalObj = {
+  title: '작성을 취소하시겠습니까?',
+  confirmText: '계속하기',
+  confilm: () => handleCancelModalConfilm,
+};
+const handleCancelModalConfilm = () => {
+  router.push('/');
+};
 </script>
 
 <template>
@@ -70,12 +81,13 @@ onMounted(async () => {
         type="default"
         text="취소"
         class="px-3 py-1.5 border border-primary-1 bg-white rounded-lg body-m"
+        @click="baseModalStore.showModal(cancelModalObj)"
       />
       <AppButton
         type="default"
         text="글 등록"
         class="px-3 py-1.5 bg-primary-1 text-white rounded-lg body-m"
-        @click="sendData"
+        @click="handleSendDataClick(userInfo, positionAndSkills)"
       />
     </article>
   </section>
