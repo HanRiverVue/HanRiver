@@ -163,7 +163,7 @@ const handleInputSearch = (input) => {
 
   <LoadingPage v-if="isLoading" />
   <div v-else class="pt-12 pb-20 flex flex-col items-center">
-    <section class="w-full flex justify-between mb-6 items-stretch">
+    <section class="flex justify-between mb-6 w-full">
       <div class="flex gap-[13px] flex-1 items-center">
         <SkillFilterDropdown
           :selected="selectedFilters.skills"
