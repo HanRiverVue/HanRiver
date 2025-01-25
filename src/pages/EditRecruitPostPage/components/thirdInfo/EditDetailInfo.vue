@@ -53,7 +53,7 @@ const handleEditorFocusKeydown = (event) => {
         @input="handleBaseInputInput"
         @keydown="handleEditorFocusKeydown"
       />
-      <Editor v-model="localBody" editorStyle="height: 440px" ref="editerRef" />
+      <Editor v-model="localBody" editorStyle="height: 600px" ref="editerRef" />
     </article>
   </article>
 </template>

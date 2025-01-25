@@ -13,6 +13,7 @@ import {
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
+import { addPostComment } from '@/api/supabase/new_comment';
 import {
   getAllUserInfo,
   getUserInfo,
@@ -155,6 +156,10 @@ onMounted(async () => {
 
   <div>
     <button @click="getUserBookmarksWithDetails()">사용자가 북마크한 글 상세 가져오기</button>
+  </div>
+
+  <div>
+    <button @click="addPostComment(93, 'ai 진짜 코드 잘 짜네')">특정 게시글 댓글 달기</button>
   </div>
 </template>
 

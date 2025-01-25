@@ -8,7 +8,6 @@ import { getUserLoggedIn } from '@/api/supabase/auth';
 import { editPositionAndSkills, sendData } from '@/pages/EditRecruitPostPage/index';
 import { useBaseModalStore } from '@/stores/baseModal';
 import router from '@/router';
-import { infoToast } from '@/constants/toast';
 
 // 최종 유저 정보
 const userInfo = ref({
