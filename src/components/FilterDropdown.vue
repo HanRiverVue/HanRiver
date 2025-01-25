@@ -32,6 +32,7 @@ const isDropdownOpen = ref(false); // 드롭다운 상태
 const selectedItem = ref(null); // 선택한 아이템
 const dropdownRef = ref(null);
 
+// 선택된 옵션값의 상태 감시
 watch(
   () => props.selected,
   (newValue) => {

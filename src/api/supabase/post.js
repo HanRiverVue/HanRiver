@@ -66,13 +66,13 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     if (filters.position) {
       query = query.ilike('post_positions.position', `%${filters.position}%`);
     }
-    if (filters.recruitArea) {
+    if (filters.recruitArea && filters.recruitArea !== '전체') {
       query = query.ilike('recruit_area', `%${filters.recruitArea}%`); // 수정된 부분
     }
     if (filters.recruitType) {
       query = query.ilike('recruit_type', filters.recruitType);
     }
-    if (filters.onOffline) {
+    if (filters.onOffline && filters.onOffline !== '전체') {
       query = query.ilike('on_offline', `%${filters.onOffline}%`); // 수정된 부분
     }
     //like, is 연산자는 문자열 비교에만 사용된다.
