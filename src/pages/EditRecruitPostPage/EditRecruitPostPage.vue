@@ -7,7 +7,7 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import { editPositionAndSkills, sendData } from '@/pages/EditRecruitPostPage/index';
 import { useBaseModalStore } from '@/stores/baseModal';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 
 // 최종 유저 정보
 const userInfo = ref({
@@ -27,6 +27,8 @@ const userInfo = ref({
   finished: false,
 });
 const positionAndSkills = reactive(editPositionAndSkills);
+
+const router = useRouter();
 
 onMounted(async () => {
   const getAuthor = await getUserLoggedIn();
