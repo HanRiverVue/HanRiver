@@ -13,6 +13,7 @@ const registerData = reactive({
   short_introduce: '',
   position: [],
   userPositions: [], // 포지션 + 스택
+  nicknameResult: 'INITIAL',
 });
 
 // 데이터 받기
@@ -21,9 +22,6 @@ const setRegisterData = (newData) => {
   // TODO: 지우기
   console.log('최최최종', JSON.stringify(registerData));
 };
-
-// 온보딩 단계 초기화
-step.value = 1;
 
 const nextStep = () => {
   if (step.value < maxPage) step.value += 1;

@@ -1,12 +1,12 @@
 <script setup>
-import { computed, ref, reactive } from 'vue';
+import { computed, ref, reactive, watch } from 'vue';
+import { MAX_SHORT_INTRODUCE_LENGTH, MAX_NICKNAME_LENGTH, POSITION } from '@/constants';
+import { checkDuplicateNickname, getAllUserInfo, getUserInfo } from '@/api/supabase/user';
+import { twMerge } from 'tailwind-merge';
 import BaseInput from '@/components/BaseInput.vue';
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
-import { MAX_SHORT_INTRODUCE_LENGTH, MAX_NICKNAME_LENGTH, POSITION } from '@/constants';
-import { checkDuplicateNickname } from '@/api/supabase/user';
 import ProgressBar from './ProgressBar.vue';
 import AppButton from '@/components/AppButton.vue';
-import { twMerge } from 'tailwind-merge';
 
 const props = defineProps({
   registerData: {
@@ -25,6 +25,15 @@ const props = defineProps({
 const emit = defineEmits(['setRegisterData', 'nextStep']);
 const baseInputRef = ref(null);
 const localRegisterData = reactive({ ...props.registerData });
+
+const nicknameCheckResult = ref(props.registerData.nicknameResult); // 닉네임 상태
+
+watch(
+  () => props.registerData.nicknameResult,
+  (newValue) => {
+    nicknameCheckResult.value = newValue;
+  },
+);
 
 const NicknameStatus = {
   EMPTY: 'EMPTY', // 공백일 경우
@@ -48,8 +57,6 @@ const NicknameMessageStyles = {
   INVALID: 'text-accent-error',
 };
 
-const nicknameCheckResult = ref(NicknameStatus.INITIAL); // 닉네임 상태
-
 const NicknameMessage = computed(() => NicknameMessages[nicknameCheckResult.value]);
 const NicknameMessageStyle = computed(() => NicknameMessageStyles[nicknameCheckResult.value]);
 
@@ -60,6 +67,7 @@ const handleNickNameInput = (value) => {
   emit('setRegisterData', { name: trimmedValue });
 };
 
+// 한 줄 소개 입력
 const handleShortIntroduceInput = (value) => {
   const trimmedValue = value.trim();
   localRegisterData.short_introduce = trimmedValue;
@@ -89,17 +97,17 @@ const nicknameValidationStatus = async (nickname) => {
   if (!trimmedNickname) {
     baseInputRef.value.focus();
     localRegisterData.name = '';
-    nicknameCheckResult.value = NicknameStatus.EMPTY;
+    emit('setRegisterData', { nicknameResult: NicknameStatus.EMPTY });
     return;
   }
   const result = await checkDuplicateNickname(trimmedNickname); // 중복 확인
   if (result) {
-    nicknameCheckResult.value = NicknameStatus.DUPLICATE;
+    emit('setRegisterData', { nicknameResult: NicknameStatus.DUPLICATE });
   } else if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣\s]*$/.test(trimmedNickname)) {
     // 특수문자 체크
-    nicknameCheckResult.value = NicknameStatus.INVALID;
+    emit('setRegisterData', { nicknameResult: NicknameStatus.INVALID });
   } else {
-    nicknameCheckResult.value = NicknameStatus.VALID; // 유효한 닉네임
+    emit('setRegisterData', { nicknameResult: NicknameStatus.VALID }); // 사용 가능한 닉네임
   }
 };
 
@@ -107,7 +115,7 @@ const nicknameValidationStatus = async (nickname) => {
 const isFormValid = computed(() => {
   return (
     props.registerData.name.length > 0 &&
-    nicknameCheckResult.value === 'VALID' &&
+    props.registerData.nicknameResult === 'VALID' &&
     props.registerData.short_introduce.length > 0 &&
     props.registerData.position.length > 0
   );

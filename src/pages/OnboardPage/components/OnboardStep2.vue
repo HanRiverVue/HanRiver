@@ -1,13 +1,12 @@
 <script setup>
 import { ref, reactive, computed, watchEffect } from 'vue';
-import OnboardTab from './OnboardTab.vue';
-import SkillSelectButton from '@/components/SkillSelectButton.vue';
 import { POSITION_SKILLS } from '@/constants/position';
 import { SKILLS } from '@/constants/skill';
+import { twMerge } from 'tailwind-merge';
+import OnboardTab from './OnboardTab.vue';
+import SkillSelectButton from '@/components/SkillSelectButton.vue';
 import ProgressBar from './ProgressBar.vue';
 import AppButton from '@/components/AppButton.vue';
-import { twMerge } from 'tailwind-merge';
-import { postUserInfoOnboard } from '@/api/supabase/user';
 
 const props = defineProps({
   registerData: {
@@ -27,7 +26,6 @@ const emit = defineEmits(['setRegisterData', 'prevStep']);
 
 // 탭 인덱스
 const activeIndex = ref(0);
-
 // 선택한 포지션
 const positions = reactive([...props.registerData.position]);
 const positionString = positions.join(', ');
@@ -95,7 +93,7 @@ const HandlePostUserInfoOnboard = () => {
   const userPositions = props.registerData.userPositions;
 
   console.log('전송', JSON.stringify(userProfile, null, 2), JSON.stringify(userPositions, null, 2));
-
+  // TODO: 전송
   // postUserInfoOnboard(userProfile, userPositions);
 };
 </script>
