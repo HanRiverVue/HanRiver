@@ -63,7 +63,7 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     if (matchingPostIds.length > 0) {
       query = query.in('id', matchingPostIds);
     }
-    if (filters.position) {
+    if (filters.position && filters.position !== '전체') {
       query = query.ilike('post_positions.position', `%${filters.position}%`);
     }
     if (filters.recruitArea && filters.recruitArea !== '전체') {
@@ -80,6 +80,9 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     if (typeof filters.finished === 'boolean' && filters.finished) {
       query = query.eq('finished', filters.finished); // 수정된 부분
     }
+    if (filters.searchResults) {
+      query = query.or(`title.ilike.%${filters.searchResults}%`);
+    }
 
     query = query.range(from, to);
     const { data, error, count } = await query; // 수정된 부분
@@ -93,6 +96,7 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
     const totalData = await Promise.all(
       data.map(async (item) => {
         const userInfo = await getUserInfoToUserId(item.author);
+
         return {
           ...item,
           name: userInfo.name,

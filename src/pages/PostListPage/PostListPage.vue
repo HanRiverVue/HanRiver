@@ -13,7 +13,9 @@ import { getAllPostsWithPagination } from '@/api/supabase/post';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import LoadingPage from '../LoadingPage.vue';
+import reset from '@/assets/icons/reset.svg';
 
+const positionFilterList = ['전체', ...POSITION];
 const regionFilterList = ['전체', ...REGION];
 const methodFilterList = ['전체', ...METHOD];
 const recruitmentStatusFilterList = ['전체', ...RECRUITMENT_STATUS];
@@ -30,6 +32,7 @@ const selectedFilters = ref({
   recruitArea: '',
   meetingMethod: '',
   recruitStatus: '',
+  searchResults: '',
 });
 
 // 필터링된 게시물
@@ -39,18 +42,21 @@ const filteredPosts = computed(() => data?.value?.data || []);
 const currentPage = ref(1);
 const totalPage = computed(() => data.value?.totalPage);
 
+// 검색 결과를 담을 게시물
+const searchInput = ref('');
+
 // 게시물 유형 감시(프로젝트 or 스터디)
 watch(
   currentPostType,
   () => {
     currentPage.value = 1;
-    selectedFilters.value = {
-      skills: [],
-      position: '',
-      recruitArea: '',
-      meetingMethod: '',
-      recruitStatus: '',
-    };
+
+    selectedFilters.value.skills = [];
+    selectedFilters.value.position = '';
+    selectedFilters.value.recruitArea = '';
+    selectedFilters.value.meetingMethod = '';
+    selectedFilters.value.recruitStatus = '';
+    selectedFilters.value.searchResults = '';
     refetch();
   },
   { flush: 'sync' },
@@ -75,6 +81,7 @@ const fetchPostsWithPagination = async () => {
           : selectedFilters.value.recruitStatus === '모집완료'
           ? true
           : '',
+      searchResults: selectedFilters.value.searchResults,
     },
     currentPage.value,
   );
@@ -90,12 +97,13 @@ const { isLoading, data, refetch, error } = useQuery({
   placeholderData: (prev) => prev, // 대기 상태때 표시해줄 데이터
 });
 
-// 필터 변경 시 refetch 호출
-watch(selectedFilters.value, () => {
+// 필터링 적용시
+watch(selectedFilters, () => {
+  currentPage.value = 1;
   refetch();
 });
 
-// 페이지 전환 함수
+// 페이지 전환시
 const handleChangePage = (page) => {
   currentPage.value = page;
   refetch();
@@ -123,6 +131,31 @@ const handleSelectMeetingMethod = (method) => {
 const handleSelectRecruitStatus = (status) => {
   selectedFilters.value.recruitStatus = status;
 };
+
+//검색에 디바운싱 적용
+let debounceTimeout;
+watch(searchInput, (newValue) => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    selectedFilters.value.searchResults = newValue;
+  }, 400);
+  // });
+
+  // 검색에 쓰로틀링 적용
+  // let throttleTimeout;
+  // watch(searchInput, (newValue) => {
+  //   if (throttleTimeout) return;
+  //   clearInterval(throttleTimeout);
+  //   throttleTimeout = setTimeout(() => {
+  //     selectedFilters.value.searchResults = newValue;
+  //     console.log(selectedFilters.value.searchResults);
+
+  //     throttleTimeout = null;
+  //   }, 300);
+});
+const handleInputSearch = (input) => {
+  searchInput.value = input;
+};
 </script>
 
 <template>
@@ -130,15 +163,15 @@ const handleSelectRecruitStatus = (status) => {
 
   <LoadingPage v-if="isLoading" />
   <div v-else class="pt-12 pb-20 flex flex-col items-center">
-    <section class="flex items-center justify-around mb-6 w-full">
-      <div class="flex gap-4">
+    <section class="w-full flex justify-between mb-6 items-stretch">
+      <div class="flex gap-[13px] flex-1 items-center">
         <SkillFilterDropdown
           :selected="selectedFilters.skills"
           class="w-[126px]"
           @selectSkill="handleSelectSkill"
         />
         <FilterDropdown
-          :items="POSITION"
+          :items="positionFilterList"
           :selected="selectedFilters.position"
           defaultText="모집 포지션"
           @click:select="handleSelectPosition"
@@ -162,8 +195,13 @@ const handleSelectRecruitStatus = (status) => {
           defaultText="모집 상태"
           @click:select="handleSelectRecruitStatus"
         />
+        <div
+          class="cursor-pointer p-1 w-8 h-8 bg-primary-4 rounded-full input-shadow flex justify-center items-center gap-[10px]"
+        >
+          <img class="w-5 h-5 flex-shrink-0" :src="reset" alt="초기화 아이콘" />
+        </div>
       </div>
-      <SearchInput />
+      <SearchInput :value="searchInput" @search="handleInputSearch" />
     </section>
 
     <section
