@@ -36,7 +36,7 @@ const signInProviders = [
 <template>
   <div
     v-if="loginModalStore.loginModal"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
     @click="closeLoginModal"
   >
     <div

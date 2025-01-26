@@ -27,7 +27,13 @@ const props = defineProps({
 const handleBaseInputInput = (value) => {
   switch (props.title) {
     case '모집 인원':
-      props.userInfo.recruit_count = value;
+      if (value < 1) {
+        props.userInfo.recruit_count = 1;
+      } else if (value > 10) {
+        props.userInfo.recruit_count = 10;
+      } else {
+        props.userInfo.recruit_count = value;
+      }
       break;
     case '연락처':
       props.userInfo.call_link = value;

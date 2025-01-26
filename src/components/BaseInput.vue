@@ -29,7 +29,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['input']);
+const emit = defineEmits(['input', 'keydown']);
 const isFocused = ref(false);
 
 const styleClass = computed(() =>
@@ -53,6 +53,10 @@ const handleInput = (event) => {
   }
   emit('input', event.target.value);
 };
+
+const handleKeydown = (event) => {
+  emit('keydown', event);
+};
 </script>
 <template>
   <div :class="styleClass">
@@ -66,6 +70,7 @@ const handleInput = (event) => {
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"
+      @keydown="handleKeydown"
     />
     <slot name="rightIcon" :isFocused="isFocused"></slot>
   </div>
