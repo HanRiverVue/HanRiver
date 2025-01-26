@@ -13,7 +13,7 @@ import { getAllPostsWithPagination } from '@/api/supabase/post';
 import { useRoute } from 'vue-router';
 import { useQuery } from '@tanstack/vue-query';
 import LoadingPage from '../LoadingPage.vue';
-import reset from '@/assets/icons/reset.svg';
+import InitFilterButton from './components/InitFilterButton.vue';
 
 const positionFilterList = ['전체', ...POSITION];
 const regionFilterList = ['전체', ...REGION];
@@ -208,12 +208,7 @@ const handleInitFilter = () => {
           @click:select="handleSelectRecruitStatus"
         />
         <!-- 초기화 버튼 -->
-        <div
-          @click="handleInitFilter"
-          class="cursor-pointer p-1 w-8 h-8 min-w-8 bg-primary-4 rounded-full input-shadow flex justify-center items-center gap-[10px]"
-        >
-          <img class="w-5 h-5 flex-shrink-0" :src="reset" alt="초기화 아이콘" />
-        </div>
+        <InitFilterButton @click="handleInitFilter" />
       </div>
       <SearchInput :value="searchInput" @search="handleInputSearch" />
     </section>
