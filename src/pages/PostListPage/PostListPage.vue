@@ -175,8 +175,8 @@ const handleInitFilter = () => {
 
   <LoadingPage v-if="isLoading" />
   <div v-else class="pt-12 pb-20 flex flex-col items-center">
-    <section class="flex justify-between mb-6 w-full">
-      <div class="flex gap-[13px] flex-1 items-center">
+    <section class="flex justify-between gap-4 mb-6 w-full">
+      <div class="flex gap-3 items-center">
         <SkillFilterDropdown
           :selected="selectedFilters.skills"
           class="w-[126px]"
@@ -210,7 +210,7 @@ const handleInitFilter = () => {
         <!-- 초기화 버튼 -->
         <div
           @click="handleInitFilter"
-          class="cursor-pointer p-1 w-8 h-8 bg-primary-4 rounded-full input-shadow flex justify-center items-center gap-[10px]"
+          class="cursor-pointer p-1 w-8 h-8 min-w-8 bg-primary-4 rounded-full input-shadow flex justify-center items-center gap-[10px]"
         >
           <img class="w-5 h-5 flex-shrink-0" :src="reset" alt="초기화 아이콘" />
         </div>
@@ -218,10 +218,7 @@ const handleInitFilter = () => {
       <SearchInput :value="searchInput" @search="handleInputSearch" />
     </section>
 
-    <section
-      v-if="filteredPosts.length > 0"
-      class="flex flex-wrap mx-auto pl-6 gap-x-3 gap-y-3 mb-12 w-full"
-    >
+    <section v-if="filteredPosts.length > 0" class="grid grid-cols-4 gap-7 mb-12 w-full">
       <PostCard
         v-for="(item, index) in filteredPosts"
         :key="index"
