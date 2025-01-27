@@ -4,11 +4,12 @@ import { twMerge } from 'tailwind-merge';
 import { dropdown_arrow_icon } from '@/assets/icons';
 import { POSITION_FILTER_GROUPS } from '@/constants/filter';
 import SkillSelectButton from '@/components/SkillSelectButton.vue';
+import { SKILLS } from '@/constants/skill';
 
 const props = defineProps({
   selected: {
     type: Array,
-    default: null,
+    default: [],
   },
   class: {
     type: String,
@@ -92,13 +93,13 @@ onBeforeUnmount(() => {
       >
         <li v-for="(skill, index) in POSITION_FILTER_GROUPS[selectedTab]" :key="index">
           <SkillSelectButton
-            :isSelected="props.selected.includes(skill.name)"
-            @click="emit('selectSkill', skill.name)"
+            :isSelected="props.selected.includes(skill)"
+            @click="emit('selectSkill', skill)"
           >
             <template #icon="{ className }">
-              <img :src="skill.image" :alt="skill.name" :class="className" />
+              <img :src="SKILLS[skill]" :alt="skill" :class="className" />
             </template>
-            <span>{{ skill.name }}</span>
+            <span>{{ skill }}</span>
           </SkillSelectButton>
         </li>
       </ul>

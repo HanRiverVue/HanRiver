@@ -13,7 +13,12 @@ import {
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
-import { addPostComment } from '@/api/supabase/new_comment';
+import {
+  addPostComment,
+  deletePostComment,
+  getCommentsByPost,
+  updatePostComment,
+} from '@/api/supabase/new_comment';
 import {
   getAllUserInfo,
   getUserInfo,
@@ -160,6 +165,18 @@ onMounted(async () => {
 
   <div>
     <button @click="addPostComment(93, 'ai 진짜 코드 잘 짜네')">특정 게시글 댓글 달기</button>
+  </div>
+
+  <div>
+    <button @click="getCommentsByPost(93)">특정 게시글 댓글 전부 가져오기</button>
+  </div>
+
+  <div>
+    <button @click="updatePostComment(93, 26, '댓글을 한번더 수정해볼께')">댓글 수정하기</button>
+  </div>
+
+  <div>
+    <button @click="deletePostComment(93, 26)">댓글 삭제하기</button>
   </div>
 </template>
 
