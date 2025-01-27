@@ -122,7 +122,7 @@ const handleFileChange = (event) => {
           :value="newNickname"
           placeholder="닉네임"
           :maxLength="MAX_NICKNAME_LENGTH"
-          className="pr-2 py-2"
+          class="pr-2 py-2"
           @input="handleNickNameInput"
         >
           <template #rightIcon>
