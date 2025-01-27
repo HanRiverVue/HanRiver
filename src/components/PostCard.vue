@@ -10,7 +10,6 @@ import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
 import { toggleBookmark, toggleLike } from '@/api/supabase/like_and_bookmark';
 import { useLoginModalStore } from '@/stores/loginModal';
-import LoginModal from '@/components/LoginModal.vue';
 
 // 로그인 확인 여부
 const userStore = useUserStore();

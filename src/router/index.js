@@ -10,12 +10,6 @@ const router = createRouter({
       path: '/',
       component: MainLayout,
       children: [
-        // {
-        //   path: '',
-        //   name: 'UserProfileModal',
-        //   component: () => import('@/components/UserProfileModal.vue'),
-        //   meta: { showFooter: true, showScrollTop: true },
-        // },
         {
           path: '',
           name: 'MainPage',

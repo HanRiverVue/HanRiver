@@ -8,7 +8,7 @@ defineProps({
   badgeStatus: String,
   posts: {
     type: Array,
-    default: () => [],
+    default: [],
   },
 });
 </script>
