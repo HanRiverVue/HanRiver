@@ -1,6 +1,6 @@
 import { ref, reactive } from 'vue';
 import { defineStore } from 'pinia';
-import { MAX_POSITION_COUNT } from '@/constants';
+import { DEFAULT_PROFILE_IMAGE_URL, MAX_POSITION_COUNT } from '@/constants';
 import { checkDuplicateNickname } from '@/api/supabase/user';
 
 export const useProfileStore = defineStore('profile', () => {
@@ -76,8 +76,8 @@ export const useProfileStore = defineStore('profile', () => {
     profileImage.file = file;
   };
   const deleteProfileImage = () => {
-    profileImage.local = '';
-    profileImage.file = '';
+    profileImage.local = DEFAULT_PROFILE_IMAGE_URL;
+    profileImage.file = DEFAULT_PROFILE_IMAGE_URL;
   };
 
   const updateShortIntroduction = (newShortIntroduction) => {

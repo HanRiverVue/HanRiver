@@ -14,6 +14,8 @@ export const MAX_POSITION_COUNT = 3;
 export const MAX_NICKNAME_LENGTH = 10;
 export const MAX_SHORT_INTRODUCE_LENGTH = 20;
 export const MAX_INTRODUCE_LENGTH = 300;
+export const DEFAULT_PROFILE_IMAGE_URL =
+  'https://hfrulsqohffbfxdsozkk.supabase.co/storage/v1/object/public/user_images/mergi-default-profile.png';
 
 export const NICKNAME_MESSAGE_STATUS = {
   default: '중복된 이름ㆍ특수문자 사용불가',
