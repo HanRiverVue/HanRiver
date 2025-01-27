@@ -7,9 +7,11 @@ import {
   signOut,
 } from '@/api/supabase/auth';
 import {
+  getPostLike,
+  getPostLikes,
   getUserBookmarks,
   getUserBookmarksWithDetails,
-  getUserLikes,
+  getUserPostLikes,
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
@@ -143,13 +145,21 @@ onMounted(async () => {
     <p v-for="user of allUserInfo">{{ user }}</p>
   </div>
 
+  <h2 class="text-[30px] font-bold my-5">좋아요 테스트</h2>
+
   <div>
     <button @click="toggleLike(93)">좋아요 보내기</button>
   </div>
 
   <div>
-    <button @click="getUserLikes()">사용자 게시글 좋아요 정보 가져오기</button>
+    <button @click="getUserPostLikes()">사용자 게시글 좋아요 정보 가져오기</button>
   </div>
+
+  <div>
+    <button @click="getPostLikes(100)">특정 포스트글 좋아요 모두 가져오기</button>
+  </div>
+
+  <h2 class="text-[30px] font-bold my-5">북마크 테스트</h2>
 
   <div>
     <button @click="toggleBookmark(93)">북마크 담기</button>
@@ -163,6 +173,8 @@ onMounted(async () => {
     <button @click="getUserBookmarksWithDetails()">사용자가 북마크한 글 상세 가져오기</button>
   </div>
 
+  <h2 class="text-[30px] font-bold my-5">댓글 테스트</h2>
+
   <div>
     <button @click="addPostComment(93, 'ai 진짜 코드 잘 짜네')">특정 게시글 댓글 달기</button>
   </div>
@@ -172,11 +184,11 @@ onMounted(async () => {
   </div>
 
   <div>
-    <button @click="updatePostComment(93, 26, '댓글을 한번더 수정해볼께')">댓글 수정하기</button>
+    <button @click="updatePostComment(93, 30, '댓글을 한번더 수정해볼께')">댓글 수정하기</button>
   </div>
 
   <div>
-    <button @click="deletePostComment(93, 26)">댓글 삭제하기</button>
+    <button @click="deletePostComment(93, 23)">댓글 삭제하기</button>
   </div>
 </template>
 
