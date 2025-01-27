@@ -5,7 +5,7 @@ import logo from '@/assets/icons/logo.svg';
 import NonLoggedInRight from '@/layout/header/components/NonLoggedInRight.vue';
 import LoggedInRight from '@/layout/header/components/LoggedInRight.vue';
 
-const isLoggedIn = ref(true);
+const isLoggedIn = ref(false);
 
 const focusClass =
   'text-primary-3 before:content-[""] before:w-1 before:h-1 before:rounded-full before:bg-primary-3 before:absolute before:top-[-4px] before:left-[50%] before:translate-x-[-50%]';
@@ -22,7 +22,7 @@ watch(route, setPath, { immediate: true });
 
 <template>
   <header>
-    <nav class="w-full fixed top-0 left-0 bg-white z-40">
+    <nav class="fixed top-0 left-0 z-40 w-full bg-white">
       <article class="w-full max-w-[1200px] flex items-center justify-between mx-auto px-10 py-4">
         <article class="w-full max-w-[610px] flex items-center justify-between">
           <RouterLink to="/" class="px-[22px]">

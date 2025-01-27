@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, reactive, watch } from 'vue';
 import { MAX_SHORT_INTRODUCE_LENGTH, MAX_NICKNAME_LENGTH, POSITION } from '@/constants';
-import { checkDuplicateNickname, getAllUserInfo, getUserInfo } from '@/api/supabase/user';
+import { checkDuplicateNickname } from '@/api/supabase/user';
 import { twMerge } from 'tailwind-merge';
 import BaseInput from '@/components/BaseInput.vue';
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
