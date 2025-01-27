@@ -62,8 +62,8 @@ const NicknameMessageStyle = computed(() => NicknameMessageStyles[nicknameCheckR
 
 const handleNickNameInput = (value) => {
   const trimmedValue = value.trim();
-  nicknameCheckResult.value = NicknameStatus.INITIAL;
   localRegisterData.name = trimmedValue;
+  emit('setRegisterData', { nicknameResult: NicknameStatus.INITIAL });
   emit('setRegisterData', { name: trimmedValue });
 };
 

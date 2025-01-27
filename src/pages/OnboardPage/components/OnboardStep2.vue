@@ -7,6 +7,7 @@ import OnboardTab from './OnboardTab.vue';
 import SkillSelectButton from '@/components/SkillSelectButton.vue';
 import ProgressBar from './ProgressBar.vue';
 import AppButton from '@/components/AppButton.vue';
+import { postUserInfoOnboard } from '@/api/supabase/user';
 
 const props = defineProps({
   registerData: {
@@ -94,7 +95,7 @@ const HandlePostUserInfoOnboard = () => {
 
   console.log('전송', JSON.stringify(userProfile, null, 2), JSON.stringify(userPositions, null, 2));
   // TODO: 전송
-  // postUserInfoOnboard(userProfile, userPositions);
+  postUserInfoOnboard(userProfile, userPositions);
   emit('completeOnboarding');
 };
 </script>
