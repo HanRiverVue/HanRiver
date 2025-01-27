@@ -7,7 +7,7 @@ import { getPostComments } from '@/api/supabase/comment';
 import { postCreateComment } from '@/api/supabase/comment_editor';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import { deleteApplication, postApplication, getMyApplicationsList } from '@/api/supabase/apply';
-import Post2 from './post2.vue';
+import PostDetail from '@/components/PostDetail.vue';
 
 const postId = 92;
 const postDetails = ref(null);
@@ -215,7 +215,7 @@ onUnmounted(() => {
       </div>
       <hr class="my-5 text-gray-10" />
       <!-- 참여 신청자 목록 조회 -->
-      <Post2 v-if="isApplicantsPage" />
+      <PostDetail v-if="isApplicantsPage" />
 
       <!-- 게시물물 -->
       <div v-if="!isApplicantsPage">
