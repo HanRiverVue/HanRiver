@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MainPage from '@/pages/MainPage.vue';
+import MainPage from '@/pages/MainPage/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
 import { supabase } from '@/config/supabase';
@@ -10,10 +10,16 @@ const router = createRouter({
       path: '/',
       component: MainLayout,
       children: [
+        // {
+        //   path: '',
+        //   name: 'UserProfileModal',
+        //   component: () => import('@/components/UserProfileModal.vue'),
+        //   meta: { showFooter: true, showScrollTop: true },
+        // },
         {
           path: '',
           name: 'MainPage',
-          component: MainPage,
+          component: () => import('@/pages/MainPage/MainPage.vue'),
           meta: { showFooter: true, showScrollTop: true },
         },
         {

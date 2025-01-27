@@ -6,7 +6,18 @@ import likeFill from '@/assets/icons/like_fill.svg';
 import bookmark from '@/assets/icons/bookmark.svg';
 import bookmarkFill from '@/assets/icons/bookmark_fill.svg';
 import { SKILLS } from '@/constants/skill';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
+import { toggleBookmark, toggleLike } from '@/api/supabase/like_and_bookmark';
 import { useLoginModalStore } from '@/stores/loginModal';
+import LoginModal from '@/components/LoginModal.vue';
+
+// 로그인 확인 여부
+const userStore = useUserStore();
+const { user, isLoggedIn } = storeToRefs(userStore);
+
+// 로그인모달
+const loginModalStore = useLoginModalStore();
 
 const props = defineProps({
   id: Number,
@@ -16,51 +27,56 @@ const props = defineProps({
   skills: Array,
   position: Array,
   applicationDeadline: String,
-  isLiked: Boolean,
-  isBookmarked: Boolean,
-  isAuthenticated: Boolean,
 });
 
-const emit = defineEmits([
-  'toggleLike',
-  'toggleBookmark',
-  'clickUserProfileImage',
-  'openLoginModal',
-]);
+// 포스트
+const MAX_VISIBLE_SKILLS = 5;
+const MAX_VISIBLE_POSITIONS = 3;
 
-const loginModalStore = useLoginModalStore();
+const visibleSkills = computed(() => props.skills.slice(0, MAX_VISIBLE_SKILLS));
+const remainingSkillsCount = computed(() => Math.max(props.skills.length - MAX_VISIBLE_SKILLS, 0));
 
-const visibleSkills = computed(() => props.skills.slice(0, 5));
-const remainingSkillsCount = computed(() =>
-  Math.max(props.skills.length - visibleSkills.value.length, 0),
-);
-
-const visiblePosition = computed(() => props.position.slice(0, 3));
+const visiblePosition = computed(() => props.position.slice(0, MAX_VISIBLE_POSITIONS));
 const remainingPositionCount = computed(() =>
-  Math.max(props.position.length - visiblePosition.value.length, 0),
+  Math.max(props.position.length - MAX_VISIBLE_POSITIONS, 0),
 );
 
-const handleToggleLike = (event) => {
+// 좋아요 및 북마크 상태 결정
+const isLiked = computed(() => user.value?.likes?.includes(props.id) ?? false);
+const isBookmarked = computed(() => user.value?.bookmarks?.includes(props.id) ?? false);
+
+// 좋아요 토글
+const handleToggleLike = async (event) => {
   event.preventDefault();
-  if (props.isAuthenticated) {
-    emit('toggleLike', props.id);
-  } else {
+  if (!isLoggedIn.value) {
     loginModalStore.setLoginModal(true);
+    return;
+  }
+  try {
+    const result = await toggleLike(props.id);
+    if (result !== null) {
+      userStore.updateLikes(props.id);
+    }
+  } catch (error) {
+    console.error('Error toggling like:', error);
   }
 };
 
-const handleToggleBookmark = (event) => {
+// 북마크 토글
+const handleToggleBookmark = async (event) => {
   event.preventDefault();
-  if (props.isAuthenticated) {
-    emit('toggleBookmark', props.id);
-  } else {
+  if (!isLoggedIn.value) {
     loginModalStore.setLoginModal(true);
+    return;
   }
-};
-
-const handleUserProfileImageClick = (event) => {
-  event.preventDefault();
-  emit('clickUserProfileImage', props.id, props.userName);
+  try {
+    const result = await toggleBookmark(props.id);
+    if (result !== null) {
+      userStore.updateBookmarks(props.id);
+    }
+  } catch (error) {
+    console.error('Error toggling bookmark:', error);
+  }
 };
 </script>
 
@@ -79,10 +95,10 @@ const handleUserProfileImageClick = (event) => {
           </div>
           <div class="flex gap-[6px]">
             <button @click="handleToggleLike" class="w-6 h-6">
-              <img :src="props.isLiked ? likeFill : like" alt="" />
+              <img :src="isLiked ? likeFill : like" alt="" />
             </button>
             <button @click="handleToggleBookmark" class="w-6 h-6">
-              <img :src="props.isBookmarked ? bookmarkFill : bookmark" alt="" />
+              <img :src="isBookmarked ? bookmarkFill : bookmark" alt="" />
             </button>
           </div>
         </div>
@@ -92,7 +108,7 @@ const handleUserProfileImageClick = (event) => {
       </div>
       <div>
         <ul class="flex gap-1 mb-[13px]">
-          <template v-if="skills.length <= 5">
+          <template v-if="skills.length <= MAX_VISIBLE_SKILLS">
             <li v-for="(skill, index) in skills" :key="index" class="w-7 h-7 rounded-full">
               <img v-if="SKILLS[skill]" :src="SKILLS[skill]" :alt="skill" />
             </li>
@@ -109,7 +125,7 @@ const handleUserProfileImageClick = (event) => {
           </template>
         </ul>
         <ul class="mb-4 flex gap-[5px]">
-          <template v-if="position.length <= 3">
+          <template v-if="position.length <= MAX_VISIBLE_POSITIONS">
             <li v-for="(pos, index) in position" :key="index">
               <PositionSmallBadge :position="pos" />
             </li>

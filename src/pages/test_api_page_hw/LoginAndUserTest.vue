@@ -33,8 +33,8 @@ const isLogin = ref(false);
 // 유저 정보 불러오기 ///////////////////////////////
 const userInfo = ref(null);
 const userProfile = {
-  name: '지원',
-  short_introduce: '안녕하세요 저는 안지원입니다.',
+  name: '예지',
+  short_introduce: '안녕하세요 저는 이예지입니다.',
 };
 const userPositions = [
   { position: '기획', stacks: ['adobe'] },
