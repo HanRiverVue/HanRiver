@@ -2,13 +2,13 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
-import { getPostComments } from '@/api/supabase/comment';
-import { postCreateComment } from '@/api/supabase/comment_editor';
+import { addPostComment, getCommentsByPost } from '@/api/supabase/new_comment';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import AppButton from '@/components/AppButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import PostApplyList from './components/PostApplyList.vue';
 import PostStickyCard from './components/PostStickyCard.vue';
+import { deleteApplication, postApplication } from '@/api/supabase/apply';
 
 const route = useRoute();
 const postId = ref(route.params.postId);
@@ -20,6 +20,7 @@ const newComment = ref('');
 const currentUserId = ref(null);
 const isAuthor = ref(false);
 const isApplicantsPage = ref(false);
+const isApplied = ref(false);
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -27,6 +28,24 @@ const formatDate = (dateString) => {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   return `${year}년 ${month}월 ${day}일`;
+};
+
+const handleApplyOrCancel = async (postId) => {
+  try {
+    if (isApplied.value) {
+      // 이미 신청한 상태일 경우 신청 취소
+      await deleteApplication(postId);
+      isApplied.value = false; // 신청 상태를 취소로 변경
+      console.log('신청이 취소되었습니다.');
+    } else {
+      // 신청하지 않은 상태일 경우 신청하기
+      await postApplication(postId);
+      isApplied.value = true; // 신청 상태로 변경
+      console.log('신청이 완료되었습니다.');
+    }
+  } catch (error) {
+    console.error('신청 처리 중 오류 발생:', error);
+  }
 };
 
 // 버튼 클릭 이벤트 정의
@@ -82,13 +101,24 @@ const handleClickOutside = (event) => {
 // 댓글 등록 처리
 const handleSubmitComment = async () => {
   try {
-    const requestObj = {
-      post_id: postId,
-      content: newComment.value,
-    };
-    const result = await postCreateComment(requestObj);
+    if (!newComment.value.trim()) {
+      console.warn('댓글 내용이 비어있습니다.');
+      return;
+    }
+
+    // 댓글 등록 요청
+    const result = await addPostComment(postId.value, newComment.value);
     console.log('댓글 등록 성공:', result);
+
+    // 댓글 입력란 초기화
     newComment.value = '';
+
+    // 추가적으로 댓글 목록 갱신 로직 (필요시)
+    const updatedComments = await getCommentsByPost(postId.value);
+    comments.value = updatedComments.map((comment) => ({
+      ...comment,
+      isDropdownOpen: false,
+    }));
   } catch (error) {
     console.error('댓글 등록 실패:', error);
   }
@@ -96,19 +126,15 @@ const handleSubmitComment = async () => {
 
 onMounted(async () => {
   try {
-    // 현재 로그인된 사용자 정보 가져오기
     const user = await getUserLoggedIn();
     if (user) {
       currentUserId.value = user.id;
     }
+    const postData = await getPostDetails(postId.value);
 
-    // 게시글 데이터 불러오기
-    const postData = await getPostDetails(postId);
-
-    // 게시글 데이터가 유효한지 확인
     if (postData && postData.id) {
       postDetails.value = postData;
-      // 작성자 여부 확인
+      console.log(postDetails.value);
       isAuthor.value = postData.author === currentUserId.value;
     } else {
       throw new Error('게시글을 불러오는 데 실패했습니다.');
@@ -123,16 +149,60 @@ onMounted(async () => {
 
 onMounted(async () => {
   try {
-    const commentData = await getPostComments(postId);
+    // postId 유효성 검사
+    if (!postId.value) {
+      throw new Error('유효하지 않은 postId입니다.');
+    }
+
+    // 댓글 데이터 가져오기
+    const commentData = await getCommentsByPost(postId.value);
+
+    // 댓글 데이터 가공
     comments.value = commentData.map((comment) => ({
       ...comment,
       isDropdownOpen: false,
     }));
   } catch (err) {
+    console.error(err);
     error.value = '댓글을 불러오는 데 실패했습니다.';
   } finally {
     loading.value = false;
   }
+});
+onMounted(async () => {
+  try {
+    const user = await getUserLoggedIn();
+    if (user) {
+      currentUserId.value = user.id;
+    }
+
+    // 게시물 상세 정보 가져오기
+    const postData = await getPostDetails(postId.value);
+    if (postData && postData.id) {
+      postDetails.value = postData;
+      console.log(postDetails.value);
+      isAuthor.value = postData.author === currentUserId.value;
+      console.log(currentUserId.value);
+
+      // 신청 여부 체크
+      const { data: existingApplication } = await supabase
+        .from('post_apply_list')
+        .select()
+        .eq('proposer_id', currentUserId.value) // 현재 로그인한 사용자의 ID와 비교
+        .eq('post_id', postId.value)
+        .single();
+
+      // 신청한 경우 isApplied를 true로 설정
+      isApplied.value = !!existingApplication;
+    } else {
+      throw new Error('게시글을 불러오는 데 실패했습니다.');
+    }
+  } catch (err) {
+    error.value = err.message || '데이터를 불러오는 데 실패했습니다.';
+  } finally {
+    loading.value = false;
+  }
+  console.log(isApplied.value);
 });
 
 onMounted(() => {
@@ -144,7 +214,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-8">
+  <div class="container mx-auto p-4 md:p-8 flex flex-col items-start md:flex-row gap-8">
     <!-- 왼쪽 콘텐츠 영역 -->
     <div class="flex-none w-[738px]" v-if="!loading && postDetails">
       <!-- 게시물 헤더 -->
@@ -157,10 +227,14 @@ onUnmounted(() => {
         <h1 class="text-2xl font-bold mb-4">{{ postDetails.title }}</h1>
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center">
+            <div
+              v-if="postDetails && postDetails.user"
+              class="w-10 h-10 rounded-full flex items-center justify-center"
+            >
               <img
-                src="@/assets/images/default_user_img.png"
-                alt="Default User"
+                v-if="postDetails.user.profile_img_path"
+                :src="postDetails.user.profile_img_path"
+                alt="User Profile Image"
                 class="w-[33px] h-[33px] rounded-full"
               />
             </div>
@@ -192,7 +266,10 @@ onUnmounted(() => {
 
         <!-- 게시물 내용 -->
         <div class="mb-8">
-          <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ postDetails.body }}</p>
+          <p
+            v-html="postDetails.body"
+            class="text-gray-700 leading-relaxed whitespace-pre-wrap"
+          ></p>
         </div>
         <hr class="my-10 text-gray-10" />
 
@@ -232,23 +309,44 @@ onUnmounted(() => {
               :key="comment.id"
               class="grid grid-cols-[auto,1fr,auto] gap-4"
             >
+              <!-- 유저 프로필 및 닉네임 -->
+              <div class="flex items-center col-start-1 col-span-3">
+                <img
+                  :src="comment.commenter_image_path"
+                  alt="프로필 이미지"
+                  class="w-10 h-10 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <p class="font-semibold text-gray-800">{{ comment.commenter_name }}</p>
+                  <p class="text-sm text-gray-500">{{ formatDate(comment.created_at) }}</p>
+                </div>
+              </div>
+
               <!-- 댓글 내용 -->
-              <div class="col-start-1 col-span-3 row-start-2">
+              <div class="col-start-1 col-span-3">
                 <p class="text-gray-700">{{ comment.content }}</p>
               </div>
-              <hr
-                v-if="index < comments.length - 1"
-                class="border-t border-gray-300 w-full col-span-3"
-              />
+
+              <!-- 구분선 -->
+              <template v-if="index < comments.length - 1">
+                <hr class="border-t border-gray-300 w-full col-span-3" />
+              </template>
             </div>
           </div>
         </div>
       </div>
-      <!-- 구분선 -->
-      <hr v-if="index < comments.length - 1" class="border-t border-gray-300 w-full col-span-3" />
     </div>
-
     <!-- 오른쪽 고정 박스 -->
-    <PostStickyCard />
+    <PostStickyCard
+      :postDetails="postDetails"
+      :loading="loading"
+      :isAuthor="isAuthor"
+      :isApplicantsPage="isApplicantsPage"
+      :handleViewApplicants="handleViewApplicants"
+      :handleBackToPost="handleBackToPost"
+      :handleCloseRecruitment="handleCloseRecruitment"
+      :handleApplyOrCancel="handleApplyOrCancel"
+      :isApplied="isApplied"
+    />
   </div>
 </template>
