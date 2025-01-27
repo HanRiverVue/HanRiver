@@ -62,7 +62,7 @@ const signInProviders = [
           @click="signInProvider.onClick"
         >
           <img :src="signInProvider.icon" :alt="signInProvider.name" />
-          {{ signInProvider.name }}
+          <div class="body-r text-gray-70">{{ signInProvider.name }}</div>
         </button>
       </div>
     </div>
