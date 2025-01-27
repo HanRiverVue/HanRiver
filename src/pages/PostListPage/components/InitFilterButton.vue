@@ -22,8 +22,7 @@ const rotateImage = () => {
     >
       <img
         ref="svgImage"
-        :class="{ 'rotate-spin': rotate }"
-        class="w-5 h-5 flex-shrink-0"
+        :class="`w-5 h-5 flex-shrink-0 ${rotate ? 'rotate-spin' : rotate}`"
         :src="reset"
         alt="초기화 아이콘"
       />

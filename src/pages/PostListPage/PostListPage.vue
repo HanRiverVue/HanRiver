@@ -91,6 +91,7 @@ const { isLoading, data, refetch, error } = useQuery({
   queryKey: ['filteredPosts', selectedFilters.value, currentPage.value],
   queryFn: fetchPostsWithPagination,
   staleTime: 1000 * 60 * 5, // 유통기한
+  gcTime: 1000 * 60 * 5,
   // retry: 3, // 재시도 횟수
   // retryDelay: 1000, // 재시도 텀
   structuralSharing: true, // 변경되지않은 데이터 재사용
@@ -145,7 +146,7 @@ watch(searchInput, (newValue) => {
   // let throttleTimeout;
   // watch(searchInput, (newValue) => {
   //   if (throttleTimeout) return;
-  //   clearInterval(throttleTimeout);
+  //   clearTimeout(throttleTimeout);
   //   throttleTimeout = setTimeout(() => {
   //     selectedFilters.value.searchResults = newValue;
   //     console.log(selectedFilters.value.searchResults);
