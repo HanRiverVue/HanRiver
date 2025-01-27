@@ -176,28 +176,41 @@ export const getPostTechStacks = async (postId) => {
 };
 
 // 사용자가 작성한 게시물 목록 API
-export const getPostsByUser = async (userId) => {
-  try {
-    const { data, error } = await supabase
-      .from('post')
-      .select()
-      .eq('author', userId)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      throw new Error(error);
-    }
-    const totalData = await Promise.all(
-      data.map(async (item) => {
-        return {
-          ...item,
-          positions: await getPostPositions(item.id),
-          techStacks: await getPostTechStacks(item.id),
-        };
-      }),
-    );
-    return totalData;
-  } catch (error) {
-    console.error(error);
-  }
+export const getPostsByUser = async (user_id, filters, page, page_size) => {
+  let { data, error } = await supabase.rpc('get_post_by_user_with_pagination', {
+    filters,
+    page,
+    page_size,
+    user_id,
+  });
+  if (error) console.error(error);
+  else console.log(data);
+  return data;
 };
+
+// // 사용자가 작성한 게시물 목록 API
+// export const getPostsByUser = async (userId) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from('post')
+//       .select()
+//       .eq('author', userId)
+//       .order('created_at', { ascending: false });
+
+//     if (error) {
+//       throw new Error(error);
+//     }
+//     const totalData = await Promise.all(
+//       data.map(async (item) => {
+//         return {
+//           ...item,
+//           positions: await getPostPositions(item.id),
+//           techStacks: await getPostTechStacks(item.id),
+//         };
+//       }),
+//     );
+//     return totalData;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };

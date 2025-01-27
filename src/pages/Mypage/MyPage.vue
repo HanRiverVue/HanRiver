@@ -10,6 +10,7 @@ import MyBookmark from './components/MyBookmark.vue';
 import { getUserInfo } from '@/api/supabase/user';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
+import LoadingPage from '../LoadingPage.vue';
 
 const items = ref(['내 정보', '작성한 모집글', '신청 목록', '찜 목록']);
 const activeIndex = ref(0);
@@ -46,11 +47,9 @@ const handleUpdateIndex = (index = 0) => {
 
 <template>
   <!-- 로딩중일때  -->
-  <div v-if="loading" class="flex justify-center items-center h-[600px]">
-    <p class="text-center text-primary-4 h3-b">로딩 중...</p>
-  </div>
+  <LoadingPage v-if="loading" />
 
-  <div v-if="!loading" class="pb-20 pt-12">
+  <div v-else class="pb-20 pt-12">
     <!-- 프로필 카드 -->
     <div
       class="px-[58px] py-[48px] flex items-center gap-[44px] rounded-[8px] bg-white max-w-[928px] m-auto card-shadow"
