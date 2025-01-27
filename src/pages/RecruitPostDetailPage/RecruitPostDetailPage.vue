@@ -7,7 +7,7 @@ import { getUserLoggedIn } from '@/api/supabase/auth';
 import AppButton from '@/components/AppButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import PostApplyList from './components/PostApplyList.vue';
-import PostStickyCard from './components/PostStickyCard.vue';
+import PostSideBar from './components/PostSideBar.vue';
 import { deleteApplication, postApplication } from '@/api/supabase/apply';
 
 const route = useRoute();
@@ -337,7 +337,7 @@ onUnmounted(() => {
       </div>
     </div>
     <!-- 오른쪽 고정 박스 -->
-    <PostStickyCard
+    <PostSideBar
       :postDetails="postDetails"
       :loading="loading"
       :isAuthor="isAuthor"

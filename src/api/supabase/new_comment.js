@@ -10,6 +10,17 @@ export const addPostComment = async (post_id, comment) => {
   return data;
 };
 
+export const getCommentsByPost = async (post_id) => {
+  const { data, error } = await supabase.rpc('get_comments_by_post', {
+    p_post_id: post_id,
+  });
+  if (error) console.error(error);
+  else {
+    console.log(data);
+    return data;
+  }
+};
+
 export const deletePostComment = async (comment_id) => {
   const { data, error } = await supabase.rpc('delete_post_comment', {
     p_comment_id: comment_id,

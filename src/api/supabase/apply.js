@@ -13,8 +13,6 @@ export const postApplication = async (postId) => {
       return;
     }
 
-    const { postTitle, hostId } = postDetails;
-
     // 현재 로그인한 사용자 정보 가져오기
     const {
       data: { user },
@@ -32,7 +30,7 @@ export const postApplication = async (postId) => {
       .select()
       .eq('proposer_id', user.id)
       .eq('post_id', postId)
-      .single();
+      .maybeSingle();
 
     if (fetchError) {
       console.error('신청 확인 중 오류 발생:', fetchError.message);
