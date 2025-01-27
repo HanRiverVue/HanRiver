@@ -5,10 +5,10 @@ import { getPostDetails } from '@/api/supabase/post';
 import { getPostComments } from '@/api/supabase/comment';
 import { postCreateComment } from '@/api/supabase/comment_editor';
 import { getUserLoggedIn } from '@/api/supabase/auth';
-import { deleteApplication, postApplication, getMyApplicationsList } from '@/api/supabase/apply';
 import AppButton from '@/components/AppButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import PostApplyList from './components/PostApplyList.vue';
+import PostStickyCard from './components/PostStickyCard.vue';
 
 const route = useRoute();
 const postId = ref(route.params.postId);
@@ -20,7 +20,6 @@ const newComment = ref('');
 const currentUserId = ref(null);
 const isAuthor = ref(false);
 const isApplicantsPage = ref(false);
-const isApplied = ref(false);
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -94,41 +93,6 @@ const handleSubmitComment = async () => {
     console.error('댓글 등록 실패:', error);
   }
 };
-
-// Props 정의
-const props = defineProps({
-  postId: String,
-  postTitle: String,
-  hostId: String,
-});
-
-// 신청 상태 확인
-const checkIfApplied = async () => {
-  try {
-    const response = await getMyApplicationsList(props.postId, props.hostId);
-    isApplied.value = response.isApplied;
-  } catch (error) {
-    console.error('신청 상태 확인 중 오류 발생:', error);
-  }
-};
-
-// 신청/취소 처리 핸들러
-const handleApplyOrCancel = async () => {
-  if (isApplied.value) {
-    // 신청 취소
-    await deleteApplication(props.postId);
-  } else {
-    // 신청
-    await postApplication(props.postId, props.postTitle, props.hostId);
-  }
-  // 신청 상태를 갱신
-  isApplied.value = !isApplied.value;
-};
-
-// 컴포넌트가 로드될 때 신청 여부를 확인
-onMounted(() => {
-  checkIfApplied();
-});
 
 onMounted(async () => {
   try {
@@ -285,94 +249,6 @@ onUnmounted(() => {
     </div>
 
     <!-- 오른쪽 고정 박스 -->
-    <div
-      :class="{
-        'h-[368px]': isAuthor,
-        'h-[312px]': !isAuthor,
-      }"
-      class="w-full md:w-[350px] bg-secondary-3 rounded-lg shadow-lg p-4 sticky top-[80px] md:shrink-0"
-    >
-      <div v-if="loading">
-        <p>로딩 중...</p>
-      </div>
-      <div v-else-if="postDetails" class="flex-1">
-        <div class="p-4 relative">
-          <ul class="space-y-2 text-gray-80 text-xs">
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">모집 인원</strong>
-              <span> {{ postDetails.recruit_count }}명 </span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">진행 기간</strong>
-              <span> {{ postDetails.start_date }} ~ {{ postDetails.end_date }} </span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">모집 마감일</strong>
-              <span>
-                {{ postDetails.recruit_deadline }}
-              </span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">포지션</strong>
-              <span v-if="postDetails && postDetails.techStack">
-                {{ postDetails.position.join(', ') }}
-              </span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">스킬</strong>
-              <span v-if="postDetails && postDetails.techStack">
-                {{ postDetails.techStack.join(', ') }}
-              </span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">모집 지역</strong>
-              <span> {{ postDetails.recruit_area }}</span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">진행 방식</strong>
-              <span> {{ postDetails.on_offline }}</span>
-            </li>
-            <li class="grid grid-cols-[120px_1fr]">
-              <strong class="font-semibold">연락 방법</strong>
-              <span>{{ postDetails.call_method }} | {{ postDetails.call_link }}</span>
-            </li>
-          </ul>
-          <div>
-            <template v-if="isAuthor">
-              <div class="flex flex-col">
-                <AppButton
-                  v-if="!isApplicantsPage"
-                  text="참여 신청자 목록 조회"
-                  type="primary"
-                  class="w-[294px] h-11 mt-6"
-                  @click="handleViewApplicants"
-                />
-                <AppButton
-                  v-else
-                  text="게시물로 돌아가기"
-                  type="primary"
-                  class="w-[294px] h-11 mt-6"
-                  @click="handleBackToPost"
-                />
-                <AppButton
-                  text="모집 마감하기"
-                  type="secondary"
-                  class="w-[294px] h-11 mt-3"
-                  @click="handleCloseRecruitment"
-                />
-              </div>
-            </template>
-            <template v-else>
-              <AppButton
-                :text="isApplied ? '신청 취소' : '참여 신청'"
-                :type="isApplied ? 'secondary' : 'primary'"
-                class="w-[294px] h-11 mt-6"
-                @click="handleApplyOrCancel"
-              />
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PostStickyCard />
   </div>
 </template>
