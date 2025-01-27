@@ -1,13 +1,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import AppButton from './AppButton.vue';
-import DropdownMenu from './DropdownMenu.vue';
 import { getPostDetails } from '@/api/supabase/post';
 import { getPostComments } from '@/api/supabase/comment';
 import { postCreateComment } from '@/api/supabase/comment_editor';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import { deleteApplication, postApplication, getMyApplicationsList } from '@/api/supabase/apply';
-import PostDetail from '@/components/PostDetail.vue';
+import AppButton from '@/components/AppButton.vue';
+import DropdownMenu from '@/components/DropdownMenu.vue';
+import PostApplyList from './components/PostApplyList.vue';
 
 const postId = 92;
 const postDetails = ref(null);
@@ -215,7 +215,7 @@ onUnmounted(() => {
       </div>
       <hr class="my-5 text-gray-10" />
       <!-- 참여 신청자 목록 조회 -->
-      <PostDetail v-if="isApplicantsPage" />
+      <PostApplyList v-if="isApplicantsPage" />
 
       <!-- 게시물물 -->
       <div v-if="!isApplicantsPage">
