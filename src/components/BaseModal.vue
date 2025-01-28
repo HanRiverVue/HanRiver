@@ -11,6 +11,7 @@ const handleConfirm = () => {
   baseModal.hideModal();
 };
 const handleCancel = () => {
+  baseModal.onCancel && baseModal.onCancel();
   baseModal.hideModal();
 };
 </script>
