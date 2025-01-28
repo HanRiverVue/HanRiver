@@ -4,7 +4,7 @@ import LargePostCard from './LargePostCard.vue';
 import FilterDropdown from '@/components/FilterDropdown.vue';
 import { getMyApplicationsListHandle } from '@/api/supabase/apply';
 import { useRouter } from 'vue-router';
-import { getPostDetails } from '@/api/supabase/post';
+import LoadingPage from '@/pages/LoadingPage.vue';
 
 // 임시 데이터
 const skills = ['React', 'Vue', 'Spring'];
@@ -30,32 +30,19 @@ const fetMyApplicationPosts = async () => {
 const handleGetStatus = (value) => {
   status.value = value;
 };
-
-// 포스트별 세부 내용 불러오기
-// const fetchPostDetails = async (postId) => {
-//   const postInfo = await getPostDetails(postId);
-
-//   return {
-//     name: postInfo.title,
-//     end_date: postInfo.end_date,
-//     positions: postInfo.position,
-//     techStacks: postInfo.techStack,
-//   };
-// };
 </script>
 <template>
   <!-- 로딩중일 때 -->
-  <div v-if="loading" class="flex justify-center items-center h-[600px]">
-    <p class="text-center text-primary-4 h3-b">로딩 중...</p>
-  </div>
+  <LoadingPage v-if="loading" class="w-32 h-32" />
 
   <!-- 목록이 있을때  -->
-  <!-- v-else-if="myApplicationPosts.length > 0" -->
-  <div class="px-6 flex flex-col justify-center items-end gap-5 self-stretch">
+  <!-- div v-else-if="myApplicationPosts.length > 0" -->
+  <div v-else class="px-6 flex flex-col justify-center items-end gap-5 self-stretch">
     <!-- 드롭다운 -->
     <div class="max-w-[126px]">
       <FilterDropdown
         :items="['전체', '수락 완료', '수락 대기중', '모집 마감']"
+        :selected="status"
         default-text="수락 상태"
         @click:select="handleGetStatus"
       />

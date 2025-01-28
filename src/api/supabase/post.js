@@ -175,7 +175,18 @@ export const getPostTechStacks = async (postId) => {
   return data.stack.split('/');
 };
 
-// 사용자가 작성한 게시물 목록 API
+// 내가 북마크한 게시물 목록 API
+export const getBookmarkPostsByUser = async (filters, page, page_size) => {
+  let { data, error } = await supabase.rpc('get_user_bookmarks_with_pagination', {
+    filters,
+    page,
+    page_size,
+  });
+  if (error) console.error(error);
+  else return data;
+};
+
+// 사용자(나 포함)가 작성한 게시물 목록 API
 export const getPostsByUser = async (user_id, filters, page, page_size) => {
   let { data, error } = await supabase.rpc('get_post_by_user_with_pagination', {
     filters,
@@ -184,7 +195,8 @@ export const getPostsByUser = async (user_id, filters, page, page_size) => {
     user_id,
   });
   if (error) console.error(error);
-  else console.log(data);
+  console.log(data);
+
   return data;
 };
 

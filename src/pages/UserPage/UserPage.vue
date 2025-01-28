@@ -1,14 +1,15 @@
 <script setup>
 import TabMenu from '@/components/TabMenu.vue';
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
-import ProfileEdit_icon from '@/assets/icons/profileEdit_icon.svg';
 import { useRouter } from 'vue-router';
 import { getUserInfo, getUserInfoToUserId } from '@/api/supabase/user';
 import MyInfo from '../Mypage/components/MyInfo.vue';
 import { useRoute } from 'vue-router';
 import Review from './components/UserReviewList.vue';
 import UserRecruitmentList from './components/UserRecruitmentList.vue';
+import { useUserStore } from '@/stores/user';
+import LoadingPage from '../LoadingPage.vue';
 
 const items = ref(['유저 정보', '작성한 모집글', '후기/평가 목록']);
 const activeIndex = ref(0);
@@ -17,9 +18,14 @@ const router = useRouter();
 const route = useRoute();
 
 // params로 전달받은 userId
-const userId = useRoute().params;
+const userId = useRoute().params.userId;
 
 const loading = ref(true);
+
+// 현재 로그인한 사용자
+const { user } = useUserStore();
+
+// 사용자
 const userInfo = ref(null);
 
 onMounted(() => {
@@ -35,15 +41,15 @@ onMounted(() => {
 });
 
 const fetchUserinfo = async () => {
-  const myInfo = await getUserInfo();
   // 현재 로그인한 사용자가 자신의 상세정보에 들어왔을시 마이페이지로 리다이렉트
   // if (myInfo.user_id === '5cc3999c-3150-4072-a824-5d5ddeb3e381') {
   //   router.push('/myPage');
   // }
-  if (myInfo.user_id === userId) {
+  if (user?.user_id === userId) {
     router.push('/myPage');
   }
-  userInfo.value = await getUserInfoToUserId('5cc3999c-3150-4072-a824-5d5ddeb3e381');
+  userInfo.value = await getUserInfoToUserId('c21c4cc8-a05e-4370-994a-305e5b26faf4');
+
   loading.value = false;
 };
 
@@ -55,11 +61,9 @@ const handleUpdateIndex = (index = 0) => {
 
 <template>
   <!-- 로딩중일때  -->
-  <div v-if="loading" class="flex justify-center items-center h-[600px]">
-    <p class="text-center text-primary-4 h3-b">로딩 중...</p>
-  </div>
+  <LoadingPage v-if="loading" />
 
-  <div v-else="!loading" class="pb-20 pt-12">
+  <div v-else class="pb-20 pt-12">
     <!-- 프로필 카드 -->
     <div
       class="px-[58px] py-[48px] flex items-center gap-[44px] rounded-[8px] bg-white max-w-[928px] m-auto card-shadow"

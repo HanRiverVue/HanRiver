@@ -7,7 +7,6 @@ import {
   signOut,
 } from '@/api/supabase/auth';
 import {
-  getPostLike,
   getPostLikes,
   getUserBookmarks,
   getUserBookmarksWithDetails,
