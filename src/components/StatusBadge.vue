@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import { twMerge } from 'tailwind-merge';
 
 const props = defineProps({

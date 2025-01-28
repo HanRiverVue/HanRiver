@@ -12,7 +12,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  className: {
+  class: {
     type: String,
     default: '',
   },
@@ -35,7 +35,7 @@ const styleClass = computed(() =>
     'border input-shadow w-full rounded-[10px] body-large-m whitespace-nowrap',
     sizeClass[props.size],
     props.isSelected ? activeClass.selected : activeClass.nonSelected,
-    props.className,
+    props.class,
   ),
 );
 </script>

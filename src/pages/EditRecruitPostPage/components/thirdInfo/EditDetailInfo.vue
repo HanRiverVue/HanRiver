@@ -1,9 +1,8 @@
 <script setup>
-import AppButton from '@/components/AppButton.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import EditTitle from '@/pages/EditRecruitPostPage/components/EditTitle.vue';
 import Editor from 'primevue/editor';
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   userInfo: Object,

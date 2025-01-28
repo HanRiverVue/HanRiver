@@ -31,11 +31,11 @@ const handleLinkInput = (index, value) => {
         @input="handleLinkInput(index, $event)"
       >
         <template #leftIcon="{ isFocused }">
-          <LinkIcon :className="isFocused ? 'w-5 h-5 text-primary-3' : 'w-5 h-5 text-gray-50'" />
+          <LinkIcon :class="isFocused ? 'w-5 h-5 text-primary-3' : 'w-5 h-5 text-gray-50'" />
         </template>
         <template #rightIcon>
           <button type="button" @click="profileStore.deleteLink(index)">
-            <CancelIcon className="text-gray-50 w-5 h-5" />
+            <CancelIcon class="text-gray-50 w-5 h-5" />
           </button>
         </template>
       </BaseInput>

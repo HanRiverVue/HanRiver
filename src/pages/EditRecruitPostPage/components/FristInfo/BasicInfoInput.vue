@@ -67,7 +67,7 @@ const selectedValues = computed(() => {
       :max-length="props.maxLength"
       :value="selectedValues"
       @input="handleBaseInputInput"
-      className="body-r"
+      class="body-r"
     />
   </article>
 </template>
