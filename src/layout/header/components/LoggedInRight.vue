@@ -27,6 +27,7 @@ const dropdownList = [
       userStore.checkLoginStatus();
       userStore.user = null;
       userStore.isLoggedIn = null;
+      router.push('/');
     },
   },
 ];
