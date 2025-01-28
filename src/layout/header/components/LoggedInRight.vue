@@ -24,7 +24,6 @@ const dropdownList = [
     label: '로그아웃',
     action: () => {
       signOut();
-      userStore.checkLoginStatus();
       userStore.user = null;
       userStore.isLoggedIn = null;
       router.push('/');

@@ -19,15 +19,12 @@ const setPath = () => {
 };
 
 watch(route, setPath, { immediate: true });
-onMounted(async () => {
-  await userStore.checkLoginStatus();
-});
 </script>
 
 <template>
   <header>
     <nav class="fixed top-0 left-0 z-40 w-full bg-white">
-      <article class="w-full max-w-[1200px] flex items-center justify-between mx-auto px-10 py-4">
+      <article class="w-full max-w-[1200px] flex items-center justify-between mx-auto px-10 py-3">
         <article class="w-full max-w-[610px] flex items-center justify-between">
           <RouterLink to="/" class="px-[22px]">
             <img :src="logo" alt="mergi 로고 아이콘" class="min-w-[96px]" />
