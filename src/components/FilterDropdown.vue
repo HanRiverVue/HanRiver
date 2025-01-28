@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { twMerge } from 'tailwind-merge';
 import { dropdown_arrow_icon } from '@/assets/icons';
 
@@ -31,6 +31,15 @@ const emit = defineEmits(['click:select']);
 const isDropdownOpen = ref(false); // 드롭다운 상태
 const selectedItem = ref(null); // 선택한 아이템
 const dropdownRef = ref(null);
+
+// 선택된 옵션값의 상태 감시
+watch(
+  () => props.selected,
+  (newValue) => {
+    selectedItem.value = newValue;
+  },
+  { immediate: true }, // 컴포넌트가 마운트될 때도 초기화
+);
 
 const handleDropdownClick = () => {
   isDropdownOpen.value = !isDropdownOpen.value;

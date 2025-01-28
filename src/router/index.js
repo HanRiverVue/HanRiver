@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MainPage from '@/pages/MainPage.vue';
+import MainPage from '@/pages/MainPage/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
 import { supabase } from '@/config/supabase';
@@ -13,7 +13,7 @@ const router = createRouter({
         {
           path: '',
           name: 'MainPage',
-          component: MainPage,
+          component: () => import('@/pages/MainPage/MainPage.vue'),
           meta: { showFooter: true, showScrollTop: true },
         },
         {
@@ -42,7 +42,7 @@ const router = createRouter({
         {
           path: 'RecruitPostDetail/:postId',
           name: 'RecruitPostDetailPage',
-          component: () => import('@/pages/RecruitPostDetailPage.vue'),
+          component: () => import('@/pages/RecruitPostDetailPage/RecruitPostDetailPage.vue'),
           meta: { showScrollTop: true },
         },
         {

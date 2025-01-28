@@ -13,6 +13,7 @@ const imgPreview = ref('');
 
 const handleImageSelectClick = async (e) => {
   const file = e.target.files[0];
+  props.userInfo.post_img_path = file;
   // 로컬주소 생성 로직
   const reader = new FileReader();
   reader.onload = (e) => {
@@ -21,7 +22,6 @@ const handleImageSelectClick = async (e) => {
   reader.readAsDataURL(file);
   console.log(imgPreview);
   // 최종 전달 데이터엔 일단 정제안된 file 데이터만 보냄(보낼때 정제 필요)
-  props.userInfo.post_img_path = file;
 };
 
 const handleImgButtonClick = () => {
