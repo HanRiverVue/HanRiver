@@ -3,7 +3,7 @@ import { postUploadPostImage } from '@/api/supabase/post_editor';
 import EditTitle from '../EditTitle.vue';
 import caution_notice_icon from '@/assets/icons/caution_notice_icon.svg';
 import AppButton from '@/components/AppButton.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   userInfo: Object,
@@ -20,7 +20,6 @@ const handleImageSelectClick = async (e) => {
     imgPreview.value = e.target.result;
   };
   reader.readAsDataURL(file);
-  console.log(imgPreview);
   // 최종 전달 데이터엔 일단 정제안된 file 데이터만 보냄(보낼때 정제 필요)
 };
 
@@ -34,6 +33,23 @@ const handleImageDeleteClick = () => {
 };
 
 const inputRef = ref(null);
+
+// 수정시 post 이미지 불러오기
+let isWatched = false;
+watch(
+  () => props.userInfo,
+  () => {
+    if (typeof props.userInfo.post_img_path === 'object') return;
+    if (props.userInfo.post_img_path && !isWatched) {
+      // supabase 이미지 가져올때 왜 중간중간에 %가 끼는거지
+      const fixedUrl = props.userInfo.post_img_path.replace(/%/g, '');
+      imgPreview.value = fixedUrl;
+      console.log(fixedUrl);
+      isWatched = true;
+    }
+  },
+  { immediate: true, deep: true },
+);
 </script>
 
 <template>
@@ -42,9 +58,10 @@ const inputRef = ref(null);
   >
     <EditTitle :index="2" title="프로젝트를 소개하는 이미지를 첨부해주세요" />
     <article
-      class="w-full py-5 mt-10 min-h-[390px] bg-secondary-2 border-dashed border-primary-4 border-2 flex items-center justify-center"
+      class="w-full py-5 mt-10 min-h-[390px] bg-secondary-2 border-dashed border-primary-4 border-2 flex items-center justify-center cursor-pointer"
+      @click="handleImgButtonClick"
     >
-      <img v-if="imgPreview !== ''" :src="imgPreview" alt="이미지 프리뷰" class="w-[50%]" />
+      <img v-if="imgPreview !== ''" :src="imgPreview" alt="이미지 프리뷰" class="h-[300px]" />
       <span v-else class="text-gray-50">이미지를 선택해주세요!</span>
     </article>
     <article>
