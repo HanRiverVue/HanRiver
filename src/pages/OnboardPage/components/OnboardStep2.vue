@@ -105,7 +105,7 @@ const HandlePostUserInfoOnboard = () => {
     <div class="flex flex-col gap-7">
       <ProgressBar :currentPage="step" :maxPage="maxPage" />
       <div class="text-gray-80 h4-b mb-7">
-        병알이 님은
+        {{ props.registerData.name }} 님은
         <span class="text-primary-3">{{ positionString }} </span> 을 선택해주셨어요. <br />
         관심있거나 보유하고 있는 스킬을 선택해주세요.
       </div>
