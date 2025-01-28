@@ -18,25 +18,25 @@ const handleCancel = () => {
 <template>
   <!-- 흐린 배경 -->
   <div
-    class="w-full h-full fixed top-0 left-0 flex justify-center items-center z-50"
+    class="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full"
     style="background-color: rgba(0, 0, 0, 0.5)"
   >
     <div
-      class="py-8 px-12 w-[330px] max-w-[330px] flex flex-col items-start gap-[10px] absolute top-1/2 left-1/2 rounded-[20px] transform: -translate-x-1/2 -translate-y-1/2 bg-secondary-2"
+      class="py-8 px-12 w-[330px] max-w-[330px] flex flex-col items-start gap-[10px] absolute top-1/2 left-1/2 rounded-[20px] transform -translate-x-1/2 -translate-y-1/2 bg-secondary-2"
     >
-      <div class="flex flex-col items-center gap-4 self-stretch">
+      <div class="flex flex-col items-center self-stretch gap-4">
         <p class="h4-b text-gray-70">
           {{ title }}
         </p>
-        <div class="flex gap-4 w-full mt-4">
+        <div class="flex w-full gap-4 mt-4">
           <button
-            class="body-r bg-white text-gray-70 modal-button-shadow p-2 rounded-lg flex-grow"
+            class="flex-grow p-2 bg-white rounded-lg body-r text-gray-70 modal-button-shadow"
             @click="handleCancel"
           >
             {{ cancelText }}
           </button>
           <button
-            class="body-r bg-primary-1 modal-button-shadow text-white p-2 rounded-lg flex-grow opacity-80"
+            class="flex-grow p-2 text-white rounded-lg body-r bg-primary-1 modal-button-shadow opacity-80"
             @click="handleConfirm"
           >
             {{ confirmText }}

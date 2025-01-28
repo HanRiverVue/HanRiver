@@ -7,10 +7,8 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-    <div
-      class="flex flex-col items-center w-[550px] py-[58px] rounded-[20px] transform: bg-secondary-2"
-    >
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="flex flex-col items-center w-[550px] py-[58px] rounded-[20px] bg-secondary-2">
       <p class="mb-[17px] h2-b text-gray-80">
         환영합니다, <span class="text-primary-3">{{ props.registerData.name }}</span> 님!
       </p>

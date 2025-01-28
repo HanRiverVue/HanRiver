@@ -103,7 +103,7 @@ const nicknameValidationStatus = async (nickname) => {
   const result = await checkDuplicateNickname(trimmedNickname); // 중복 확인
   if (result) {
     emit('setRegisterData', { nicknameResult: NicknameStatus.DUPLICATE });
-  } else if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣\s]*$/.test(trimmedNickname)) {
+  } else if (!/^[a-zA-Z0-9ㄱ-ㅎ가-힣ㅏ-ㅣ\s]*$/.test(trimmedNickname)) {
     // 특수문자 체크
     emit('setRegisterData', { nicknameResult: NicknameStatus.INVALID });
   } else {
