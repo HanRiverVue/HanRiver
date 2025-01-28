@@ -24,23 +24,24 @@ const sortPosts = {
   new: (posts) => posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
 };
 
-// 포스트카드 API 호출
+// 매핑 함수
+const mapPost = (post) => ({
+  id: post.id,
+  user_id: post.author,
+  userImage: post.profile_img_path,
+  userName: post.name,
+  projectTitle: post.title,
+  skills: post.techStacks || [],
+  position: post.positions || [],
+  applicationDeadline: post.recruit_deadline,
+});
+
+// API호출 함수
 const fetchPosts = async () => {
   isLoading.value = true;
   try {
     const data = await getAllPosts();
     if (Array.isArray(data)) {
-      // 포스트 데이터 매핑 함수
-      const mapPost = (post) => ({
-        id: post.id,
-        userImage: post.profile_img_path,
-        userName: post.name,
-        projectTitle: post.title,
-        skills: post.techStacks || [],
-        position: post.positions || [],
-        applicationDeadline: post.recruit_deadline,
-      });
-
       hotPosts.value = sortPosts.hot(data).slice(0, 4).map(mapPost);
       deadlinePosts.value = sortPosts.deadline(data).slice(0, 4).map(mapPost);
       newPosts.value = sortPosts.new(data).slice(0, 4).map(mapPost);

@@ -7,6 +7,8 @@ import HeaderLayout from '@/layout/header/HeaderLayout.vue';
 import { useBaseModalStore } from '@/stores/baseModal';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterView } from 'vue-router';
+import UserProfileModal from '@/components/UserProfileModal.vue';
+import { useUserProfileModalStore } from '@/stores/userProfileModal';
 
 const isScrollTopShow = ref(false);
 const handlePageScroll = () => {
@@ -25,9 +27,12 @@ onBeforeUnmount(() => {
 });
 
 const baseModal = useBaseModalStore();
+
+const userProfileModalStore = useUserProfileModalStore();
 </script>
 
 <template>
+  <UserProfileModal v-if="userProfileModalStore.userProfileModal" />
   <LoginModal />
   <!-- 공통 모달창 -->
   <BaseModal v-if="baseModal.isVisible" />
