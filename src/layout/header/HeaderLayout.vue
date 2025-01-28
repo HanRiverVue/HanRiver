@@ -1,11 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import logo from '@/assets/icons/logo.svg';
 import NonLoggedInRight from '@/layout/header/components/NonLoggedInRight.vue';
 import LoggedInRight from '@/layout/header/components/LoggedInRight.vue';
+import { useUserStore } from '@/stores/user';
 
-const isLoggedIn = ref(false);
+const userStore = useUserStore();
 
 const focusClass =
   'text-primary-3 before:content-[""] before:w-1 before:h-1 before:rounded-full before:bg-primary-3 before:absolute before:top-[-4px] before:left-[50%] before:translate-x-[-50%]';
@@ -18,6 +19,9 @@ const setPath = () => {
 };
 
 watch(route, setPath, { immediate: true });
+onMounted(async () => {
+  await userStore.checkLoginStatus();
+});
 </script>
 
 <template>
@@ -40,7 +44,7 @@ watch(route, setPath, { immediate: true });
             </li>
           </ul>
         </article>
-        <LoggedInRight v-if="isLoggedIn" />
+        <LoggedInRight v-if="userStore.isLoggedIn" />
         <NonLoggedInRight v-else />
       </article>
     </nav>
