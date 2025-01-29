@@ -12,7 +12,7 @@ const postsByUser = ref(null);
 
 onMounted(async () => {
   // fetchAllPosts();
-  // fetchFilteredPosts();
+  fetchFilteredPosts();
   // fetchPostDetails();
   // fetchPostsByUser();
 });
@@ -36,8 +36,9 @@ const fetchFilteredPosts = async () => {
     position: null,
     techStack: ['React'],
     recruitArea: null,
-    recruitType: null,
+    recruitType: '프로젝트',
     onOffline: null,
+    finished: null,
   });
   console.log(filterdPosts.value);
 };

@@ -146,7 +146,7 @@ export const getUserInfoToUserId = async (user_id) => {
       return { ...position, stacks: stacks.stacks.split('/') };
     }),
   );
-  console.log({ ...realProfile, positions: positions });
+  // console.log({ ...realProfile, positions: positions });
   return { ...realProfile, positions: positions };
 };
 

@@ -15,7 +15,7 @@ const props = defineProps({
     type: String,
     default: 'text',
   },
-  className: {
+  class: {
     type: String,
     default: '',
   },
@@ -31,11 +31,12 @@ const props = defineProps({
 
 const emit = defineEmits(['input', 'keydown']);
 const isFocused = ref(false);
+const inputRef = ref(null);
 
 const styleClass = computed(() =>
   twMerge(
     'input-shadow w-full rounded-lg flex gap-1.5 items-center border border-transparent focus-within:border-primary-3 px-4 py-3 bg-white',
-    props.className,
+    props.class,
   ),
 );
 
@@ -62,11 +63,12 @@ const handleKeydown = (event) => {
   <div :class="styleClass">
     <slot name="leftIcon" :isFocused="isFocused"></slot>
     <input
+      ref="inputRef"
       :value="props.value"
       :type="props.type"
       :placeholder="props.placeholder"
       :readonly="props.readonly"
-      class="w-full text-gray-80 placeholder:text-gray-40 bg-transparent"
+      class="w-full bg-transparent text-gray-80 placeholder:text-gray-40"
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"
