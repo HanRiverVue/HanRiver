@@ -46,7 +46,7 @@ const handleBaseInputInput = (value) => {
 const selectedValues = computed(() => {
   switch (props.title) {
     case '모집 인원':
-      return props.userInfo.recruit_count;
+      return String(props.userInfo.recruit_count);
     case '연락처':
       return props.userInfo.call_link;
     default:

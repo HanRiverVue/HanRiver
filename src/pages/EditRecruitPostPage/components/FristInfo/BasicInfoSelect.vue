@@ -1,5 +1,6 @@
 <script setup>
 import FilterDropdown from '@/components/FilterDropdown.vue';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
   title: {
@@ -37,6 +38,33 @@ const handleFilterDropdownClick = (item) => {
       break;
   }
 };
+
+// 수정시 selected 데이터 불러오기
+// 비동기로 받아와서 동기로만 데이터를 받는 filterdropdown에서 계속 빈값만 받아졌음
+// 그래서 filterdropdown에 속성을 하나 더 만들어 비동기로 데이터를 받은 시점에 ui가 업데이트 되도록 일단 조치힘
+const selected = ref(null);
+watch(
+  () => props.userInfo,
+  (newUserInfo) => {
+    switch (props.title) {
+      case '모집 구분':
+        selected.value = newUserInfo.recruit_type;
+        break;
+      case '모집 지역':
+        selected.value = newUserInfo.recruit_area;
+        break;
+      case '진행 방식':
+        selected.value = newUserInfo.on_offline;
+        break;
+      case '연락 방법':
+        selected.value = newUserInfo.call_method;
+        break;
+      default:
+        break;
+    }
+  },
+  { immediate: true, deep: true },
+);
 </script>
 
 <template>
@@ -50,6 +78,7 @@ const handleFilterDropdownClick = (item) => {
       :items="items"
       :default-text="defaultText"
       :useToPost="true"
+      :selected="selected"
     />
   </article>
 </template>

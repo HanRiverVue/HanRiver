@@ -120,7 +120,7 @@ export const postUploadPostImage = async (file) => {
 // 내가 작성한 게시물 수정 API(🔒)  - PUT
 export const putUpdatePost = async (requestObj, positions, stacks, postId) => {
   try {
-    const user = await getAuthUser();
+    const user = await getUserLoggedIn();
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }
@@ -203,4 +203,13 @@ export const deletePost = async (postId) => {
   } catch (error) {
     console.error(error);
   }
+};
+
+// 내 게시글인지 확인하는 api(추가)
+export const isUserPostAuthor = async (post_id) => {
+  const { data, error } = await supabase.rpc('is_user_post_author', {
+    post_id: post_id,
+  });
+  if (error) console.error(error);
+  else return data;
 };
