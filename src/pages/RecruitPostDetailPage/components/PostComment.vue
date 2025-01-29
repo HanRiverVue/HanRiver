@@ -1,7 +1,15 @@
 <script setup>
-import { addPostComment, getCommentsByPost } from '@/api/supabase/new_comment';
+import {
+  addPostComment,
+  deletePostComment,
+  getCommentsByPost,
+  updatePostComment,
+} from '@/api/supabase/new_comment';
 import AppButton from '@/components/AppButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
+import { useBaseModalStore } from '@/stores/baseModal';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -9,6 +17,13 @@ const props = defineProps({
   error: String,
   loading: Boolean,
 });
+
+// 유저 스토어
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+// 베이스 모달 스토어
+const baseModalStore = useBaseModalStore();
+
 const emit = defineEmits(['update:error', 'update:loading']);
 
 const localError = computed({
@@ -33,45 +48,77 @@ const route = useRoute();
 const postId = ref(route.params.postId);
 const newComment = ref('');
 const comments = reactive([]);
+// 댓글수정 포맷용 comments데이터터
+const formatComments = reactive([]);
 
 // 댓글 드롭다운 항목 정의
-const dropdownItems = [
-  { label: '댓글 수정하기', action: () => console.log('댓글 수정하기') },
-  { label: '댓글 삭제하기', action: () => console.log('댓글 삭제하기') },
-];
+const dropdownItems = computed(() => {
+  return (index) => {
+    return [
+      {
+        label: '댓글 수정',
+        action: () => OpenEdit(index),
+      },
+      { label: '댓글 삭제', action: () => handleDeleteModalClick(index) },
+    ];
+  };
+});
+
+// 댓글 드롭다운 댓글 수정하기 함수
+const OpenEdit = (index) => {
+  comments[index].isEditable = true;
+};
+const handleCloseEditClick = (index) => {
+  comments[index].content = formatComments[index].content;
+  comments[index].isEditable = false;
+};
+
+const commentRef = ref(null);
+const handleSendEditClick = async (index, comment_id, comment, post_id) => {
+  try {
+    await updatePostComment(comment_id, comment, post_id);
+    comments[index].isEditable = false;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// 댓글 드롭다운 댓글 삭제하기 함수
+const handleDeleteModalClick = (index) => {
+  baseModalStore.showModal({
+    title: '정말 삭제하시겠습니까?',
+    confirmText: '삭제하기',
+    onConfirm: async () => {
+      try {
+        await deletePostComment(comments[index].comment_id, comments[index].post_id);
+        comments.splice(index, 1);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+};
+
+// 댓글 드롭다운 onClose 이벤트 핸들러
+const handleCloseClick = (index) => {
+  comments[index].isDropdownOpen = false;
+};
 
 // 댓글 드롭다운 상태 토글 함수
 const toggleDropdown = (comment) => {
   comment.isDropdownOpen = !comment.isDropdownOpen;
-  // comments.value.forEach((comment) => {
-  //   if (comment.comment_id !== commentId) {
-  //     comment.isDropdownOpen = false;
-  //   }
-  // });
-  // const commentIdx = comments.value.findIndex((c) => c.comment_id === commentId);
-  // if (commentIdx !== -1) {
-  //   comments.value[commentIdx].isDropdownOpen = !comments.value[commentIdx].isDropdownOpen;
-  // }
-  // console.log(comments.value);
 };
-watch(
-  () => comments,
-  (newVal) => {
-    console.log('comments updated:', newVal);
-  },
-  { deep: true },
-);
 
+// 댓글 ref배열
+const dropDownRef = ref(null);
 // 댓글 드롭다운 외부 클릭 감지 함수
 const handleClickOutside = (event) => {
-  const dropdownElements = document.querySelectorAll('.dropdown');
-  const isClickInside = Array.from(dropdownElements).some((el) => el.contains(event.target));
+  const isClickInside = Array.from(dropDownRef.value).some((el) => el.contains(event.target));
 
   if (!isClickInside) {
-    comments.map((comment) => ({
-      ...comment,
-      isDropdownOpen: false,
-    }));
+    comments.forEach((comment) => {
+      comment.isDropdownOpen = false;
+    });
   }
 };
 
@@ -85,13 +132,12 @@ const handleSubmitComment = async () => {
 
     // 댓글 등록 요청
     const result = await addPostComment(postId.value, newComment.value);
-    console.log('댓글 등록 성공:', result);
 
     // 댓글 입력란 초기화
     newComment.value = '';
 
     // 댓글 추가정보 갱신 로직
-    comments.unshift({ ...result[0], isDropdownOpen: false });
+    comments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
   } catch (error) {
     console.error('댓글 등록 실패:', error);
   }
@@ -119,7 +165,8 @@ onMounted(async () => {
     comments.length = 0;
     // 댓글 데이터 가공
     commentData.forEach((comment) => {
-      comments.push({ ...comment, isDropdownOpen: false });
+      comments.push({ ...comment, isDropdownOpen: false, isEditable: false });
+      formatComments.push({ ...comment, isDropdownOpen: false, isEditable: false });
     });
   } catch (err) {
     console.error(err);
@@ -182,14 +229,46 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <button @click="toggleDropdown(comment)">...</button>
-          {{ comment.isDropdownOpen }}
-          <DropdownMenu :is-open="comment.isDropdownOpen" :dropdown-list="dropdownItems" />
+          <div class="relative" ref="dropDownRef">
+            <button v-if="comment.user_list_id === user?.id" @click="toggleDropdown(comment)">
+              ︙
+            </button>
+            <DropdownMenu
+              :is-open="comment.isDropdownOpen"
+              :dropdown-list="dropdownItems(index)"
+              @on-close="handleCloseClick(index)"
+              :class="'right-0 px-3 py-1'"
+            />
+          </div>
         </div>
 
         <!-- 댓글 내용 -->
-        <div class="col-start-1 col-span-3">
-          <p class="text-gray-700">{{ comment.content }}</p>
+        <div class="col-start-1 col-span-3" ref="commentRef">
+          <p v-if="!comment.isEditable" class="text-gray-700">{{ comment.content }}</p>
+          <div v-else class="flex flex-wrap justify-end">
+            <textarea
+              type="text"
+              maxlength="100"
+              v-model="comment.content"
+              class="text-gray-700 text-sm w-full p-2 border"
+            />
+            <div class="flex gap-1">
+              <AppButton
+                text="취소"
+                type="secondary"
+                class="w-[72px] h-[28px]"
+                @click="handleCloseEditClick(index)"
+              />
+              <AppButton
+                text="완료"
+                type="primary"
+                class="w-[72px] h-[28px]"
+                @click="
+                  handleSendEditClick(index, comment.comment_id, comment.content, comment.post_id)
+                "
+              />
+            </div>
+          </div>
         </div>
 
         <!-- 구분선 -->
