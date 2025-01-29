@@ -1,38 +1,36 @@
 <script setup>
 import TabMenu from '@/components/TabMenu.vue';
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import { useRouter } from 'vue-router';
-import { getUserInfo, getUserInfoToUserId } from '@/api/supabase/user';
+import { getUserInfoToUserId } from '@/api/supabase/user';
 import MyInfo from '../Mypage/components/MyInfo.vue';
 import { useRoute } from 'vue-router';
 import Review from './components/UserReviewList.vue';
 import UserRecruitmentList from './components/UserRecruitmentList.vue';
 import { useUserStore } from '@/stores/user';
 import LoadingPage from '../LoadingPage.vue';
+import { storeToRefs } from 'pinia';
 
-const items = ref(['유저 정보', '작성한 모집글', '후기/평가 목록']);
+const items = ['유저 정보', '작성한 모집글', '후기/평가 목록'];
 const activeIndex = ref(0);
 
 const router = useRouter();
 const route = useRoute();
 
-// params로 전달받은 userId
+//  특정 사용자
+const userInfo = ref(null);
 const userId = useRoute().params.userId;
 
-const loading = ref(true);
-
-// 현재 로그인한 사용자
-const { user } = useUserStore();
-
-// 사용자
-const userInfo = ref(null);
+// 현재 로그인한 사용자(나)
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 onMounted(() => {
   fetchUserinfo();
 
   // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
-  if (route.query.tabIndex > items.value.length || !route.query.tabIndex) {
+  if (route.query.tabIndex > items.length || !route.query.tabIndex) {
     activeIndex.value = 0;
     router.push({ query: { tabIndex: activeIndex.value } });
     return;
@@ -42,15 +40,10 @@ onMounted(() => {
 
 const fetchUserinfo = async () => {
   // 현재 로그인한 사용자가 자신의 상세정보에 들어왔을시 마이페이지로 리다이렉트
-  // if (myInfo.user_id === '5cc3999c-3150-4072-a824-5d5ddeb3e381') {
-  //   router.push('/myPage');
-  // }
   if (user?.user_id === userId) {
     router.push('/myPage');
   }
-  userInfo.value = await getUserInfoToUserId('c21c4cc8-a05e-4370-994a-305e5b26faf4');
-
-  loading.value = false;
+  userInfo.value = await getUserInfoToUserId(userId);
 };
 
 const handleUpdateIndex = (index = 0) => {
@@ -61,7 +54,7 @@ const handleUpdateIndex = (index = 0) => {
 
 <template>
   <!-- 로딩중일때  -->
-  <LoadingPage v-if="loading" />
+  <LoadingPage v-if="!user || !userInfo" />
 
   <div v-else class="pb-20 pt-12">
     <!-- 프로필 카드 -->

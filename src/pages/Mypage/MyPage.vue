@@ -7,36 +7,38 @@ import MyRecruitmentList from './components/MyRecruitmentList.vue';
 import MyRequestList from './components/MyRequestList.vue';
 import ProfileEdit_icon from '@/assets/icons/profileEdit_icon.svg';
 import MyBookmark from './components/MyBookmark.vue';
-import { getUserInfo } from '@/api/supabase/user';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import LoadingPage from '../LoadingPage.vue';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
-const items = ref(['내 정보', '작성한 모집글', '신청 목록', '찜 목록']);
+const items = ['내 정보', '작성한 모집글', '신청 목록', '찜 목록'];
 const activeIndex = ref(0);
 const loading = ref(true);
 const route = useRoute();
 const router = useRouter();
 
-const userInfo = ref(null);
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
+// 마이페이지 수정 버튼
 const handleEditProfile = () => {
   router.push('/EditProfile');
 };
 
 onMounted(async () => {
-  userInfo.value = await getUserInfo();
-  loading.value = false;
-
   // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
-  if (route.query.tabIndex > items.value.length || !route.query.tabIndex) {
+  if (route.query.tabIndex > items.length || !route.query.tabIndex) {
     activeIndex.value = 0;
     router.push({ query: { tabIndex: activeIndex.value } });
     return;
   }
   activeIndex.value = parseInt(route.query.tabIndex);
+  loading.value = false;
 });
 
+// 탭의 인덱스 변경
 const handleUpdateIndex = (index = 0) => {
   activeIndex.value = index;
   router.push({ query: { tabIndex: index } });
@@ -45,7 +47,7 @@ const handleUpdateIndex = (index = 0) => {
 
 <template>
   <!-- 로딩중일때  -->
-  <LoadingPage v-if="loading" />
+  <LoadingPage v-if="!user" />
 
   <div v-else class="pb-20 pt-12">
     <!-- 프로필 카드 -->
@@ -54,19 +56,15 @@ const handleUpdateIndex = (index = 0) => {
     >
       <!-- 프로필 이미지 -->
       <div class="w-[124px] h-[124px]">
-        <img
-          class="w-full h-full rounded-full"
-          :src="userInfo.profile_img_path"
-          alt="프로필 이미지"
-        />
+        <img class="w-full h-full rounded-full" :src="user.profile_img_path" alt="프로필 이미지" />
       </div>
       <!-- 프로필 정보 -->
       <div class="flex flex-col items-start gap-[16px] flex-1">
         <div class="flex flex-col items-start flex-1 w-full gap-1">
-          <p class="h2-b text-black">{{ userInfo.name }}</p>
+          <p class="h2-b text-black">{{ user.name }}</p>
 
           <div class="flex justify-between items-center w-full">
-            <p class="body-large-r text-gray-40">{{ userInfo.short_introduce }}</p>
+            <p class="body-large-r text-gray-40">{{ user.short_introduce }}</p>
 
             <div
               class="flex py-1.5 px-3 justify-center items-center gap-1.5 rounded-[4px] bg-primary-1 hover:bg-primary-hover cursor-pointer"
@@ -80,7 +78,7 @@ const handleUpdateIndex = (index = 0) => {
 
         <div>
           <ul class="flex items-center gap-[15px]">
-            <li v-for="pos in userInfo.positions" :key="pos.id">
+            <li v-for="pos in user.positions" :key="pos.id">
               <PositionSmallBadge :position="pos.position" />
             </li>
           </ul>
@@ -96,7 +94,7 @@ const handleUpdateIndex = (index = 0) => {
       <TabMenu :menu-items="items" :activeIndex="activeIndex" @update-Index="handleUpdateIndex" />
       <!-- 탭 내용 -->
       <div>
-        <div v-if="activeIndex === 0"><MyInfo :user-info="userInfo" /></div>
+        <div v-if="activeIndex === 0"><MyInfo :user-info="user" /></div>
         <div v-else-if="activeIndex === 1"><MyRecruitmentList /></div>
         <div v-else-if="activeIndex === 2"><MyRequestList /></div>
         <div v-else-if="activeIndex === 3"><MyBookmark /></div>

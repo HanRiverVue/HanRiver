@@ -1,13 +1,13 @@
 <script setup>
 import PostCard from '@/components/PostCard.vue';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getPostsByUser } from '@/api/supabase/post';
 
 import { useRouter } from 'vue-router';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import FilterDropdown from '@/components/FilterDropdown.vue';
-import { useQuery } from '@tanstack/vue-query';
+import { usePagination } from '@/utils/usePagination';
 
 const props = defineProps({
   userInfo: {
@@ -19,17 +19,7 @@ const props = defineProps({
 const router = useRouter();
 const loading = ref(true);
 
-const selectedFilter = ref({
-  order: '최신순',
-});
-
 const orderFilterList = ['최신순', '오래된순', '인기순', '마감일순'];
-// 필터링된 게시물
-const filteredPosts = computed(() => data?.value?.posts || []);
-
-// 현재 페이지, 전체 페이지
-const currentPage = ref(1);
-const totalPage = computed(() => data?.value?.total_page);
 
 onMounted(async () => {
   fetchUserPostsWithPagination();
@@ -50,29 +40,20 @@ const fetchUserPostsWithPagination = async () => {
   );
 };
 
-const { isLoading, data, refetch } = useQuery({
-  queryKey: ['filteredUserPosts', selectedFilter.value, currentPage.value],
-  queryFn: fetchUserPostsWithPagination,
-  staleTime: 1000 * 60 * 5, // 유통기한
-  gcTime: 1000 * 60 * 5,
-  structuralSharing: true, // 변경되지않은 데이터 재사용
-  placeholderData: (prev) => prev, // 대기 상태때 표시해줄 데이터
+const {
+  isLoading,
+  filteredPosts,
+  currentPage,
+  totalPage,
+  selectedFilter,
+  handleChangePage,
+  handleUpdateFilter,
+} = usePagination(fetchUserPostsWithPagination, 'filteredUserPosts', {
+  order: '최신순',
 });
-
-// 필터링 적용시
-watch(selectedFilter, () => {
-  currentPage.value = 1;
-});
-
-// 페이지 전환시
-const handleChangePage = (page) => {
-  currentPage.value = page;
-  refetch();
-};
 
 const handleSelectOrder = (order) => {
-  selectedFilter.value.order = order;
-  refetch();
+  handleUpdateFilter({ order });
 };
 </script>
 <template>

@@ -1,30 +1,21 @@
 <script setup>
 import PostCard from '@/components/PostCard.vue';
-// 임시 이미지
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted } from 'vue';
 import { getPostsByUser } from '@/api/supabase/post';
-import { getUserInfo } from '@/api/supabase/user';
 import { useRouter } from 'vue-router';
 import FilterDropdown from '@/components/FilterDropdown.vue';
-import { useQuery } from '@tanstack/vue-query';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import LoadingPage from '@/pages/LoadingPage.vue';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
+import { usePagination } from '@/utils/usePagination';
 
 const router = useRouter();
-const loading = ref(true);
-const user = ref(null);
 
-const selectedFilter = ref({
-  order: '최신순',
-});
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const orderFilterList = ['최신순', '오래된순', '인기순', '마감일순'];
-// 필터링된 게시물
-const filteredPosts = computed(() => data?.value?.posts || []);
-
-// 현재 페이지, 전체 페이지
-const currentPage = ref(1);
-const totalPage = computed(() => data?.value?.total_page || 1);
 
 onMounted(() => {
   fetchMyPostsWithPagination();
@@ -32,9 +23,7 @@ onMounted(() => {
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchMyPostsWithPagination = async () => {
-  user.value = await getUserInfo();
   const userId = user.value.user_id;
-  loading.value = false;
   return await getPostsByUser(
     userId,
     {
@@ -44,36 +33,26 @@ const fetchMyPostsWithPagination = async () => {
     8,
   );
 };
-
-const { isLoading, data, refetch } = useQuery({
-  queryKey: ['filteredMyPosts', selectedFilter.value, currentPage.value],
-  queryFn: fetchMyPostsWithPagination,
-  staleTime: 1000 * 60 * 5, // 유통기한
-  gcTime: 1000 * 60 * 5,
-  structuralSharing: true, // 변경되지않은 데이터 재사용
-  placeholderData: (prev) => prev, // 대기 상태때 표시해줄 데이터
+const {
+  isLoading,
+  filteredPosts,
+  currentPage,
+  totalPage,
+  selectedFilter,
+  handleChangePage,
+  handleUpdateFilter,
+} = usePagination(fetchMyPostsWithPagination, 'filteredMyPosts', {
+  order: '최신순',
 });
-
-// 필터링 적용시
-watch(selectedFilter, () => {
-  currentPage.value = 1;
-});
-
-// 페이지 전환시
-const handleChangePage = (page) => {
-  currentPage.value = page;
-  refetch();
-};
 
 const handleSelectOrder = (order) => {
-  selectedFilter.value.order = order;
-  refetch();
+  handleUpdateFilter({ order });
 };
 </script>
 
 <template>
   <!-- 로딩중일때  -->
-  <LoadingPage v-if="loading" class="w-32 h-32" />
+  <LoadingPage v-if="isLoading" class="w-32 h-32" />
 
   <div v-else class="flex flex-col px-4 gap-5">
     <FilterDropdown
@@ -88,8 +67,8 @@ const handleSelectOrder = (order) => {
       <div v-for="post in filteredPosts" :key="post.id" class="cursor-pointer">
         <PostCard
           :id="post.id"
-          :user-image="user?.profile_img_path"
-          :user-name="user?.name"
+          :user-image="user.profile_img_path"
+          :user-name="user.name"
           :project-title="post.title"
           :skills="post.tech_stacks"
           :position="post.positions"
