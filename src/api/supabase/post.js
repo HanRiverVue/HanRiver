@@ -91,7 +91,7 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
       throw new Error(error);
     }
 
-    const totalPage = Math.ceil((count || 0) / pageSize);
+    const total_page = Math.ceil((count || 0) / pageSize);
 
     const totalData = await Promise.all(
       data.map(async (item) => {
@@ -107,12 +107,116 @@ export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12
       }),
     );
 
-    return { data: totalData, totalPost: count, page, totalPage };
+    return { posts: totalData, total_post: count, page, total_page };
   } catch (error) {
     console.error(error);
-    return { data: [], totalPost: 0, page, totalPage: 0 };
+    return { posts: [], total_post: 0, page, total_page: 0 };
   }
 };
+
+// 내가 신청한 목록
+export const getMyApplyPosts = async (filters, page = 1, pageSize = 8) => {
+  try {
+    const from = (page - 1) * pageSize;
+    const to = page * pageSize - 1;
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError) {
+      console.error('사용자 정보 가져오기 실패:', userError.message);
+      return;
+    }
+
+    let query = supabase
+      .from('post_apply_list')
+      .select('*', { count: 'exact' })
+      .eq('proposer_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (filters.status === '수락 완료') {
+      query = query.eq('accepted', true);
+    } else if (filters.status === '수락 대기중') {
+      query = query.eq('finished', false);
+    } else if (filters.status === '모집 마감') {
+      query = query.eq('finished', true);
+    }
+    query = query.range(from, to);
+    const { data, error, count } = await query; // 수정된 부분
+
+    if (error) {
+      console.error('내가 신청한 목록 가져오기 실패:', error.message);
+      return;
+    }
+    const total_page = Math.ceil((count || 0) / pageSize);
+
+    // 비동기 처리를 위해 Promise.all 사용
+    const newData = await Promise.all(
+      data.map(async (item) => {
+        const postId = item.post_id;
+        const post = await getPostDetails(postId);
+        return { ...item, ...post };
+      }),
+    );
+
+    return { posts: newData, total_page, total_post: count, page };
+  } catch (error) {
+    console.error('내가 신청한 목록 처리 중 오류 발생:', error);
+  }
+};
+
+// 내가 북마크한 게시물 목록 API
+export const getBookmarkPostsByUser = async (filters, page, page_size) => {
+  let { data, error } = await supabase.rpc('get_user_bookmarks_with_pagination', {
+    filters,
+    page,
+    page_size,
+  });
+  if (error) console.error(error);
+  else return data;
+};
+
+// 사용자(나 포함)가 작성한 게시물 목록 API
+export const getPostsByUser = async (user_id, filters, page, page_size) => {
+  let { data, error } = await supabase.rpc('get_post_by_user_with_pagination', {
+    filters,
+    page,
+    page_size,
+    user_id,
+  });
+  if (error) console.error(error);
+
+  return data;
+};
+
+// // 사용자가 작성한 게시물 목록 API
+// export const getPostsByUser = async (userId) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from('post')
+//       .select()
+//       .eq('author', userId)
+//       .order('created_at', { ascending: false });
+
+//     if (error) {
+//       throw new Error(error);
+//     }
+//     const totalData = await Promise.all(
+//       data.map(async (item) => {
+//         return {
+//           ...item,
+//           positions: await getPostPositions(item.id),
+//           techStacks: await getPostTechStacks(item.id),
+//         };
+//       }),
+//     );
+//     return totalData;
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 // 게시물 상세보기 API
 export const getPostDetails = async (postId) => {
@@ -174,55 +278,3 @@ export const getPostTechStacks = async (postId) => {
   }
   return data.stack.split('/');
 };
-
-// 내가 북마크한 게시물 목록 API
-export const getBookmarkPostsByUser = async (filters, page, page_size) => {
-  let { data, error } = await supabase.rpc('get_user_bookmarks_with_pagination', {
-    filters,
-    page,
-    page_size,
-  });
-  if (error) console.error(error);
-  else return data;
-};
-
-// 사용자(나 포함)가 작성한 게시물 목록 API
-export const getPostsByUser = async (user_id, filters, page, page_size) => {
-  let { data, error } = await supabase.rpc('get_post_by_user_with_pagination', {
-    filters,
-    page,
-    page_size,
-    user_id,
-  });
-  if (error) console.error(error);
-  console.log(data);
-
-  return data;
-};
-
-// // 사용자가 작성한 게시물 목록 API
-// export const getPostsByUser = async (userId) => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('post')
-//       .select()
-//       .eq('author', userId)
-//       .order('created_at', { ascending: false });
-
-//     if (error) {
-//       throw new Error(error);
-//     }
-//     const totalData = await Promise.all(
-//       data.map(async (item) => {
-//         return {
-//           ...item,
-//           positions: await getPostPositions(item.id),
-//           techStacks: await getPostTechStacks(item.id),
-//         };
-//       }),
-//     );
-//     return totalData;
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
