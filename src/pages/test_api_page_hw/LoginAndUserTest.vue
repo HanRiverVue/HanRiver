@@ -14,7 +14,7 @@ import {
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
-import { addPostComment } from '@/api/supabase/new_comment';
+
 import {
   addPostComment,
   deletePostComment,
@@ -25,6 +25,7 @@ import { isUserPostAuthor } from '@/api/supabase/post_editor';
 import {
   getAllUserInfo,
   getUserInfo,
+  getUserInfoTest,
   getUserInfoToUserId,
   postUserInfoOnboard,
   putUserInfo,
@@ -124,6 +125,11 @@ onMounted(async () => {
 
   <div>
     <button @click="getUserInfoHandler()">유저 정보 가져오기</button>
+    <p>{{ userInfo }}</p>
+  </div>
+
+  <div>
+    <button @click="getUserInfoTest()">유저 정보 가져오기 함수 시용 버전전</button>
     <p>{{ userInfo }}</p>
   </div>
 
