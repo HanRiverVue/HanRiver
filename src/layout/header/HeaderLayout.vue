@@ -1,11 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import logo from '@/assets/icons/logo.svg';
 import NonLoggedInRight from '@/layout/header/components/NonLoggedInRight.vue';
 import LoggedInRight from '@/layout/header/components/LoggedInRight.vue';
+import { useUserStore } from '@/stores/user';
 
-const isLoggedIn = ref(false);
+const userStore = useUserStore();
 
 const focusClass =
   'text-primary-3 before:content-[""] before:w-1 before:h-1 before:rounded-full before:bg-primary-3 before:absolute before:top-[-4px] before:left-[50%] before:translate-x-[-50%]';
@@ -23,7 +24,7 @@ watch(route, setPath, { immediate: true });
 <template>
   <header>
     <nav class="fixed top-0 left-0 z-40 w-full bg-white">
-      <article class="w-full max-w-[1200px] flex items-center justify-between mx-auto px-10 py-4">
+      <article class="w-full max-w-[1200px] flex items-center justify-between mx-auto px-10 py-3">
         <article class="w-full max-w-[610px] flex items-center justify-between">
           <RouterLink to="/" class="px-[22px]">
             <img :src="logo" alt="mergi 로고 아이콘" class="min-w-[96px]" />
@@ -40,7 +41,7 @@ watch(route, setPath, { immediate: true });
             </li>
           </ul>
         </article>
-        <LoggedInRight v-if="isLoggedIn" />
+        <LoggedInRight v-if="userStore.isLoggedIn" />
         <NonLoggedInRight v-else />
       </article>
     </nav>

@@ -9,22 +9,6 @@ const props = defineProps({
 });
 const emit = defineEmits(['update:data']);
 
-const localBody = ref(props.userInfo.body);
-
-watch(
-  () => props.userInfo,
-  (newValue) => {
-    localBody.value = newValue;
-  },
-);
-
-watch(
-  () => localBody.value,
-  (newValue) => {
-    props.userInfo.body = newValue;
-  },
-);
-
 const handleBaseInputInput = (value) => {
   props.userInfo.title = value;
 };
@@ -52,7 +36,7 @@ const handleEditorFocusKeydown = (event) => {
         @input="handleBaseInputInput"
         @keydown="handleEditorFocusKeydown"
       />
-      <Editor v-model="localBody" editorStyle="height: 600px" ref="editerRef" />
+      <Editor v-model="props.userInfo.body" editorStyle="height: 600px" ref="editerRef" />
     </article>
   </article>
 </template>

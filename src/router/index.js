@@ -3,6 +3,7 @@ import MainPage from '@/pages/MainPage/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
 import { supabase } from '@/config/supabase';
+import { isUserPostAuthor } from '@/api/supabase/post_editor';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -38,6 +39,22 @@ const router = createRouter({
           name: 'EditRecruitPostPage',
           component: () => import('@/pages/EditRecruitPostPage/EditRecruitPostPage.vue'),
           meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
+        },
+        {
+          path: 'ModifyRecruitPost/:postId',
+          name: 'ModifyRecruitPostPage',
+          component: () => import('@/pages/EditRecruitPostPage/EditRecruitPostPage.vue'),
+          meta: { showScrollTop: true, bg_color: 'bg-secondary-3', requiredAuth: true },
+          beforeEnter: async (to, from, next) => {
+            const author = await isUserPostAuthor(to.params.postId);
+            if (author) {
+              next();
+            } else {
+              console.log(author);
+              alert('글 작성자가 아닙니다.');
+              next(from.path);
+            }
+          },
         },
         {
           path: 'RecruitPostDetail/:postId',
