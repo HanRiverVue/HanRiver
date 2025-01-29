@@ -104,7 +104,7 @@ const handleUserProfileImageClick = (event) => {
       <div class="mb-auto">
         <div class="flex justify-between mb-5">
           <div @click="handleUserProfileImageClick" class="flex items-center gap-2.5">
-            <div class="w-[33px] h-[33px] bg-cover">
+            <div class="w-[33px] h-[33px] rounded-full overflow-hidden user-Profile-img-shadow">
               <img class="w-full h-full object-cover rounded-full" :src="userImage" alt="" />
             </div>
             <span class="body-large-b">{{ userName }}</span>
