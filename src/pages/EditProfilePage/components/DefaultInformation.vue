@@ -84,34 +84,37 @@ const handleFileChange = (event) => {
       class="hidden"
       @change="handleFileChange"
     />
-    <DropdownButton>
-      <template #trigger="{ toggleDropdown }">
-        <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden input-shadow">
-          <button
-            type="button"
-            class="absolute w-[190px] h-[190px] bg-black/60 hidden group-hover:flex items-center justify-center"
-            @click="toggleDropdown"
-          >
-            <PencilIcon class="text-white w-6 h-6" />
-          </button>
-          <img
-            v-if="profileImage.local"
-            :src="profileImage.local"
-            alt="임시 프로필 이미지"
-            class="w-full h-full object-cover object-bottom"
+    <section class="flex flex-col items-center">
+      <DropdownButton>
+        <template #trigger="{ toggleDropdown }">
+          <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden input-shadow">
+            <button
+              type="button"
+              class="absolute w-[190px] h-[190px] bg-black/60 hidden group-hover:flex items-center justify-center"
+              @click="toggleDropdown"
+            >
+              <PencilIcon class="text-white w-6 h-6" />
+            </button>
+            <img
+              v-if="profileImage.local"
+              :src="profileImage.local"
+              alt="프로필 이미지"
+              class="w-full h-full object-cover object-bottom"
+            />
+            <div else class="bg-primary-5 w-full h-full" />
+          </div>
+        </template>
+        <template #menu="{ isOpen, closeDropdown }">
+          <DropdownMenu
+            :isOpen="isOpen"
+            :dropdownList="dropdownList"
+            class="top-1/2 -translate-y-1/2 left-1/2 ml-6"
+            @onClose="closeDropdown"
           />
-          <div else class="bg-primary-5 w-full h-full" />
-        </div>
-      </template>
-      <template #menu="{ isOpen, closeDropdown }">
-        <DropdownMenu
-          :isOpen="isOpen"
-          :dropdownList="dropdownList"
-          class="top-1/2 -translate-y-1/2 left-1/2 ml-6"
-          @onClose="closeDropdown"
-        />
-      </template>
-    </DropdownButton>
+        </template>
+      </DropdownButton>
+    </section>
+
     <div class="grow">
       <section class="mb-6">
         <h3 class="h3-b text-gray-80 mb-2.5">닉네임을 입력해주세요.</h3>
@@ -119,7 +122,7 @@ const handleFileChange = (event) => {
           :value="newNickname"
           placeholder="닉네임"
           :maxLength="MAX_NICKNAME_LENGTH"
-          className="pr-2 py-2"
+          class="pr-2 py-2"
           @input="handleNickNameInput"
         >
           <template #rightIcon>

@@ -14,12 +14,14 @@ import {
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
+import { addPostComment } from '@/api/supabase/new_comment';
 import {
   addPostComment,
   deletePostComment,
   getCommentsByPost,
   updatePostComment,
 } from '@/api/supabase/new_comment';
+import { isUserPostAuthor } from '@/api/supabase/post_editor';
 import {
   getAllUserInfo,
   getUserInfo,
@@ -188,6 +190,12 @@ onMounted(async () => {
 
   <div>
     <button @click="deletePostComment(93, 23)">댓글 삭제하기</button>
+  </div>
+
+  <h2 class="text-[30px] font-bold my-5">포스트 테스트</h2>
+
+  <div>
+    <button @click="isUserPostAuthor(92)">내 포스트 게시글인지 확인하기</button>
   </div>
 </template>
 

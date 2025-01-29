@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import { selects, editPositionAndSkills } from '@/pages/EditRecruitPostPage/index';
 import EditTitle from '@/pages/EditRecruitPostPage/components/EditTitle.vue';
 import BasicInfoSelect from '@/pages/EditRecruitPostPage/components/FristInfo/BasicInfoSelect.vue';
@@ -27,7 +27,7 @@ const handlePositionButtonClick = (PIndex) => {
       (pos) => pos.position === editPositionAndSkills[PIndex].position,
     );
     if (posIndex !== -1) {
-      selectedPositions[posIndex].selectedSkills = [];
+      props.positionAndSkills[PIndex].selectedSkills = [];
       selectedPositions.splice(posIndex, 1);
     }
   }
@@ -43,6 +43,29 @@ const handleSkillButtonClick = (pIndex, skill) => {
     }
   }
 };
+
+// 수정시 selectedPositions 업데이트 하기
+let isWatched = false;
+watch(
+  () => props.userInfo,
+  () => {
+    if (props.userInfo.saved_position_and_stacks && !isWatched) {
+      const parsedSavePositions = JSON.parse(props.userInfo.saved_position_and_stacks);
+      const filteredParsedSavePositions = parsedSavePositions.filter((e) => {
+        if (e.positionSelected) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      for (let i = 0; i < filteredParsedSavePositions.length; i++) {
+        selectedPositions.push(filteredParsedSavePositions[i]);
+      }
+      isWatched = true;
+    }
+  },
+  { immediate: true, deep: true },
+);
 </script>
 
 <template>

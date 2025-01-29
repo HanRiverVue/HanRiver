@@ -5,8 +5,12 @@ import NotificationSvg from '@/assets/icons/NotificationSvg.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import DropdownButton from '@/components/DropdownButton.vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+import { signOut } from '@/api/supabase/auth';
 
 const router = useRouter();
+
+const userStore = useUserStore();
 
 const dropdownList = [
   {
@@ -19,7 +23,10 @@ const dropdownList = [
   {
     label: '로그아웃',
     action: () => {
-      console.log('로그아웃 처리');
+      signOut();
+      userStore.user = null;
+      userStore.isLoggedIn = null;
+      router.push('/');
     },
   },
 ];
