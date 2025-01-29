@@ -47,7 +47,7 @@ const dropdownList = [
     <li class="flex flex-col justify-center items-end" ref="targetElement">
       <DropdownButton>
         <template #trigger="{ toggleDropdown }">
-          <button @click="toggleDropdown">
+          <button @click="toggleDropdown" class="flex">
             <img :src="default_user_img" alt="유저 기본 이미지 아이콘" class="w-10 rounded-full" />
           </button>
         </template>
