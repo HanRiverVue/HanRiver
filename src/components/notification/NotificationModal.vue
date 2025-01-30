@@ -1,15 +1,27 @@
 <script setup>
 import noti_close_icon from '@/assets/icons/noti_close_icon.svg';
 import { twMerge } from 'tailwind-merge';
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import AllNotifications from './AllNotifications.vue';
 import UnWatchedNotifications from './UnWatchedNotifications.vue';
 import { useNotificationModalStore } from '@/stores/notificaionModal';
+import { AllMarkAsSeen } from '@/api/supabase/notifications';
+import { storeToRefs } from 'pinia';
 
 const notificationModalStore = useNotificationModalStore();
+const { notifications } = storeToRefs(notificationModalStore);
 
 const toggleState = ref('All');
 const toggleButton = computed(() => twMerge('text-primary-3 border-b-[2px] border-primary-3'));
+
+onMounted(async () => {
+  await AllMarkAsSeen(notifications.value);
+  notificationModalStore.setHasNewNotificationFalse();
+  document.body.style.overflow = 'hidden';
+});
+onUnmounted(() => {
+  document.body.style.overflow = 'inherit';
+});
 </script>
 
 <template>
@@ -49,7 +61,9 @@ const toggleButton = computed(() => twMerge('text-primary-3 border-b-[2px] borde
               </button>
             </li>
           </ul>
-          <button class="caption-m">모두 읽음</button>
+          <button class="caption-m" @click="notificationModalStore.updateCheckAll()">
+            모두 확인
+          </button>
         </div>
         <!-- 컨텐츠 하단(알림) -->
         <AllNotifications v-if="toggleState === 'All'" />

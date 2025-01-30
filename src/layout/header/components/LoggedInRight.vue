@@ -8,11 +8,16 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { signOut } from '@/api/supabase/auth';
 import { useNotificationModalStore } from '@/stores/notificaionModal';
+import { storeToRefs } from 'pinia';
+import { onMounted, onUnmounted } from 'vue';
+import { subscribeToNotifications } from '@/api/supabase/notifications';
+import { supabase } from '@/config/supabase';
 
 const router = useRouter();
 
 const userStore = useUserStore();
 const notificationModalStore = useNotificationModalStore();
+const { notifications, hasNewNotification } = storeToRefs(notificationModalStore);
 
 const dropdownList = [
   {
@@ -32,6 +37,23 @@ const dropdownList = [
     },
   },
 ];
+
+onMounted(async () => {
+  await notificationModalStore.fetchNotifications();
+
+  const result = notifications.value.filter((notification) => !notification.seen);
+
+  if (result.length > 0) {
+    notificationModalStore.setHasNewNotificationTrue();
+  }
+  subscribeToNotifications(
+    notificationModalStore.addNotifications,
+    notificationModalStore.setHasNewNotificationTrue,
+  );
+});
+onUnmounted(() => {
+  supabase.removeChannel('notifications');
+});
 </script>
 
 <template>
@@ -42,8 +64,12 @@ const dropdownList = [
       </RouterLink>
     </li>
     <li class="flex items-center">
-      <button @click="notificationModalStore.openNotificationModal()">
+      <button @click="notificationModalStore.openNotificationModal()" class="relative">
         <NotificationSvg />
+        <div
+          v-if="hasNewNotification"
+          class="w-2.5 h-2.5 rounded-full bg-red-600 absolute top-0 right-0"
+        ></div>
       </button>
     </li>
     <li class="flex flex-col justify-center items-end" ref="targetElement">
