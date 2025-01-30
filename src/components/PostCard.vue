@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import like from '@/assets/icons/like.svg';
 import likeFill from '@/assets/icons/like_fill.svg';
@@ -14,7 +14,7 @@ import { useUserProfileModalStore } from '@/stores/userProfileModal';
 
 // 로그인 확인 여부
 const userStore = useUserStore();
-const { user, isLoggedIn } = storeToRefs(userStore);
+const { user, isLoggedIn, userPostLikes } = storeToRefs(userStore);
 
 // 로그인모달
 const loginModalStore = useLoginModalStore();
@@ -45,8 +45,12 @@ const remainingPositionCount = computed(() =>
   Math.max(props.position.length - MAX_VISIBLE_POSITIONS, 0),
 );
 
+onMounted(async () => {
+  await userStore.setUserPostLikes();
+});
+
 // 좋아요 및 북마크 상태 결정
-const isLiked = computed(() => user.value?.likes?.includes(props.id) ?? false);
+const isLiked = computed(() => userPostLikes.value?.includes(props.id) ?? false);
 const isBookmarked = computed(() => user.value?.bookmarks?.includes(props.id) ?? false);
 
 // 좋아요 토글
