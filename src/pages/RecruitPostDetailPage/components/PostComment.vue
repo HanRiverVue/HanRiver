@@ -113,7 +113,8 @@ const toggleDropdown = (comment) => {
 const dropDownRef = ref(null);
 // 댓글 드롭다운 외부 클릭 감지 함수
 const handleClickOutside = (event) => {
-  const isClickInside = Array.from(dropDownRef.value).some((el) => el.contains(event.target));
+  const isClickInside =
+    dropDownRef.value && Array.from(dropDownRef.value).some((el) => el.contains(event.target));
 
   if (!isClickInside) {
     comments.forEach((comment) => {
