@@ -1,4 +1,5 @@
 import { getUserInfo } from '@/api/supabase/user';
+import { getUserLoggedIn } from '@/api/supabase/auth';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { getUserPostLikes } from '@/api/supabase/like_and_bookmark';

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import like from '@/assets/icons/like.svg';
 import likeFill from '@/assets/icons/like_fill.svg';
@@ -10,6 +10,7 @@ import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
 import { toggleBookmark, toggleLike } from '@/api/supabase/like_and_bookmark';
 import { useLoginModalStore } from '@/stores/loginModal';
+import { useUserProfileModalStore } from '@/stores/userProfileModal';
 
 // 로그인 확인 여부
 const userStore = useUserStore();
@@ -18,7 +19,11 @@ const { user, isLoggedIn } = storeToRefs(userStore);
 // 로그인모달
 const loginModalStore = useLoginModalStore();
 
+// 유저프로필 모달
+const userProfileModalStore = useUserProfileModalStore();
+
 const props = defineProps({
+  user_id: String,
   id: Number,
   userImage: String,
   userName: String,
@@ -30,15 +35,13 @@ const props = defineProps({
 
 // 포스트
 const MAX_VISIBLE_SKILLS = 5;
-const MAX_VISIBLE_POSITIONS = 3;
+const MAX_VISIBLE_POSITIONS = 2;
 
 const visibleSkills = computed(() => props.skills.slice(0, MAX_VISIBLE_SKILLS));
 const remainingSkillsCount = computed(() => Math.max(props.skills.length - MAX_VISIBLE_SKILLS, 0));
 
 const visiblePosition = computed(() => props.position.slice(0, MAX_VISIBLE_POSITIONS));
-const visiblePosition = computed(() => props.position.slice(0, MAX_VISIBLE_POSITIONS));
 const remainingPositionCount = computed(() =>
-  Math.max(props.position.length - MAX_VISIBLE_POSITIONS, 0),
   Math.max(props.position.length - MAX_VISIBLE_POSITIONS, 0),
 );
 
@@ -48,25 +51,7 @@ const isBookmarked = computed(() => user.value?.bookmarks?.includes(props.id) ??
 
 // 좋아요 토글
 const handleToggleLike = async (event) => {
-// 좋아요 토글
-const handleToggleLike = async (event) => {
   event.preventDefault();
-  if (!isLoggedIn.value) {
-    loginModalStore.setLoginModal(true);
-    return;
-  }
-  try {
-    const result = await toggleLike(props.id);
-    if (result !== null) {
-      userStore.updateLikes(props.id);
-    }
-  } catch (error) {
-    console.error('Error toggling like:', error);
-  }
-};
-
-// 북마크 토글
-const handleToggleBookmark = async (event) => {
   if (!isLoggedIn.value) {
     loginModalStore.setLoginModal(true);
     return;
@@ -97,6 +82,18 @@ const handleToggleBookmark = async (event) => {
     console.error('Error toggling bookmark:', error);
   }
 };
+
+// 유저프로필 모달 클릭 핸들러
+const handleUserProfileImageClick = (event) => {
+  event.preventDefault();
+
+  if (props.user_id) {
+    userProfileModalStore.fetchModalUserProfile(props.user_id);
+    userProfileModalStore.setUserProfileModal(true);
+  } else {
+    console.error('User ID is undefined');
+  }
+};
 </script>
 
 <template>
@@ -115,10 +112,8 @@ const handleToggleBookmark = async (event) => {
           <div class="flex gap-[6px]">
             <button @click="handleToggleLike" class="w-6 h-6">
               <img :src="isLiked ? likeFill : like" alt="" />
-              <img :src="isLiked ? likeFill : like" alt="" />
             </button>
             <button @click="handleToggleBookmark" class="w-6 h-6">
-              <img :src="isBookmarked ? bookmarkFill : bookmark" alt="" />
               <img :src="isBookmarked ? bookmarkFill : bookmark" alt="" />
             </button>
           </div>
@@ -129,7 +124,6 @@ const handleToggleBookmark = async (event) => {
       </div>
       <div>
         <ul class="flex gap-1 mb-[13px]">
-          <template v-if="skills.length <= MAX_VISIBLE_SKILLS">
           <template v-if="skills.length <= MAX_VISIBLE_SKILLS">
             <li v-for="(skill, index) in skills" :key="index" class="w-7 h-7 rounded-full">
               <img v-if="SKILLS[skill]" :src="SKILLS[skill]" :alt="skill" />
@@ -147,7 +141,6 @@ const handleToggleBookmark = async (event) => {
           </template>
         </ul>
         <ul class="mb-4 flex gap-[5px]">
-          <template v-if="position.length <= MAX_VISIBLE_POSITIONS">
           <template v-if="position.length <= MAX_VISIBLE_POSITIONS">
             <li v-for="(pos, index) in position" :key="index">
               <PositionSmallBadge :position="pos" />
