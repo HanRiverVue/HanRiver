@@ -37,22 +37,10 @@ export default {
           error: '#EB2525',
         },
       },
-    },
-    fontFamily: {
-      jalnan: ['yg-jalnan', 'sans-serif'],
-      pretendard: ['Pretendard', 'sans-serif'],
-    },
-    animation: {
-      'fade-in-500': 'fadeIn .5s linear',
-    },
-    keyframes: {
-      fadeIn: {
-        '0%': { opacity: 0 },
-        '100%': { opacity: 1 },
+      fontFamily: {
+        jalnan: ['yg-jalnan', 'sans-serif'],
+        pretendard: ['Pretendard', 'sans-serif'],
       },
-    },
-    dropShadow: {
-      'post-editor-shadow': '0 0 8px rgba(0, 0, 0, 0.11)',
     },
   },
   plugins: [],
