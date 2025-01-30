@@ -6,8 +6,7 @@ export const addPostComment = async (post_id, comment) => {
     p_content: comment,
   });
   if (error) console.error(error);
-  else console.log(data);
-  return data;
+  else return data;
 };
 
 export const getCommentsByPost = async (post_id) => {
@@ -15,25 +14,24 @@ export const getCommentsByPost = async (post_id) => {
     p_post_id: post_id,
   });
   if (error) console.error(error);
-  else {
-    console.log(data);
-    return data;
-  }
+  else return data;
 };
 
-export const deletePostComment = async (comment_id) => {
+export const deletePostComment = async (comment_id, post_id) => {
   const { data, error } = await supabase.rpc('delete_post_comment', {
     p_comment_id: comment_id,
+    p_post_id: post_id,
   });
   if (error) console.error(error);
-  else console.log(data);
+  else return data;
 };
 
-export const updatePostComment = async (post_id, comment) => {
+export const updatePostComment = async (comment_id, comment, post_id) => {
   const { data, error } = await supabase.rpc('update_post_comment', {
-    p_comment_id: post_id,
+    p_comment_id: comment_id,
     p_content: comment,
+    p_post_id: post_id,
   });
   if (error) console.error(error);
-  else console.log(data);
+  else return data;
 };
