@@ -2,10 +2,12 @@ import { getUserInfo } from '@/api/supabase/user';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { getUserPostLikes } from '@/api/supabase/like_and_bookmark';
 
 export const useUserStore = defineStore('user', () => {
   const user = ref(null);
   const isLoggedIn = ref(false);
+  const userPostLikes = ref([]);
 
   const checkLoginStatus = async () => {
     const loggedInUser = await getUserLoggedIn();
@@ -21,13 +23,19 @@ export const useUserStore = defineStore('user', () => {
     console.log('확인', user.value);
   };
 
+  const setUserPostLikes = async () => {
+    const res = await getUserPostLikes();
+    if (res) {
+      userPostLikes.value = res;
+    }
+  };
+
   const updateLikes = (postId) => {
-    if (!user.value.likes) user.value.likes = [];
-    const index = user.value.likes.indexOf(postId);
+    const index = userPostLikes.value.indexOf(postId);
     if (index > -1) {
-      user.value.likes.splice(index, 1);
+      userPostLikes.value.splice(index, 1);
     } else {
-      user.value.likes.push(postId);
+      userPostLikes.value.push(postId);
     }
   };
 
@@ -46,6 +54,8 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn,
     checkLoginStatus,
     fetchUserInfo,
+    userPostLikes,
+    setUserPostLikes,
     updateLikes,
     updateBookmarks,
   };

@@ -16,7 +16,6 @@ import {
 } from '@/api/supabase/like_and_bookmark';
 import { addPostComment } from '@/api/supabase/new_comment';
 import {
-  addPostComment,
   deletePostComment,
   getCommentsByPost,
   updatePostComment,

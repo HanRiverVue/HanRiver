@@ -10,6 +10,7 @@ import talk from '@/assets/images/talk.png';
 import { ref, onMounted } from 'vue';
 import { getAllPosts } from '@/api/supabase/post';
 import PostSection from '@/pages/MainPage/components/PostSection.vue';
+import { useUserStore } from '@/stores/user';
 
 const hotPosts = ref([]);
 const deadlinePosts = ref([]);
@@ -56,6 +57,13 @@ const fetchPosts = async () => {
 };
 
 onMounted(fetchPosts);
+
+// 사용자 좋아요 업데이트
+const userStore = useUserStore();
+onMounted(async () => {
+  await userStore.setUserPostLikes();
+  console.log('좋아요 업데이트', userStore.userPostLikes);
+});
 </script>
 
 <template>

@@ -7,10 +7,12 @@ import DropdownButton from '@/components/DropdownButton.vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { signOut } from '@/api/supabase/auth';
+import { useNotificationModalStore } from '@/stores/notificaionModal';
 
 const router = useRouter();
 
 const userStore = useUserStore();
+const notificationModalStore = useNotificationModalStore();
 
 const dropdownList = [
   {
@@ -40,7 +42,7 @@ const dropdownList = [
       </RouterLink>
     </li>
     <li class="flex items-center">
-      <button>
+      <button @click="notificationModalStore.openNotificationModal()">
         <NotificationSvg />
       </button>
     </li>
