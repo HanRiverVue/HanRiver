@@ -1,30 +1,13 @@
 <script setup>
-import AppButton from '@/components/AppButton.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import EditTitle from '@/pages/EditRecruitPostPage/components/EditTitle.vue';
 import Editor from 'primevue/editor';
-import { ref, watch, defineProps, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   userInfo: Object,
 });
 const emit = defineEmits(['update:data']);
-
-const localBody = ref(props.userInfo.body);
-
-watch(
-  () => props.userInfo,
-  (newValue) => {
-    localBody.value = newValue;
-  },
-);
-
-watch(
-  () => localBody.value,
-  (newValue) => {
-    props.userInfo.body = newValue;
-  },
-);
 
 const handleBaseInputInput = (value) => {
   props.userInfo.title = value;
@@ -53,7 +36,7 @@ const handleEditorFocusKeydown = (event) => {
         @input="handleBaseInputInput"
         @keydown="handleEditorFocusKeydown"
       />
-      <Editor v-model="localBody" editorStyle="height: 600px" ref="editerRef" />
+      <Editor v-model="props.userInfo.body" editorStyle="height: 600px" ref="editerRef" />
     </article>
   </article>
 </template>

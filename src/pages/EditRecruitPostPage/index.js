@@ -1,6 +1,10 @@
-import { postCreatePost, postUploadPostImage } from '@/api/supabase/post_editor';
+import { postCreatePost, postUploadPostImage, putUpdatePost } from '@/api/supabase/post_editor';
 import { REGION } from '@/constants/filter';
 import { POSITION_SKILLS } from '@/constants/position';
+import { useBaseModalStore } from '@/stores/baseModal';
+import { errorToast, successToast } from '@/utils/toast';
+
+const baseModalStore = useBaseModalStore();
 
 // 모집 설정
 export const selects = [
@@ -25,6 +29,43 @@ export const selects = [
     defaultText: '연락 방법을 선택해주세요',
   },
 ];
+
+// 기본정보
+export const baseUserInfo = {
+  author: '',
+  recruit_type: '',
+  title: '',
+  body: '',
+  recruit_count: '',
+  recruit_area: '',
+  start_date: null,
+  end_date: null,
+  on_offline: '',
+  recruit_deadline: null,
+  call_method: '',
+  call_link: '',
+  post_img_path: '',
+  finished: false,
+  saved_position_and_stacks: null,
+};
+
+export const resetBaseUserInfo = {
+  author: '',
+  recruit_type: '',
+  title: '',
+  body: '',
+  recruit_count: '',
+  recruit_area: '',
+  start_date: null,
+  end_date: null,
+  on_offline: '',
+  recruit_deadline: null,
+  call_method: '',
+  call_link: '',
+  post_img_path: '',
+  finished: false,
+  saved_position_and_stacks: null,
+};
 
 // 포지션
 export const editPositionAndSkills = [
@@ -83,69 +124,136 @@ export const editPositionAndSkills = [
     selectedSkills: [],
   },
 ];
-
 // 데이터 검사 + 전송 로직
-export const sendData = async (userInfo, positionAndSkills) => {
+export const sendData = async (
+  userInfo,
+  positionAndSkills,
+  postId,
+  scrollRefs,
+  afterPostModalObj,
+) => {
   let filePath;
+  const defaultFilePath =
+    'https://hfrulsqohffbfxdsozkk.supabase.co/storage/v1/object/public/post_images/programmers.png';
+
   if (userInfo.post_img_path === '') {
     // 선택된 이미지 없으면 기본이미지 제공
-    filePath =
-      'https://hfrulsqohffbfxdsozkk.supabase.co/storage/v1/object/public/post_images/programmers.png';
-  } else {
+    filePath = defaultFilePath;
+  } else if (typeof userInfo.post_img_path === 'object') {
     filePath = await postUploadPostImage(userInfo.post_img_path);
+  } else {
+    filePath = userInfo.post_img_path;
   }
 
   // 최종 전송할 데이터
   const positions = [];
   let techStacks = [];
 
-  console.log(userInfo);
-  switch (true) {
-    case userInfo.author === '':
-      return alert('오류 : 유저 로그인 정보가 없습니다.');
-    case userInfo.recruit_type === '':
-      return alert('모집 구분 선택을 완료해주세요');
-    case userInfo.recruit_count === '':
-      return alert('모집 인원 선택을 완료해주세요');
-    case userInfo.recruit_deadline === null:
-      return alert('모집 마감일 선택을 완료해주세요');
-    case userInfo.on_offline === '':
-      return alert('진행 방식 선택을 완료해주세요');
-    case userInfo.start_date === null:
-      return alert('진행 기간 선택을 완료해주세요');
-    case userInfo.end_date === null:
-      return alert('진행 기간 선택을 완료해주세요(종료 날짜가 선택되지 않았습니다)');
-    case userInfo.call_method === '':
-      return alert('연락 방법 선택을 완료해주세요');
-    case userInfo.call_link === '':
-      return alert('연락처 선택을 완료해주세요');
-    case userInfo.title === '':
-      return alert('글 제목 작성을 완료해주세요');
-    case userInfo.body === '':
-      return alert('글 내용 작성을 완료해주세요');
-    default:
-      break;
-  }
+  let stackNotSelected = false;
 
   const selected = positionAndSkills.filter((data) => {
     return data.positionSelected;
   });
-  if (selected.length === 0) return alert('포지션 선택을 완료해주세요.');
   for (let i = 0; i < selected.length; i++) {
     positions.push(selected[i].position);
     if (selected[i].selectedSkills.length > 0) {
       techStacks = [...techStacks, ...selected[i].selectedSkills];
     } else {
       techStacks = [];
-      return alert('기술스택 선택을 완료해주세요.');
+      stackNotSelected = true;
     }
   }
+
+  let goto = null;
+  switch (true) {
+    case userInfo.author === '': {
+      errorToast('오류 : 유저 로그인 정보가 없습니다.');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.recruit_type === '': {
+      errorToast('모집 구분 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.recruit_count === '': {
+      errorToast('모집 인원 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.recruit_deadline === null: {
+      errorToast('모집 마감일 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.on_offline === '': {
+      errorToast('진행 방식 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.start_date === null: {
+      errorToast('진행 기간 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.end_date === null: {
+      errorToast('진행 기간 선택을 완료해주세요(종료 날짜가 선택되지 않았습니다)');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.call_method === '': {
+      errorToast('연락 방법 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.call_link === '': {
+      errorToast('연락처 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
+    case selected.length === 0: {
+      errorToast('포지션 선택을 완료해주세요.');
+      goto = scrollRefs[0];
+      break;
+    }
+    case stackNotSelected: {
+      errorToast('기술스택 선택을 완료해주세요.');
+      goto = scrollRefs[0];
+      break;
+    }
+    case userInfo.title === '': {
+      errorToast('글 제목 작성을 완료해주세요');
+      goto = scrollRefs[1];
+      break;
+    }
+    case userInfo.body === '': {
+      errorToast('글 내용 작성을 완료해주세요');
+      goto = scrollRefs[1];
+      break;
+    }
+    default:
+      break;
+  }
+  if (goto) {
+    return window.scrollTo(0, goto);
+  }
+
   const setTechStacks = new Set(techStacks);
   techStacks = [...setTechStacks];
 
-  const resultUserInfo = { ...userInfo, post_img_path: filePath };
-  console.log(resultUserInfo, positions, techStacks);
+  const resultUserInfo = {
+    ...userInfo,
+    saved_position_and_stacks: JSON.stringify(positionAndSkills),
+    post_img_path: filePath,
+  };
 
-  await postCreatePost(resultUserInfo, positions, techStacks);
-  alert('전송완료!');
+  if (postId) {
+    await putUpdatePost(resultUserInfo, positions, techStacks, postId);
+    successToast('게시글 수정이 완료되었습니다.');
+    return baseModalStore.showModal(afterPostModalObj.modify);
+  } else {
+    await postCreatePost(resultUserInfo, positions, techStacks);
+    successToast('게시글에 등록되었습니다.');
+    return baseModalStore.showModal(afterPostModalObj.edit);
+  }
 };

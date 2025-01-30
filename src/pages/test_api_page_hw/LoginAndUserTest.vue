@@ -7,7 +7,6 @@ import {
   signOut,
 } from '@/api/supabase/auth';
 import {
-  getPostLike,
   getPostLikes,
   getUserBookmarks,
   getUserBookmarksWithDetails,
@@ -15,15 +14,17 @@ import {
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
+
 import {
-  addPostComment,
   deletePostComment,
   getCommentsByPost,
   updatePostComment,
 } from '@/api/supabase/new_comment';
+import { isUserPostAuthor } from '@/api/supabase/post_editor';
 import {
   getAllUserInfo,
   getUserInfo,
+  getUserInfoTest,
   getUserInfoToUserId,
   postUserInfoOnboard,
   putUserInfo,
@@ -127,6 +128,11 @@ onMounted(async () => {
   </div>
 
   <div>
+    <button @click="getUserInfoTest()">유저 정보 가져오기 함수 시용 버전전</button>
+    <p>{{ userInfo }}</p>
+  </div>
+
+  <div>
     <button @click="getUserInfoToUserIdHandler('5cc3999c-3150-4072-a824-5d5ddeb3e381')">
       특정 유저 정보 가져오기
     </button>
@@ -189,6 +195,12 @@ onMounted(async () => {
 
   <div>
     <button @click="deletePostComment(93, 23)">댓글 삭제하기</button>
+  </div>
+
+  <h2 class="text-[30px] font-bold my-5">포스트 테스트</h2>
+
+  <div>
+    <button @click="isUserPostAuthor(92)">내 포스트 게시글인지 확인하기</button>
   </div>
 </template>
 

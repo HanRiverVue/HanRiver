@@ -43,7 +43,7 @@ const signInProviders = [
       class="relative flex flex-col justify-center items-center bg-secondary-2 rounded-[20px] w-[500px] h-[540px]"
       @click.stop
     >
-      <CancelIcon className=" absolute top-7 right-7 w-6 h-6" @click="closeLoginModal" />
+      <CancelIcon class="absolute top-7 right-7 w-6 h-6" @click="closeLoginModal" />
       <div class="px-[22px]">
         <img :src="logo" alt="mergi 로고 아이콘" class="min-w-[96px]" />
       </div>
@@ -62,7 +62,7 @@ const signInProviders = [
           @click="signInProvider.onClick"
         >
           <img :src="signInProvider.icon" :alt="signInProvider.name" />
-          {{ signInProvider.name }}
+          <div class="body-r text-gray-70">{{ signInProvider.name }}</div>
         </button>
       </div>
     </div>

@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { getUserInfo, putUserInfo } from '@/api/supabase/user';
 import { postUploadUserImage } from '@/api/supabase/imageUpload';
+import { DEFAULT_PROFILE_IMAGE_URL } from '@/constants';
 
 const router = useRouter();
 const profileStore = useProfileStore();
@@ -39,6 +40,11 @@ const handleSubmit = async () => {
   if (typeof newProfile.profile_img_path === 'object') {
     const uploadedImage = await postUploadUserImage(newProfile.profile_img_path);
     newProfile.profile_img_path = uploadedImage;
+  }
+
+  // 이미지가 없을 때 기본 이미지로 변경
+  if (newProfile.profile_img_path === '') {
+    newProfile.profile_img_path = DEFAULT_PROFILE_IMAGE_URL;
   }
 
   const res = await putUserInfo(newProfile, newPositions);

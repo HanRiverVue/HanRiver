@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-  className: {
+  class: {
     type: String,
     default: 'w-6 h-6',
   },
@@ -14,7 +14,7 @@ const props = defineProps({
     height="100%"
     viewBox="0 0 24 24"
     fill="none"
-    :class="props.className"
+    :class="props.class"
     role="img"
     aria-hidden="true"
   >

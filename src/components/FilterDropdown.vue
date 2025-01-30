@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
     <!-- 셀렉트 박스 버튼 -->
     <button :class="selectBoxButtonStyle" @click="handleDropdownClick">
       <span>{{ selectedItem || defaultText }}</span>
-      <img :src="dropdown_arrow_icon" alt="드롭다운 화살표" class="w-6 h-6" />
+      <img :src="dropdown_arrow_icon" alt="드롭다운 화살표" class="w-5 h-5" />
     </button>
 
     <!-- 드롭다운 메뉴 -->

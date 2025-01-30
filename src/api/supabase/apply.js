@@ -1,10 +1,18 @@
 import { supabase } from '@/config/supabase';
-import { getPostDetails, getPostPositions, getPostTechStacks } from './post';
+import { getPostDetails } from './post';
 import { getUserInfo } from './user';
 
 // 신청하기 함수
-const postApplication = async (postId, postTitle, hostId) => {
+export const postApplication = async (postId) => {
+  console.log('postId in postApplication:', postId);
   try {
+    // 게시물 상세 정보 가져오기 (postId만 사용)
+    const postDetails = await getPostDetails(postId);
+    if (!postDetails) {
+      console.error('게시물 정보를 가져올 수 없습니다.');
+      return;
+    }
+
     // 현재 로그인한 사용자 정보 가져오기
     const {
       data: { user },
@@ -17,12 +25,17 @@ const postApplication = async (postId, postTitle, hostId) => {
     }
 
     // 이미 신청했는지 확인
-    const { data: existingApplication } = await supabase
+    const { data: existingApplication, error: fetchError } = await supabase
       .from('post_apply_list')
       .select()
       .eq('proposer_id', user.id)
       .eq('post_id', postId)
-      .single();
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('신청 확인 중 오류 발생:', fetchError.message);
+      return;
+    }
 
     if (existingApplication) {
       console.error('이미 신청한 게시물입니다.');
@@ -30,27 +43,28 @@ const postApplication = async (postId, postTitle, hostId) => {
     }
 
     // 사용자 프로필에서 이름 가져오기
-    const { data: userProfile } = await supabase
-      .from('user_profiles')
+    const { data: userList } = await supabase
+      .from('user_list')
       .select('name')
       .eq('user_id', user.id)
       .single();
 
-    const proposerName = userProfile?.name || '이름 없음';
+    const proposerName = userList?.name || '이름 없음';
 
     const userInfo = await getUserInfo();
-    const userPositions = userInfo.positions.map((item) => item.position).join('/');
+    const userPositions = userInfo.positions.map((item) => item.position);
+    console.log('userPositions:', userPositions);
 
     // 신청 데이터 생성
     const { data, error } = await supabase
       .from('post_apply_list')
       .insert([
         {
-          host_id: hostId,
+          host_id: postDetails.author,
           proposer_id: user.id,
           post_id: postId,
           proposer_name: proposerName,
-          post_title: postTitle,
+          post_title: postDetails.title,
           accepted: false,
           finished: false,
           proposer_positions: userPositions,
@@ -63,7 +77,7 @@ const postApplication = async (postId, postTitle, hostId) => {
       return;
     }
 
-    // console.log('신청이 완료되었습니다:', data);
+    console.log('신청이 완료되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 처리 중 오류 발생:', error);
@@ -71,7 +85,7 @@ const postApplication = async (postId, postTitle, hostId) => {
 };
 
 // 신청 취소 함수
-const deleteApplication = async (postId) => {
+export const deleteApplication = async (postId) => {
   try {
     const {
       data: { user },
@@ -103,7 +117,7 @@ const deleteApplication = async (postId) => {
 };
 
 // 내가 신청한 목록
-const getMyApplicationsList = async () => {
+export const getMyApplicationsList = async () => {
   try {
     const {
       data: { user },
@@ -125,15 +139,16 @@ const getMyApplicationsList = async () => {
       return;
     }
 
-    // post_apply_list 정보 + 해당 post 상세정보
-    const newData = data.map(async (item) => {
-      const postId = item.post_id;
-      const post = await getPostDetails(postId);
-      const positionArr = item.proposer_positions.split('/');
-      return { ...item, proposer_positions: positionArr, ...post };
-    });
+    // 비동기 처리를 위해 Promise.all 사용
+    const newData = await Promise.all(
+      data.map(async (item) => {
+        const postId = item.post_id;
+        const post = await getPostDetails(postId);
+        const positionArr = item.proposer_positions.split('/');
+        return { ...item, proposer_positions: positionArr, ...post };
+      }),
+    );
 
-    // console.log('내가 신청한 목록:', newData);
     return newData;
   } catch (error) {
     console.error('내가 신청한 목록 처리 중 오류 발생:', error);
@@ -141,7 +156,7 @@ const getMyApplicationsList = async () => {
 };
 
 // 내가 작성한 글에 대한 신청 목록
-const getApplicationsForMyPosts = async () => {
+export const getApplicationsForMyPosts = async () => {
   try {
     const {
       data: { user },
@@ -155,7 +170,9 @@ const getApplicationsForMyPosts = async () => {
 
     const { data, error } = await supabase
       .from('post_apply_list')
-      .select('proposer_name, proposer_id, post_id, post_title, accepted, finished')
+      .select(
+        'created_at, proposer_name, proposer_id, proposer_positions, post_id, post_title, accepted, finished',
+      )
       .eq('host_id', user.id);
 
     if (error) {
