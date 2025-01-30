@@ -38,7 +38,7 @@ const dropDownHide = () => {
     </svg>
     <article
       v-if="dropDown"
-      class="absolute bottom-[-10px] rounded-md bg-primary-4 w-[50px] h-4.5 flex items-center justify-center"
+      class="absolute bottom-[-27px] rounded-md bg-primary-4 w-[50px] h-4.5 flex items-center justify-center"
     >
       <span class="caption-r text-white">알림</span>
     </article>
