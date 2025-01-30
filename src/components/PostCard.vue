@@ -45,10 +45,6 @@ const remainingPositionCount = computed(() =>
   Math.max(props.position.length - MAX_VISIBLE_POSITIONS, 0),
 );
 
-onMounted(async () => {
-  await userStore.setUserPostLikes();
-});
-
 // 좋아요 및 북마크 상태 결정
 const isLiked = computed(() => userPostLikes.value?.includes(props.id) ?? false);
 const isBookmarked = computed(() => user.value?.bookmarks?.includes(props.id) ?? false);
