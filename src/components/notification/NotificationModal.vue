@@ -7,7 +7,7 @@ import UnWatchedNotifications from './UnWatchedNotifications.vue';
 import { useNotificationModalStore } from '@/stores/notificaionModal';
 import { AllMarkAsSeen } from '@/api/supabase/notifications';
 import { storeToRefs } from 'pinia';
-
+//
 const notificationModalStore = useNotificationModalStore();
 const { notifications } = storeToRefs(notificationModalStore);
 
