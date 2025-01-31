@@ -1,23 +1,19 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
-import { addPostComment, getCommentsByPost } from '@/api/supabase/new_comment';
 import { getUserLoggedIn } from '@/api/supabase/auth';
-import AppButton from '@/components/AppButton.vue';
-import DropdownMenu from '@/components/DropdownMenu.vue';
 import PostApplyList from './components/PostApplyList.vue';
 import PostSideBar from './components/PostSideBar.vue';
 import { deleteApplication, postApplication } from '@/api/supabase/apply';
 import { supabase } from '@/config/supabase';
+import PostComment from './components/PostComment.vue';
 
 const route = useRoute();
 const postId = ref(route.params.postId);
 const postDetails = ref(null);
 const loading = ref(true);
 const error = ref(null);
-const comments = ref([]);
-const newComment = ref('');
 const currentUserId = ref(null);
 const isAuthor = ref(false);
 const isApplicantsPage = ref(false);
@@ -62,65 +58,6 @@ const handleCloseRecruitment = () => {
   console.log('모집 마감하기 버튼 클릭');
 };
 
-// 드롭다운 항목 정의
-const dropdownItems = [
-  { label: '댓글 수정하기', action: () => console.log('댓글 수정하기') },
-  { label: '댓글 삭제하기', action: () => console.log('댓글 삭제하기') },
-];
-
-// 드롭다운 상태 토글 함수
-const toggleDropdown = (commentId) => {
-  comments.value.forEach((comment) => {
-    if (comment.id !== commentId) {
-      comment.isDropdownOpen = false;
-    }
-  });
-
-  const comment = comments.value.find((c) => c.id === commentId);
-  if (comment) {
-    comment.isDropdownOpen = !comment.isDropdownOpen;
-  }
-};
-
-// 드롭다운 외부 클릭 감지 함수
-const handleClickOutside = (event) => {
-  const dropdownElements = document.querySelectorAll('.dropdown');
-  const isClickInside = Array.from(dropdownElements).some((el) => el.contains(event.target));
-
-  if (!isClickInside) {
-    comments.value = comments.value.map((comment) => ({
-      ...comment,
-      isDropdownOpen: false,
-    }));
-  }
-};
-
-// 댓글 등록 처리
-const handleSubmitComment = async () => {
-  try {
-    if (!newComment.value.trim()) {
-      console.warn('댓글 내용이 비어있습니다.');
-      return;
-    }
-
-    // 댓글 등록 요청
-    const result = await addPostComment(postId.value, newComment.value);
-    console.log('댓글 등록 성공:', result);
-
-    // 댓글 입력란 초기화
-    newComment.value = '';
-
-    // 추가적으로 댓글 목록 갱신 로직 (필요시)
-    const updatedComments = await getCommentsByPost(postId.value);
-    comments.value = updatedComments.map((comment) => ({
-      ...comment,
-      isDropdownOpen: false,
-    }));
-  } catch (error) {
-    console.error('댓글 등록 실패:', error);
-  }
-};
-
 onMounted(async () => {
   try {
     const user = await getUserLoggedIn();
@@ -136,38 +73,14 @@ onMounted(async () => {
       throw new Error('게시글을 불러오는 데 실패했습니다.');
     }
   } catch (err) {
-    // 에러 메시지 처리
     error.value = err.message || '데이터를 불러오는 데 실패했습니다.';
   } finally {
     loading.value = false;
   }
 });
 
-onMounted(async () => {
-  try {
-    // postId 유효성 검사
-    if (!postId.value) {
-      throw new Error('유효하지 않은 postId입니다.');
-    }
-
-    // 댓글 데이터 가져오기
-    const commentData = await getCommentsByPost(postId.value);
-
-    // 댓글 데이터 가공
-    comments.value = commentData.map((comment) => ({
-      ...comment,
-      isDropdownOpen: false,
-    }));
-  } catch (err) {
-    console.error(err);
-    error.value = '댓글을 불러오는 데 실패했습니다.';
-  } finally {
-    loading.value = false;
-  }
-});
-
 watchEffect(async () => {
-  if (!postId.value || !currentUserId.value) return; // postId 또는 currentUserId가 없으면 실행 X
+  if (!postId.value || !currentUserId.value) return;
 
   try {
     const { data, error } = await supabase
@@ -183,13 +96,6 @@ watchEffect(async () => {
   } catch (err) {
     console.error('신청 상태 확인 오류:', err);
   }
-});
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
 });
 </script>
 
@@ -254,66 +160,7 @@ onUnmounted(() => {
         <hr class="my-10 text-gray-10" />
 
         <!-- 댓글 작성 및 목록 -->
-        <div class="space-y-6">
-          <!-- 댓글 작성 영역 -->
-          <div class="flex flex-col items-start gap-2">
-            <div class="flex-1 font-bold">
-              <span class="text-base text-gray-80">{{ comments.length }}개의 댓글</span>
-            </div>
-            <div class="w-full">
-              <textarea
-                v-model="newComment"
-                placeholder="댓글을 입력해주세요"
-                class="text-sm w-full p-2 border rounded-md focus:outline-none focus:ring focus:ring-primary-4"
-                rows="3"
-                maxlength="100"
-              ></textarea>
-              <div class="flex justify-between items-center">
-                <span class="text-xs text-gray-500 mb-10">{{ newComment.length }}/100</span>
-                <div class="flex justify-end mb-8">
-                  <AppButton
-                    text="댓글 등록"
-                    type="primary"
-                    class="w-[72px] h-[28px]"
-                    @click="handleSubmitComment"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 댓글 목록 -->
-          <div class="space-y-6">
-            <div
-              v-for="(comment, index) in comments"
-              :key="comment.id"
-              class="grid grid-cols-[auto,1fr,auto] gap-4"
-            >
-              <!-- 유저 프로필 및 닉네임 -->
-              <div class="flex items-center col-start-1 col-span-3">
-                <img
-                  :src="comment.commenter_image_path"
-                  alt="프로필 이미지"
-                  class="w-10 h-10 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <p class="font-semibold text-gray-800">{{ comment.commenter_name }}</p>
-                  <p class="text-sm text-gray-500">{{ formatDate(comment.created_at) }}</p>
-                </div>
-              </div>
-
-              <!-- 댓글 내용 -->
-              <div class="col-start-1 col-span-3">
-                <p class="text-gray-700">{{ comment.content }}</p>
-              </div>
-
-              <!-- 구분선 -->
-              <template v-if="index < comments.length - 1">
-                <hr class="border-t border-gray-300 w-full col-span-3" />
-              </template>
-            </div>
-          </div>
-        </div>
+        <PostComment v-model:error="error" v-model:loading="loading" />
       </div>
     </div>
     <!-- 오른쪽 고정 박스 -->

@@ -1,4 +1,5 @@
 import { supabase } from '@/config/supabase';
+import { getUserInfo } from './user';
 
 // 알림을 삽입하는 함수
 const insertNotification = async (receiverId, senderId, postId, type, message) => {
@@ -32,26 +33,26 @@ const createLikeOrApplyNotification = async (userId, postId, notificationType) =
   await insertNotification(userId, userId, postId, notificationType, message);
 };
 
-// 알림 목록을 가져오는 함수
-const getNotifications = async (userId) => {
-  try {
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('receiver_id', userId) // 사용자의 알림만 가져오기
-      .order('created_at', { ascending: false }); // 생성일 기준으로 내림차순 정렬
+// // 알림 목록을 가져오는 함수 (승현님이 만드신거)
+// const getNotifications = async (userId) => {
+//   try {
+//     const { data, error } = await supabase
+//       .from('notifications')
+//       .select('*')
+//       .eq('receiver_id', userId) // 사용자의 알림만 가져오기
+//       .order('created_at', { ascending: false }); // 생성일 기준으로 내림차순 정렬
 
-    if (error) {
-      throw error;
-    }
+//     if (error) {
+//       throw error;
+//     }
 
-    // console.log('알림 목록:', data);
-    return data;
-  } catch (error) {
-    console.error('알림을 가져오는 중 오류 발생:', error);
-    return [];
-  }
-};
+//     // console.log('알림 목록:', data);
+//     return data;
+//   } catch (error) {
+//     console.error('알림을 가져오는 중 오류 발생:', error);
+//     return [];
+//   }
+// };
 
 // 알림 생성 핸들러
 export const insertNotificationHandle = async (receiverId, senderId, postId, type, message) => {
@@ -71,4 +72,73 @@ export const createLikeOrApplyNotificationHandle = async (userId, postId, notifi
 // 알림 목록을 가져오는 핸들러
 export const getNotificationsHandle = async (userId) => {
   return await getNotifications(userId);
+};
+
+export const getNotifications = async () => {
+  const user = await getUserInfo();
+
+  const { data, error } = await supabase
+    .from('notifications')
+    .select()
+    .eq('user_id', user.user_id)
+    .order('created_at', { ascending: false });
+  if (error) {
+    console.error(error);
+  }
+  return data;
+};
+
+// 새로운 알림 구독 (실시간 반영)
+export const subscribeToNotifications = (addNotifications, setHasNewNotificationTrue) => {
+  return supabase
+    .channel('notifications')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'notifications' },
+      (payload) => {
+        console.log('새로운 알림 도착!', payload.new);
+        addNotifications(payload.new);
+        setHasNewNotificationTrue();
+      },
+    )
+    .subscribe();
+};
+
+// 알림 읽음 처리
+export const markAsSeen = async (id, notifications, hasNewNoti) => {
+  // db에 업데이트
+  await supabase.from('notifications').update({ seen: true }).eq('id', id);
+
+  notifications = notifications.map((noti) => (noti.id === id ? { ...noti, seen: true } : noti));
+
+  const data = await getNotifications();
+  const result = data.filter((item) => !item.seen);
+  if (result.length === 0) hasNewNoti = false;
+  else hasNewNoti = true;
+};
+
+export const markAsChecked = async (id) => {
+  try {
+    await supabase.from('notifications').update({ checked: true }).eq('id', id);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export const AllMarkAsSeen = async (notifications) => {
+  notifications.forEach(async (notification) => {
+    if (notification.seen === false) {
+      await supabase.from('notifications').update({ seen: true }).eq('id', notification.id);
+    }
+  });
+};
+
+export const AllMarkAsChecked = async (notifications) => {
+  notifications.forEach(async (notification) => {
+    if (notification.checked === false) {
+      await supabase.from('notifications').update({ checked: true }).eq('id', notification.id);
+    }
+  });
 };
