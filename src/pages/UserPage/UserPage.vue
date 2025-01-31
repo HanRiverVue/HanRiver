@@ -26,7 +26,7 @@ const userId = useRoute().params.userId;
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
-onMounted(() => {
+onMounted(async () => {
   fetchUserinfo();
 
   // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
@@ -36,6 +36,9 @@ onMounted(() => {
     return;
   }
   activeIndex.value = parseInt(route.query.tabIndex);
+
+  // 사용자 좋아요 업데이트
+  await userStore.setUserPostLikes();
 });
 
 const fetchUserinfo = async () => {

@@ -14,12 +14,14 @@ import { useRoute } from 'vue-router';
 import LoadingPage from '../LoadingPage.vue';
 import InitFilterButton from './components/InitFilterButton.vue';
 import { usePagination } from '@/utils/usePagination';
+import { useUserStore } from '@/stores/user';
 
 const positionFilterList = ['전체', ...POSITION];
 const regionFilterList = ['전체', ...REGION];
 const methodFilterList = ['전체', ...METHOD];
 const recruitmentStatusFilterList = ['전체', ...RECRUITMENT_STATUS];
 
+const userStore = useUserStore();
 const route = useRoute();
 
 // 현재 포스트 유형(ex. 프로젝트, 스터디)
@@ -37,8 +39,11 @@ watch(
   { flush: 'sync' },
 );
 
-onMounted(() => {
+onMounted(async () => {
   fetchPostsWithPagination();
+
+  // 사용자 좋아요 업데이트
+  await userStore.setUserPostLikes();
 });
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기

@@ -38,6 +38,11 @@ onMounted(async () => {
   loading.value = false;
 });
 
+// 사용자 좋아요 업데이트
+onMounted(async () => {
+  await userStore.setUserPostLikes();
+});
+
 // 탭의 인덱스 변경
 const handleUpdateIndex = (index = 0) => {
   activeIndex.value = index;
