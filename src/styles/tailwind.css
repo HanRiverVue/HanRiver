@@ -70,7 +70,7 @@
   }
 
   .scroll-arrow {
-    @apply absolute top-1/2 -translate-y-1/2 bg-[rgba(75, 175, 255, 0.7)] text-white border-none rounded-full w-10 h-10 text-xl cursor-pointer z-10 transition-colors duration-300 ease-in-out;
+    @apply absolute top-1/2 -translate-y-1/2 bg-[rgba(75,175,255,0.7)] text-white border-none rounded-full w-10 h-10 text-xl cursor-pointer z-10 transition-colors duration-300 ease-in-out;
   }
 
   .scroll-arrow:hover {
