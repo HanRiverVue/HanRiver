@@ -1,5 +1,6 @@
 import { supabase } from '@/config/supabase';
 import { getUserInfo } from './user';
+import { storeToRefs } from 'pinia';
 
 // 알림을 삽입하는 함수
 const insertNotification = async (receiverId, senderId, postId, type, message) => {
@@ -95,10 +96,16 @@ export const subscribeToNotifications = (addNotifications, setHasNewNotification
     .on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'notifications' },
-      (payload) => {
-        console.log('새로운 알림 도착!', payload.new);
-        addNotifications(payload.new);
-        setHasNewNotificationTrue();
+      async (payload) => {
+        const { useUserStore } = await import('@/stores/user');
+        const userStore = useUserStore();
+        const { user } = storeToRefs(userStore);
+
+        if (payload.new.user_id === user.value.user_id) {
+          console.log('새로운 알림 도착!', payload.new);
+          addNotifications(payload.new);
+          setHasNewNotificationTrue();
+        }
       },
     )
     .subscribe();
