@@ -182,6 +182,7 @@ const handleInitFilter = () => {
     <section v-if="filteredPosts.length > 0" class="grid grid-cols-4 gap-7 mb-12 w-full">
       <PostCard
         v-for="(item, index) in filteredPosts"
+        :user_id="item.author"
         :key="index"
         :id="item.id"
         :userImage="item.profile_img_path"

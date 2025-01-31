@@ -10,7 +10,8 @@ import { usePagination } from '@/utils/usePagination';
 import { supabase } from '@/config/supabase';
 
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
-
+// queryClient.invalidateQueries({ queryKey: [키 값] })
+// const queryClient = useQueryClient()
 const router = useRouter();
 
 onMounted(async () => {
@@ -37,9 +38,14 @@ const {
   refetch,
   handleChangePage,
   handleUpdateFilter,
-} = usePagination(fetchMyApplyPostsWithPagination, 'filteredApplyPosts', {
-  status: '',
-});
+} = usePagination(
+  fetchMyApplyPostsWithPagination,
+  'filteredApplyPosts',
+  {
+    status: '',
+  },
+  false,
+);
 
 const handleGetStatus = (status) => {
   handleUpdateFilter({ status });
@@ -64,7 +70,7 @@ const subscribeCancelPostApply = async () => {
   <!-- 로딩중일 때 -->
   <LoadingPage v-if="isLoading" class="w-32 h-32" />
 
-  <div v-else class="flex flex-col gap-5 px-4">
+  <div v-else class="flex flex-col gap-5 px-6">
     <!-- 드롭다운 -->
     <div class="max-w-[126px] ml-auto">
       <FilterDropdown
@@ -75,33 +81,41 @@ const subscribeCancelPostApply = async () => {
       />
     </div>
     <!-- 목록이 있을때  -->
-    <div v-if="filteredPosts?.length > 0" class="flex flex-col justify-center gap-5">
-      <!-- 신청 목록 -->
-      <div class="flex flex-wrap items-center gap-y-10 justify-between">
-        <LargePostCard
-          class="cursor-pointer"
-          v-for="(post, index) in filteredPosts"
-          :key="index"
-          v-if="
-            filteredPosts.status === '전체' ||
-            !filteredPosts.status ||
-            filteredPosts.status === '수락 완료'
-          "
-          :post-id="post.id"
-          :project-title="post.title"
-          :skills="post.techStack"
-          :position="post.position"
-          :application-deadline="post.recruit_deadline"
-          :status="post.accepted ? 'success' : post.finished ? 'done' : 'warning'"
-          @click="router.push(`/RecruitPostDetail/${post.post_id}`)"
-        />
+    <div v-if="filteredPosts?.length > 0" class="flex flex-col gap-7">
+      <div class="flex flex-col justify-center gap-6">
+        <!-- 신청 목록 -->
+        <div class="flex flex-wrap items-center gap-7">
+          <LargePostCard
+            class="cursor-pointer"
+            v-for="(post, index) in filteredPosts"
+            :key="index"
+            v-if="
+              filteredPosts.status === '전체' ||
+              !filteredPosts.status ||
+              filteredPosts.status === '수락 완료'
+            "
+            :post-id="post.id"
+            :project-title="post.title"
+            :skills="post.techStack"
+            :position="post.position"
+            :application-deadline="post.recruit_deadline"
+            :status="post.accepted ? 'success' : post.finished ? 'done' : 'warning'"
+            @click="router.push(`/RecruitPostDetail/${post.post_id}`)"
+          />
+        </div>
       </div>
+      <PostPagination
+        :currentPage="currentPage"
+        :totalPage="totalPage"
+        @change="handleChangePage"
+        class="m-auto"
+      />
     </div>
 
     <!-- 목록이 없을 때 -->
     <div
       v-else-if="filteredPosts?.length === 0"
-      class="flex flex-col justify-center items-center gap-5 flex-1 h-[600px]"
+      class="h-[400px] flex flex-col gap-4 items-center justify-center"
     >
       <p class="text-center text-primary-4 h3-b">아직 신청한 글이 없습니다.</p>
       <button
@@ -111,12 +125,6 @@ const subscribeCancelPostApply = async () => {
         신청하러 가볼까요?
       </button>
     </div>
-    <PostPagination
-      :currentPage="currentPage"
-      :totalPage="totalPage"
-      @change="handleChangePage"
-      class="m-auto"
-    />
   </div>
 </template>
 <style scoped></style>
