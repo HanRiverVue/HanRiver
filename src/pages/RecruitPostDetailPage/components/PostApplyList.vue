@@ -1,10 +1,12 @@
 <script setup>
-import AppButton from '@/components/AppButton.vue';
 import { ref, onMounted } from 'vue';
-import { getApplicationsForMyPosts, getMyApplicationsList } from '@/api/supabase/apply';
+import { useRoute } from 'vue-router';
+import AppButton from '@/components/AppButton.vue';
+import { getApplicationsForMyPosts } from '@/api/supabase/apply';
 import { supabase } from '@/config/supabase';
 
-const postId = 92;
+const route = useRoute();
+const postId = ref(route.params.postId);
 const applications = ref([]);
 const loading = ref(true);
 const error = ref(null);
@@ -21,7 +23,7 @@ const formatDate = (dateString) => {
 const loadApplications = async () => {
   try {
     loading.value = true;
-    const data = await getApplicationsForMyPosts();
+    const data = await getApplicationsForMyPosts(postId.value);
     if (data) {
       applications.value = data;
     }
@@ -51,14 +53,14 @@ const handleAccept = async (proposerId) => {
       .from('post_apply_list')
       .update({ accepted: true })
       .eq('proposer_id', proposerId)
-      .eq('post_id', postId);
+      .eq('post_id', postId.value);
 
     if (error) {
       console.error('수락 처리 실패:', error.message);
       return;
     }
     console.log(`${proposerId}번 신청자를 수락했습니다.`);
-    await loadApplications(); // 새로고침
+    await loadApplications();
   } catch (err) {
     console.error('수락 처리 중 오류 발생:', err);
   }
@@ -71,7 +73,7 @@ const handleReject = async (proposerId) => {
       .from('post_apply_list')
       .update({ finished: true })
       .eq('proposer_id', proposerId)
-      .eq('post_id', postId);
+      .eq('post_id', postId.value);
 
     if (error) {
       console.error('거절 처리 실패:', error.message);

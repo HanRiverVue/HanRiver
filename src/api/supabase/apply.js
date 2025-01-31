@@ -149,7 +149,7 @@ export const getMyApplicationsList = async () => {
 };
 
 // 내가 작성한 글에 대한 신청 목록
-export const getApplicationsForMyPosts = async () => {
+export const getApplicationsForMyPosts = async (postId) => {
   try {
     const {
       data: { user },
@@ -166,14 +166,14 @@ export const getApplicationsForMyPosts = async () => {
       .select(
         'created_at, proposer_name, proposer_id, proposer_positions, post_id, post_title, accepted, finished',
       )
-      .eq('host_id', user.id);
+      .eq('host_id', user.id)
+      .eq('post_id', postId);
 
     if (error) {
       console.error('내가 작성한 글에 대한 신청 목록 가져오기 실패:', error.message);
       return;
     }
 
-    // console.log('내가 작성한 글에 대한 신청 목록:', data);
     return data;
   } catch (error) {
     console.error('내가 작성한 글에 대한 신청 목록 처리 중 오류 발생:', error);
