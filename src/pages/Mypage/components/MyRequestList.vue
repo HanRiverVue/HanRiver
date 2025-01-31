@@ -7,17 +7,19 @@ import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import { getMyApplyPosts } from '@/api/supabase/post';
 import { usePagination } from '@/utils/usePagination';
+import { supabase } from '@/config/supabase';
 
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
 
 const router = useRouter();
 
 onMounted(async () => {
-  fetMyApplyPostsWithPagination();
+  await fetchMyApplyPostsWithPagination();
+  await subscribeCancelPostApply();
 });
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
-const fetMyApplyPostsWithPagination = async () => {
+const fetchMyApplyPostsWithPagination = async () => {
   return await getMyApplyPosts(
     {
       status: selectedFilter.value.status,
@@ -26,21 +28,36 @@ const fetMyApplyPostsWithPagination = async () => {
     4,
   );
 };
-
 const {
   isLoading,
   filteredPosts,
   currentPage,
   totalPage,
   selectedFilter,
+  refetch,
   handleChangePage,
   handleUpdateFilter,
-} = usePagination(fetMyApplyPostsWithPagination, 'filteredApplyPosts', {
+} = usePagination(fetchMyApplyPostsWithPagination, 'filteredApplyPosts', {
   status: '',
 });
 
 const handleGetStatus = (status) => {
   handleUpdateFilter({ status });
+};
+
+// post_apply_list  구독(delete시)
+const subscribeCancelPostApply = async () => {
+  return supabase
+    .channel('cancel-apply-channel')
+    .on(
+      'postgres_changes',
+      { event: 'DELETE', schema: 'public', table: 'post_apply_list' },
+      (payload) => {
+        console.log('신청 취소 변경 감지됨!', payload);
+        refetch();
+      },
+    )
+    .subscribe();
 };
 </script>
 <template>
@@ -76,7 +93,7 @@ const handleGetStatus = (status) => {
           :position="post.position"
           :application-deadline="post.recruit_deadline"
           :status="post.accepted ? 'success' : post.finished ? 'done' : 'warning'"
-          @click="router.push(`/RecruitPostDetail/${post.id}`)"
+          @click="router.push(`/RecruitPostDetail/${post.post_id}`)"
         />
       </div>
     </div>
@@ -88,7 +105,7 @@ const handleGetStatus = (status) => {
     >
       <p class="text-center text-primary-4 h3-b">아직 신청한 글이 없습니다.</p>
       <button
-        @click="router.push('/editrecruitpost')"
+        @click="router.push('/PostList/project')"
         class="bg-primary-3 text-white rounded-lg body-large-m py-2 px-6"
       >
         신청하러 가볼까요?

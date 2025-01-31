@@ -12,8 +12,10 @@ export const usePagination = (fetchData, queryKey, filters = {}) => {
   // 필터링
   const selectedFilter = ref(filters);
 
+  const queryKeys = computed(() => [queryKey, selectedFilter.value, currentPage.value]);
+
   const { isLoading, data, refetch } = useQuery({
-    queryKey: [queryKey, selectedFilter.value, currentPage.value],
+    queryKey: queryKeys,
     queryFn: fetchData,
     staleTime: 1000 * 60 * 5, // 유통기한
     gcTime: 1000 * 60 * 5,
@@ -24,22 +26,23 @@ export const usePagination = (fetchData, queryKey, filters = {}) => {
   // 필터링 적용시
   watch(selectedFilter, () => {
     currentPage.value = 1;
+    refetch();
   });
 
   // 페이지 전환시
   const handleChangePage = (page) => {
     currentPage.value = page;
-    refetch();
+    // refetch();
   };
 
   //  필터링 업데이트 함수
   const handleUpdateFilter = (newFilter) => {
     selectedFilter.value = { ...selectedFilter.value, ...newFilter };
-    refetch();
   };
 
   return {
     isLoading,
+    refetch,
     filteredPosts,
     currentPage,
     totalPage,

@@ -64,7 +64,10 @@ if (props.status === 'success') {
 </script>
 
 <template>
-  <div class="w-[522px] p-6 rounded-lg text-gray-80 input-shadow" @click="$emit('click')">
+  <div
+    class="w-[522px] p-6 rounded-lg text-gray-80 input-shadow hover:card-shadow"
+    @click="$emit('click')"
+  >
     <!-- 제목 & 상태   -->
     <div class="flex justify-between items-center mb-[14px]">
       <p class="body-large-b text-gray-80 line-clamp-3">
