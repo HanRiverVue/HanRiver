@@ -29,12 +29,6 @@ const handleEditProfile = () => {
 };
 
 onMounted(async () => {
-  // edit에서 넘어온 경우 완료되었다는 토스트 메시지 보여주기
-  if (history.state.isCompleteEdit) {
-    successToast('프로필 수정이 완료되었습니다.');
-    history.replaceState(null, '', location.href);
-  }
-
   // 탭의 갯수보다 큰 index 임의 조작시 0으로 강제 전환
   if (route.query.tabIndex > items.length || !route.query.tabIndex) {
     activeIndex.value = 0;
@@ -47,7 +41,14 @@ onMounted(async () => {
 
 // 사용자 좋아요 업데이트
 onMounted(async () => {
-  await userStore.setUserPostLikes();
+  // edit에서 넘어온 경우 완료되었다는 토스트 메시지 보여주기
+  if (history.state.isCompleteEdit) {
+    successToast('프로필 수정이 완료되었습니다.');
+    history.replaceState(null, '', location.href);
+    await userStore.refetchUserInfo();
+  } else {
+    await userStore.setUserPostLikes();
+  }
 });
 
 // 탭의 인덱스 변경
