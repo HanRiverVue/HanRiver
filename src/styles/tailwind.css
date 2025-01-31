@@ -10,6 +10,8 @@
   body {
     font-family: 'Pretendard', sans-serif;
     font-synthesis: none;
+    background-color: #fff;
+    color: #3B3B3B;
   }
 
   .card-shadow {
@@ -31,13 +33,13 @@
 
 @layer components {
   .primary-button {
-    @apply bg-primary-1 text-white border border-primary-1 rounded-md;
+    @apply text-white border rounded-md bg-primary-1 border-primary-1;
     @apply hover:bg-primary-hover hover:border-primary-hover disabled:bg-gray-30 disabled:border-gray-30;
     @apply transition-colors duration-200;
   }
 
   .secondary-button {
-    @apply bg-white text-primary-1 border border-primary-1 rounded-md;
+    @apply bg-white border rounded-md text-primary-1 border-primary-1;
     @apply hover:bg-white/50 disabled:bg-gray-30 disabled:text-white disabled:border-transparent;
     @apply transition-colors duration-200;
   }
