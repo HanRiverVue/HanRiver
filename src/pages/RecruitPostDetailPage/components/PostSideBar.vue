@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue';
+import { useBaseModalStore } from '@/stores/baseModal';
 import AppButton from '@/components/AppButton.vue';
 import ApplyModal from './ApplyModal.vue';
-import ConfirmModal from './ConfirmModal.vue';
 
 const props = defineProps({
   postDetails: Object,
@@ -16,12 +16,19 @@ const props = defineProps({
   isApplied: Boolean,
 });
 
+const baseModal = useBaseModalStore();
 const isApplyModalOpen = ref(false);
-const confirmCancel = ref(false);
 
 const openApplyModal = () => {
   if (props.isApplied) {
-    confirmCancel.value = true;
+    baseModal.showModal({
+      title: '신청 취소 확인',
+      confirmText: '확인',
+      cancelText: '취소',
+      onConfirm: () => {
+        props.handleApplyOrCancel(props.postDetails.id);
+      }
+    });
   } else {
     isApplyModalOpen.value = true;
   }
@@ -30,21 +37,10 @@ const openApplyModal = () => {
 const closeApplyModal = () => {
   isApplyModalOpen.value = false;
 };
-
-const handleCancelConfirm = () => {
-  props.handleApplyOrCancel(props.postDetails.id);
-  confirmCancel.value = false;
-};
-
-const handleCancelClose = () => {
-  confirmCancel.value = false;
-};
 </script>
 
 <template>
-  <div
-    class="flex w-full md:w-[350px] bg-secondary-3 rounded-lg shadow-lg p-4 sticky top-[80px] md:shrink-0"
-  >
+ <div class="flex w-full md:w-[350px] bg-secondary-3 rounded-lg shadow-lg p-4 sticky top-[80px] md:shrink-0">
     <div v-if="loading">
       <p>로딩 중...</p>
     </div>
@@ -128,18 +124,11 @@ const handleCancelClose = () => {
     </div>
   </div>
 
-  <ConfirmModal
-    v-if="confirmCancel"
-    message="신청을 취소하시겠습니까?"
-    @confirm="handleCancelConfirm"
-    @close="handleCancelClose"
+<ApplyModal
+    v-if="postDetails"
+    :isOpen="isApplyModalOpen"
+    :postId="postDetails.id"
+    @apply="(postId, selectedPositions) => handleApplyOrCancel(postId, selectedPositions)"
+    @close="closeApplyModal"
   />
-
-  <ApplyModal
-  v-if="postDetails"
-  :isOpen="isApplyModalOpen"
-  :postId="postDetails.id"
-  @apply="(postId, selectedPositions) => handleApplyOrCancel(postId, selectedPositions)"
-  @close="closeApplyModal"
-/>
 </template>
