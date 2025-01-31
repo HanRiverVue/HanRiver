@@ -38,7 +38,6 @@ const completeOnboarding = () => {
   sessionStorage.removeItem('to');
 };
 
-// 온보딩 이탈
 onBeforeMount(() => {
   sessionStorage.setItem('to', '/Onboard');
 });
