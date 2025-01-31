@@ -41,6 +41,9 @@ export default {
         jalnan: ['yg-jalnan', 'sans-serif'],
         pretendard: ['Pretendard', 'sans-serif'],
       },
+      dropShadow: {
+        'post-editor-shadow': '0 0 8px rgba(0, 0, 0, 0.11)',
+      },
     },
   },
   plugins: [],
