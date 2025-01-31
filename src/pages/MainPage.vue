@@ -10,17 +10,6 @@ import pencil from '@/assets/images/pencil.png';
 import search from '@/assets/images/search.png';
 import talk from '@/assets/images/talk.png';
 import MainSmallBanner from '@/components/MainSmallBanner.vue';
-import { onMounted } from 'vue';
-import { getUserInfo } from '@/api/supabase/user';
-import { useRouter } from 'vue-router';
-const router = useRouter();
-
-onMounted(async () => {
-  const user = await getUserInfo();
-  if (!user) {
-    router.push('/Onboard');
-  }
-});
 
 const postCardData = {
   userImage: PostcardUserImage,

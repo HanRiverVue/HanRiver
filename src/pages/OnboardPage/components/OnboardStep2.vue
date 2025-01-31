@@ -94,7 +94,6 @@ const HandlePostUserInfoOnboard = () => {
   const userPositions = props.registerData.userPositions;
 
   console.log('전송', JSON.stringify(userProfile, null, 2), JSON.stringify(userPositions, null, 2));
-  // TODO: 전송
   postUserInfoOnboard(userProfile, userPositions);
   emit('completeOnboarding');
 };

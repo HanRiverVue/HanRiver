@@ -151,7 +151,7 @@ const nextStep = () => {
               :value="localRegisterData.name"
               placeholder="닉네임"
               :maxLength="MAX_NICKNAME_LENGTH"
-              className="pr-2 py-2"
+              class="py-2 pr-2"
               @input="handleNickNameInput"
             >
               <template #rightIcon>
