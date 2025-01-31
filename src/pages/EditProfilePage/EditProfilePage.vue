@@ -10,6 +10,7 @@ import { useProfileStore } from '@/stores/profile';
 import { getUserInfo, putUserInfo } from '@/api/supabase/user';
 import { postUploadUserImage } from '@/api/supabase/imageUpload';
 import { DEFAULT_PROFILE_IMAGE_URL } from '@/constants';
+import { errorToast } from '@/utils/toast';
 
 const router = useRouter();
 const profileStore = useProfileStore();
@@ -29,7 +30,12 @@ const handleCancel = () => {
 const handleSubmit = async () => {
   // 닉네임 중복 체크 여부 확인해야 함
   if (!profileStore.isCheckNickname) {
-    alert('닉네임 중복 확인을 해주세요.');
+    errorToast('닉네임 중복 확인을 해주세요.');
+    return;
+  }
+
+  if (profileStore.shortIntroduction.trim() === '') {
+    errorToast('한 줄 소개를 입력해주세요.');
     return;
   }
 
@@ -48,7 +54,13 @@ const handleSubmit = async () => {
   }
 
   const res = await putUserInfo(newProfile, newPositions);
-  if (res) router.push('/MyPage');
+  if (res) {
+    router.push({
+      path: '/MyPage',
+      query: { tabIndex: 0 },
+      state: { isCompleteEdit: true },
+    });
+  }
 };
 
 onMounted(() => {
@@ -58,10 +70,10 @@ onMounted(() => {
 
 <template>
   <form class="flex flex-col gap-10 pt-12 pb-20" @submit.prevent="handleSubmit">
-    <section class="p-6 card-shadow rounded-lg bg-white">
+    <section class="p-6 bg-white rounded-lg card-shadow">
       <DefaultInformation />
     </section>
-    <section class="bg-white card-shadow p-6 gap-11 flex flex-col rounded-lg">
+    <section class="flex flex-col p-6 bg-white rounded-lg card-shadow gap-11">
       <ProfileIntroduction />
       <ProfileLinks />
       <ProfilePositions />
