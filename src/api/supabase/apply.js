@@ -3,28 +3,26 @@ import { getPostDetails } from './post';
 import { getUserInfo } from './user';
 
 // 신청하기 함수
-export const postApplication = async (postId) => {
+export const postApplication = async (postId, selectedPositions) => {
   console.log('postId in postApplication:', postId);
+  console.log('Selected Positions:', selectedPositions);
+
   try {
-    // 게시물 상세 정보 가져오기 (postId만 사용)
     const postDetails = await getPostDetails(postId);
     if (!postDetails) {
       console.error('게시물 정보를 가져올 수 없습니다.');
       return;
     }
 
-    // 현재 로그인한 사용자 정보 가져오기
     const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
-
     if (userError) {
       console.error('사용자 정보 가져오기 실패:', userError.message);
       return;
     }
 
-    // 이미 신청했는지 확인
     const { data: existingApplication, error: fetchError } = await supabase
       .from('post_apply_list')
       .select()
@@ -42,7 +40,6 @@ export const postApplication = async (postId) => {
       return;
     }
 
-    // 사용자 프로필에서 이름 가져오기
     const { data: userList } = await supabase
       .from('user_list')
       .select('name')
@@ -50,10 +47,6 @@ export const postApplication = async (postId) => {
       .single();
 
     const proposerName = userList?.name || '이름 없음';
-
-    const userInfo = await getUserInfo();
-    const userPositions = userInfo.positions.map((item) => item.position);
-    console.log('userPositions:', userPositions);
 
     // 신청 데이터 생성
     const { data, error } = await supabase
@@ -67,7 +60,7 @@ export const postApplication = async (postId) => {
           post_title: postDetails.title,
           accepted: false,
           finished: false,
-          proposer_positions: userPositions,
+          proposer_positions: selectedPositions,
         },
       ])
       .select();

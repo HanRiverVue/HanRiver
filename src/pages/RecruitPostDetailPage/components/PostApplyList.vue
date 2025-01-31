@@ -24,7 +24,6 @@ const loadApplications = async () => {
     const data = await getApplicationsForMyPosts();
     if (data) {
       applications.value = data;
-      console.log('신청 목록:', data); // 추가한 부분
     }
   } catch (err) {
     error.value = '신청 목록을 불러오는 데 실패했습니다.';

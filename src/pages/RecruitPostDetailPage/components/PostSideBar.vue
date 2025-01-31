@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import AppButton from '@/components/AppButton.vue';
+import ApplyModal from './ApplyModal.vue';
+import ConfirmModal from './ConfirmModal.vue';
 
 const props = defineProps({
   postDetails: Object,
@@ -13,6 +15,30 @@ const props = defineProps({
   handleApplyOrCancel: Function,
   isApplied: Boolean,
 });
+
+const isApplyModalOpen = ref(false);
+const confirmCancel = ref(false);
+
+const openApplyModal = () => {
+  if (props.isApplied) {
+    confirmCancel.value = true;
+  } else {
+    isApplyModalOpen.value = true;
+  }
+};
+
+const closeApplyModal = () => {
+  isApplyModalOpen.value = false;
+};
+
+const handleCancelConfirm = () => {
+  props.handleApplyOrCancel(props.postDetails.id);
+  confirmCancel.value = false;
+};
+
+const handleCancelClose = () => {
+  confirmCancel.value = false;
+};
 </script>
 
 <template>
@@ -94,11 +120,26 @@ const props = defineProps({
               :text="isApplied ? '신청 취소' : '참여 신청'"
               :type="isApplied ? 'secondary' : 'primary'"
               class="w-[294px] h-11 mt-6"
-              @click="handleApplyOrCancel(postDetails.id)"
+              @click="openApplyModal"
             />
           </template>
         </div>
       </div>
     </div>
   </div>
+
+  <ConfirmModal
+    v-if="confirmCancel"
+    message="신청을 취소하시겠습니까?"
+    @confirm="handleCancelConfirm"
+    @close="handleCancelClose"
+  />
+
+  <ApplyModal
+  v-if="postDetails"
+  :isOpen="isApplyModalOpen"
+  :postId="postDetails.id"
+  @apply="(postId, selectedPositions) => handleApplyOrCancel(postId, selectedPositions)"
+  @close="closeApplyModal"
+/>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
 import { addPostComment, getCommentsByPost } from '@/api/supabase/new_comment';
@@ -9,6 +9,7 @@ import DropdownMenu from '@/components/DropdownMenu.vue';
 import PostApplyList from './components/PostApplyList.vue';
 import PostSideBar from './components/PostSideBar.vue';
 import { deleteApplication, postApplication } from '@/api/supabase/apply';
+import { supabase } from '@/config/supabase';
 
 const route = useRoute();
 const postId = ref(route.params.postId);
@@ -30,17 +31,15 @@ const formatDate = (dateString) => {
   return `${year}년 ${month}월 ${day}일`;
 };
 
-const handleApplyOrCancel = async (postId) => {
+const handleApplyOrCancel = async (postId, selectedPositions) => {
   try {
     if (isApplied.value) {
-      // 이미 신청한 상태일 경우 신청 취소
       await deleteApplication(postId);
-      isApplied.value = false; // 신청 상태를 취소로 변경
+      isApplied.value = false;
       console.log('신청이 취소되었습니다.');
     } else {
-      // 신청하지 않은 상태일 경우 신청하기
-      await postApplication(postId);
-      isApplied.value = true; // 신청 상태로 변경
+      await postApplication(postId, selectedPositions);
+      isApplied.value = true;
       console.log('신청이 완료되었습니다.');
     }
   } catch (error) {
@@ -52,7 +51,6 @@ const handleApplyOrCancel = async (postId) => {
 const handleViewApplicants = () => {
   isApplicantsPage.value = true;
   console.log('참여 신청자 목록 조회 버튼 클릭');
-  // 실제 참여자 목록을 조회하는 로직 추가
 };
 
 const handleBackToPost = () => {
@@ -62,7 +60,6 @@ const handleBackToPost = () => {
 
 const handleCloseRecruitment = () => {
   console.log('모집 마감하기 버튼 클릭');
-  // 모집 마감 로직 추가
 };
 
 // 드롭다운 항목 정의
@@ -134,7 +131,6 @@ onMounted(async () => {
 
     if (postData && postData.id) {
       postDetails.value = postData;
-      console.log(postDetails.value);
       isAuthor.value = postData.author === currentUserId.value;
     } else {
       throw new Error('게시글을 불러오는 데 실패했습니다.');
@@ -169,40 +165,24 @@ onMounted(async () => {
     loading.value = false;
   }
 });
-onMounted(async () => {
+
+watchEffect(async () => {
+  if (!postId.value || !currentUserId.value) return; // postId 또는 currentUserId가 없으면 실행 X
+
   try {
-    const user = await getUserLoggedIn();
-    if (user) {
-      currentUserId.value = user.id;
-    }
+    const { data, error } = await supabase
+      .from('post_apply_list')
+      .select('id')
+      .eq('proposer_id', currentUserId.value)
+      .eq('post_id', postId.value)
+      .maybeSingle();
 
-    // 게시물 상세 정보 가져오기
-    const postData = await getPostDetails(postId.value);
-    if (postData && postData.id) {
-      postDetails.value = postData;
-      console.log(postDetails.value);
-      isAuthor.value = postData.author === currentUserId.value;
-      console.log(currentUserId.value);
+    if (error) throw error;
 
-      // 신청 여부 체크
-      const { data: existingApplication } = await supabase
-        .from('post_apply_list')
-        .select()
-        .eq('proposer_id', currentUserId.value) // 현재 로그인한 사용자의 ID와 비교
-        .eq('post_id', postId.value)
-        .single();
-
-      // 신청한 경우 isApplied를 true로 설정
-      isApplied.value = !!existingApplication;
-    } else {
-      throw new Error('게시글을 불러오는 데 실패했습니다.');
-    }
+    isApplied.value = !!data;
   } catch (err) {
-    error.value = err.message || '데이터를 불러오는 데 실패했습니다.';
-  } finally {
-    loading.value = false;
+    console.error('신청 상태 확인 오류:', err);
   }
-  console.log(isApplied.value);
 });
 
 onMounted(() => {
