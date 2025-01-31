@@ -10,15 +10,20 @@ import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
 import { toggleBookmark, toggleLike } from '@/api/supabase/like_and_bookmark';
 import { useLoginModalStore } from '@/stores/loginModal';
+import { useUserProfileModalStore } from '@/stores/userProfileModal';
 
 // 로그인 확인 여부
 const userStore = useUserStore();
-const { user, isLoggedIn } = storeToRefs(userStore);
+const { user, isLoggedIn, userPostLikes } = storeToRefs(userStore);
 
 // 로그인모달
 const loginModalStore = useLoginModalStore();
 
+// 유저프로필 모달
+const userProfileModalStore = useUserProfileModalStore();
+
 const props = defineProps({
+  user_id: String,
   id: Number,
   userImage: String,
   userName: String,
@@ -30,7 +35,7 @@ const props = defineProps({
 
 // 포스트
 const MAX_VISIBLE_SKILLS = 5;
-const MAX_VISIBLE_POSITIONS = 3;
+const MAX_VISIBLE_POSITIONS = 2;
 
 const visibleSkills = computed(() => props.skills.slice(0, MAX_VISIBLE_SKILLS));
 const remainingSkillsCount = computed(() => Math.max(props.skills.length - MAX_VISIBLE_SKILLS, 0));
@@ -41,7 +46,7 @@ const remainingPositionCount = computed(() =>
 );
 
 // 좋아요 및 북마크 상태 결정
-const isLiked = computed(() => user.value?.likes?.includes(props.id) ?? false);
+const isLiked = computed(() => userPostLikes.value?.includes(props.id) ?? false);
 const isBookmarked = computed(() => user.value?.bookmarks?.includes(props.id) ?? false);
 
 // 좋아요 토글
@@ -77,6 +82,18 @@ const handleToggleBookmark = async (event) => {
     console.error('Error toggling bookmark:', error);
   }
 };
+
+// 유저프로필 모달 클릭 핸들러
+const handleUserProfileImageClick = (event) => {
+  event.preventDefault();
+
+  if (props.user_id) {
+    userProfileModalStore.fetchModalUserProfile(props.user_id);
+    userProfileModalStore.setUserProfileModal(true);
+  } else {
+    console.error('User ID is undefined');
+  }
+};
 </script>
 
 <template>
@@ -86,8 +103,8 @@ const handleToggleBookmark = async (event) => {
     >
       <div class="mb-auto">
         <div class="flex justify-between mb-5">
-          <div class="flex items-center gap-2.5">
-            <div @click="handleUserProfileImageClick" class="w-[33px] h-[33px] bg-cover">
+          <div @click="handleUserProfileImageClick" class="flex items-center gap-2.5">
+            <div class="w-[33px] h-[33px] rounded-full overflow-hidden user-Profile-img-shadow">
               <img class="w-full h-full object-cover rounded-full" :src="userImage" alt="" />
             </div>
             <span class="body-large-b">{{ userName }}</span>

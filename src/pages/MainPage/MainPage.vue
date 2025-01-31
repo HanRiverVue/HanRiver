@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted } from 'vue';
 import mainBanner from '@/assets/images/main_banner.png';
 import MainSmallBanner from '@/pages/MainPage/components/MainSmallBanner.vue';
 import mainProjectBanner from '@/assets/images/main_project_banner.png';
@@ -7,14 +8,18 @@ import mainServiceBanner from '@/assets/images/main_service_banner.png';
 import pencil from '@/assets/images/pencil.png';
 import search from '@/assets/images/search.png';
 import talk from '@/assets/images/talk.png';
-import { ref, onMounted } from 'vue';
 import { getAllPosts } from '@/api/supabase/post';
-import PostSection from '@/pages/MainPage/components/PostSection.vue';
+import { useUserStore } from '@/stores/user';
+import SwipeablePostSection from '@/pages/MainPage/components/SwipeablePostSection.vue';
 
 const hotPosts = ref([]);
 const deadlinePosts = ref([]);
 const newPosts = ref([]);
 const isLoading = ref(true);
+
+// 포스트 카드 렌더링 상수
+const VISIBLE_POSTS = 4;
+const TOTAL_POSTS = 10;
 
 // 포스트 정렬
 const sortPosts = {
@@ -33,6 +38,7 @@ const fetchPosts = async () => {
       // 포스트 데이터 매핑 함수
       const mapPost = (post) => ({
         id: post.id,
+        user_id: post.author,
         userImage: post.profile_img_path,
         userName: post.name,
         projectTitle: post.title,
@@ -41,9 +47,9 @@ const fetchPosts = async () => {
         applicationDeadline: post.recruit_deadline,
       });
 
-      hotPosts.value = sortPosts.hot(data).slice(0, 4).map(mapPost);
-      deadlinePosts.value = sortPosts.deadline(data).slice(0, 4).map(mapPost);
-      newPosts.value = sortPosts.new(data).slice(0, 4).map(mapPost);
+      hotPosts.value = sortPosts.hot(data).slice(0, TOTAL_POSTS).map(mapPost);
+      deadlinePosts.value = sortPosts.deadline(data).slice(0, TOTAL_POSTS).map(mapPost);
+      newPosts.value = sortPosts.new(data).slice(0, TOTAL_POSTS).map(mapPost);
     } else {
       console.error('게시글을 불러오는데 실패했습니다', data);
     }
@@ -54,7 +60,16 @@ const fetchPosts = async () => {
   }
 };
 
-onMounted(fetchPosts);
+// 사용자 좋아요 업데이트
+const userStore = useUserStore();
+onMounted(async () => {
+  await userStore.setUserPostLikes();
+  console.log('좋아요 업데이트', userStore.userPostLikes);
+});
+
+onMounted(() => {
+  fetchPosts();
+});
 </script>
 
 <template>
@@ -96,24 +111,30 @@ onMounted(fetchPosts);
       />
     </div>
   </section>
-  <section v-if="!isLoading">
-    <PostSection
+  <section class="space-y-8">
+    <SwipeablePostSection
       title="Hot 인기있는 프로젝트"
       badgeText="인기있는"
       badgeStatus="success"
       :posts="hotPosts"
+      :visiblePosts="VISIBLE_POSTS"
+      :isLoading="isLoading"
     />
-    <PostSection
+    <SwipeablePostSection
       title="Now 곧 마감되는 프로젝트"
       badgeText="마감직전"
       badgeStatus="danger"
       :posts="deadlinePosts"
+      :visiblePosts="VISIBLE_POSTS"
+      :isLoading="isLoading"
     />
-    <PostSection
+    <SwipeablePostSection
       title="New 새로운 프로젝트"
       badgeText="새로운"
       badgeStatus="warning"
       :posts="newPosts"
+      :visiblePosts="VISIBLE_POSTS"
+      :isLoading="isLoading"
     />
   </section>
 </template>

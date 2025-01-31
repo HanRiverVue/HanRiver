@@ -363,3 +363,10 @@ export const checkDuplicateNickname = async (nickname) => {
 
   return data; // 중복이면 true, 중복이 아니면 false
 };
+
+// 내 사용자 유저정보 받아오기 테스트(잘 작동됨)
+export const getUserInfoTest = async () => {
+  const { data, error } = await supabase.rpc('get_user_info_test');
+  if (error) console.error(error);
+  else console.log(data);
+};

@@ -29,6 +29,9 @@
   .modal-button-shadow {
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.07);
   }
+  .user-Profile-img-shadow {
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  }
 }
 
 @layer components {
@@ -61,5 +64,28 @@
   }
   .dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-primary-4;
+  }
+  .swipe-container {
+    @apply overflow-x-hidden;
+  }
+
+  .scroll-arrow {
+    @apply absolute top-1/2 -translate-y-1/2 bg-[rgba(75, 175, 255, 0.7)] text-white border-none rounded-full w-10 h-10 text-xl cursor-pointer z-10 transition-colors duration-300 ease-in-out;
+  }
+
+  .scroll-arrow:hover {
+    @apply bg-[#4bafff];
+  }
+
+  .scroll-arrow img {
+    @apply w-[45px] filter invert-[100%] sepia-0 saturate-0 hue-rotate-[93deg] brightness-[103%] contrast-[103%];
+  }
+
+  .left-arrow {
+    @apply left-[-40px];
+  }
+
+  .right-arrow {
+    @apply right-[-40px];
   }
 }
