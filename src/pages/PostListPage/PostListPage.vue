@@ -11,36 +11,21 @@ import { ref, onMounted, computed, watch } from 'vue';
 import PostPagination from './components/PostPagination.vue';
 import { getAllPostsWithPagination } from '@/api/supabase/post';
 import { useRoute } from 'vue-router';
-import { useQuery } from '@tanstack/vue-query';
 import LoadingPage from '../LoadingPage.vue';
 import InitFilterButton from './components/InitFilterButton.vue';
+import { usePagination } from '@/utils/usePagination';
+import { useUserStore } from '@/stores/user';
 
 const positionFilterList = ['전체', ...POSITION];
 const regionFilterList = ['전체', ...REGION];
 const methodFilterList = ['전체', ...METHOD];
 const recruitmentStatusFilterList = ['전체', ...RECRUITMENT_STATUS];
 
+const userStore = useUserStore();
 const route = useRoute();
 
 // 현재 포스트 유형(ex. 프로젝트, 스터디)
 const currentPostType = computed(() => route.params.type);
-
-// 필터링 종류
-const selectedFilters = ref({
-  skills: [],
-  position: '',
-  recruitArea: '',
-  meetingMethod: '',
-  recruitStatus: '',
-  searchResults: '',
-});
-
-// 필터링된 게시물
-const filteredPosts = computed(() => data?.value?.data || []);
-
-// 현재 페이지, 전체 페이지
-const currentPage = ref(1);
-const totalPage = computed(() => data.value?.totalPage);
 
 // 검색 결과를 담을 게시물
 const searchInput = ref('');
@@ -49,88 +34,84 @@ const searchInput = ref('');
 watch(
   currentPostType,
   () => {
-    currentPage.value = 1;
-
-    selectedFilters.value.skills = [];
-    selectedFilters.value.position = '';
-    selectedFilters.value.recruitArea = '';
-    selectedFilters.value.meetingMethod = '';
-    selectedFilters.value.recruitStatus = '';
-    selectedFilters.value.searchResults = '';
-    refetch();
+    handleInitFilter();
   },
   { flush: 'sync' },
 );
 
-onMounted(() => {
+onMounted(async () => {
   fetchPostsWithPagination();
+
+  // 사용자 좋아요 업데이트
+  await userStore.setUserPostLikes();
 });
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchPostsWithPagination = async () => {
   return await getAllPostsWithPagination(
     {
-      position: selectedFilters.value.position,
-      techStack: selectedFilters.value.skills,
-      recruitArea: selectedFilters.value.recruitArea,
+      position: selectedFilter.value.position,
+      techStack: selectedFilter.value.skills,
+      recruitArea: selectedFilter.value.recruitArea,
       recruitType: currentPostType.value === 'project' ? '프로젝트' : '스터디',
-      onOffline: selectedFilters.value.meetingMethod,
+      onOffline: selectedFilter.value.meetingMethod,
       finished:
-        selectedFilters.value.recruitStatus === '모집중'
+        selectedFilter.value.recruitStatus === '모집중'
           ? false
-          : selectedFilters.value.recruitStatus === '모집완료'
+          : selectedFilter.value.recruitStatus === '모집완료'
           ? true
           : '',
-      searchResults: selectedFilters.value.searchResults,
+      searchResults: selectedFilter.value.searchResults,
     },
     currentPage.value,
   );
 };
 
-const { isLoading, data, refetch, error } = useQuery({
-  queryKey: ['filteredPosts', selectedFilters.value, currentPage.value],
-  queryFn: fetchPostsWithPagination,
-  staleTime: 1000 * 60 * 5, // 유통기한
-  gcTime: 1000 * 60 * 5,
-  // retry: 3, // 재시도 횟수
-  // retryDelay: 1000, // 재시도 텀
-  structuralSharing: true, // 변경되지않은 데이터 재사용
-  placeholderData: (prev) => prev, // 대기 상태때 표시해줄 데이터
+const {
+  isLoading,
+  filteredPosts,
+  currentPage,
+  totalPage,
+  selectedFilter,
+  handleChangePage,
+  handleUpdateFilter,
+} = usePagination(fetchPostsWithPagination, 'filteredPosts', {
+  skills: [],
+  position: '',
+  recruitArea: '',
+  meetingMethod: '',
+  recruitStatus: '',
+  searchResults: '',
 });
-
-// 필터링 적용시
-watch(selectedFilters, () => {
-  currentPage.value = 1;
-  refetch();
-});
-
-// 페이지 전환시
-const handleChangePage = (page) => {
-  currentPage.value = page;
-  refetch();
-};
 
 // 유형별 필터링 후 API 재호출
 const handleSelectSkill = (skill) => {
-  const index = selectedFilters.value.skills.findIndex((selectedSkill) => selectedSkill === skill);
-  if (index === -1) {
-    selectedFilters.value.skills.push(skill);
+  const skills = selectedFilter.value.skills;
+  const skillIndex = selectedFilter.value.skills.findIndex(
+    (selectedSkill) => selectedSkill === skill,
+  );
+  if (skillIndex === -1) {
+    skills.push(skill);
   } else {
-    selectedFilters.value.skills.splice(index, 1);
+    skills.splice(skillIndex, 1);
   }
 };
 const handleSelectPosition = (position) => {
-  selectedFilters.value.position = position;
+  handleUpdateFilter({ position });
 };
-const handleSelectRecruitArea = (area) => {
-  selectedFilters.value.recruitArea = area;
+const handleSelectRecruitArea = (recruitArea) => {
+  handleUpdateFilter({ recruitArea });
 };
-const handleSelectMeetingMethod = (method) => {
-  selectedFilters.value.meetingMethod = method;
+const handleSelectMeetingMethod = (meetingMethod) => {
+  handleUpdateFilter({ meetingMethod });
 };
 
-const handleSelectRecruitStatus = (status) => {
-  selectedFilters.value.recruitStatus = status;
+const handleSelectRecruitStatus = (recruitStatus) => {
+  handleUpdateFilter({ recruitStatus });
+};
+
+const handleInputSearch = (searchResults) => {
+  handleUpdateFilter({ searchResults });
 };
 
 //검색에 디바운싱 적용
@@ -138,73 +119,57 @@ let debounceTimeout;
 watch(searchInput, (newValue) => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
-    selectedFilters.value.searchResults = newValue;
+    handleUpdateFilter({ searchResults: newValue });
   }, 400);
   // });
-
-  // 검색에 쓰로틀링 적용
-  // let throttleTimeout;
-  // watch(searchInput, (newValue) => {
-  //   if (throttleTimeout) return;
-  //   clearTimeout(throttleTimeout);
-  //   throttleTimeout = setTimeout(() => {
-  //     selectedFilters.value.searchResults = newValue;
-  //     console.log(selectedFilters.value.searchResults);
-
-  //     throttleTimeout = null;
-  //   }, 300);
 });
-const handleInputSearch = (input) => {
-  searchInput.value = input;
-};
 
 // 필터링 초기화
 const handleInitFilter = () => {
   currentPage.value = 1;
-  selectedFilters.value.skills = [];
-  selectedFilters.value.position = '';
-  selectedFilters.value.recruitArea = '';
-  selectedFilters.value.meetingMethod = '';
-  selectedFilters.value.recruitStatus = '';
-  selectedFilters.value.searchResults = '';
-  refetch();
+  handleUpdateFilter({
+    skills: [],
+    position: '',
+    recruitArea: '',
+    meetingMethod: '',
+    recruitStatus: '',
+    searchResults: '',
+  });
 };
 </script>
 
 <template>
-  <div v-if="error">에러 발생: {{ error.message }}</div>
-
   <LoadingPage v-if="isLoading" />
   <div v-else class="pt-12 pb-20 flex flex-col items-center">
     <section class="flex justify-between gap-4 mb-6 w-full">
       <div class="flex gap-3 items-center">
         <SkillFilterDropdown
-          :selected="selectedFilters.skills"
+          :selected="selectedFilter.skills"
           class="w-[126px]"
           @selectSkill="handleSelectSkill"
         />
         <FilterDropdown
           :items="positionFilterList"
-          :selected="selectedFilters.position"
+          :selected="selectedFilter.position"
           defaultText="모집 포지션"
           @click:select="handleSelectPosition"
         />
         <FilterDropdown
           :items="regionFilterList"
-          :selected="selectedFilters.recruitArea"
+          :selected="selectedFilter.recruitArea"
           defaultText="지역"
           class="min-w-[136px]"
           @click:select="handleSelectRecruitArea"
         />
         <FilterDropdown
           :items="methodFilterList"
-          :selected="selectedFilters.meetingMethod"
+          :selected="selectedFilter.meetingMethod"
           defaultText="진행 방식"
           @click:select="handleSelectMeetingMethod"
         />
         <FilterDropdown
           :items="recruitmentStatusFilterList"
-          :selected="selectedFilters.recruitStatus"
+          :selected="selectedFilter.recruitStatus"
           defaultText="모집 상태"
           @click:select="handleSelectRecruitStatus"
         />

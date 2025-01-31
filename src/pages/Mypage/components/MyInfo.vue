@@ -15,6 +15,8 @@ const props = defineProps({
 });
 
 const positions = props.userInfo.positions;
+console.log(positions[0].stacks);
+
 const links = props.userInfo.link;
 console.log(links);
 

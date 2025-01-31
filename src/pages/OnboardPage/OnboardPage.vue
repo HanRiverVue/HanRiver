@@ -2,18 +2,12 @@
 import OnboardAside from './components/OnboardAside.vue';
 import OnboardStep1 from './components/OnboardStep1.vue';
 import OnboardStep2 from './components/OnboardStep2.vue';
-import { onUnmounted, reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref, watch } from 'vue';
 import OnboardingCompleteModal from './components/OnboardingCompleteModal.vue';
-import { signOut } from '@/api/supabase/auth';
-const step = ref(1); // 현재 온보딩 단계
-const maxPage = 2; // 최대 온보딩 단계
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 
-onUnmounted(async () => {
-  await signOut();
-  const user = await getUserLoggedIn();
-  if (user) return (isLogin.value = true);
-  else return (isLogin.value = false);
-});
+const step = ref(1); // 온보딩 단계
+const maxPage = 2; // 최대 온보딩 단계
 
 // 온보딩 데이터
 const registerData = reactive({
@@ -41,7 +35,13 @@ const prevStep = () => {
 // 온보딩 완료
 const completeOnboarding = () => {
   registerData.isComplete = true;
+  sessionStorage.removeItem('to');
 };
+
+// 온보딩 이탈
+onBeforeMount(() => {
+  sessionStorage.setItem('to', '/Onboard');
+});
 </script>
 
 <template>
