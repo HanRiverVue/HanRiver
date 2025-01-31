@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/user';
 import { signOut } from '@/api/supabase/auth';
 import { useNotificationModalStore } from '@/stores/notificaionModal';
 import { storeToRefs } from 'pinia';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { subscribeToNotifications } from '@/api/supabase/notifications';
 import { supabase } from '@/config/supabase';
 
@@ -18,6 +18,8 @@ const router = useRouter();
 const userStore = useUserStore();
 const notificationModalStore = useNotificationModalStore();
 const { notifications, hasNewNotification } = storeToRefs(notificationModalStore);
+
+const subscribeRef = ref({});
 
 const dropdownList = [
   {
@@ -30,9 +32,11 @@ const dropdownList = [
   {
     label: '로그아웃',
     action: () => {
+      subscribeRef.value.unsubscribe();
       signOut();
       userStore.user = null;
-      userStore.isLoggedIn = null;
+      userStore.isLoggedIn = false;
+      userStore.userPostLikes = [];
       router.push('/');
     },
   },
@@ -46,13 +50,13 @@ onMounted(async () => {
   if (result.length > 0) {
     notificationModalStore.setHasNewNotificationTrue();
   }
-  subscribeToNotifications(
+  subscribeRef.value = subscribeToNotifications(
     notificationModalStore.addNotifications,
     notificationModalStore.setHasNewNotificationTrue,
   );
 });
 onUnmounted(() => {
-  supabase.removeChannel('notifications');
+  subscribeRef.value.unsubscribe();
 });
 </script>
 
@@ -72,7 +76,7 @@ onUnmounted(() => {
         ></div>
       </button>
     </li>
-    <li class="flex flex-col justify-center items-end" ref="targetElement">
+    <li class="flex flex-col items-end justify-center" ref="targetElement">
       <DropdownButton>
         <template #trigger="{ toggleDropdown }">
           <button @click="toggleDropdown" class="flex">
