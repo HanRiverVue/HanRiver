@@ -1,38 +1,64 @@
 <script setup>
+import { getPostPositions } from '@/api/supabase/post';
 import PositionSelectButton from '@/components/PositionSelectButton.vue';
-import { reactive } from 'vue';
+import { ref, watch } from 'vue';
+
+const positions = ref([]);
+const selectedPositions = ref([]);
 
 const APPLY_LIMIT = 3;
 
-// TODO: 실제 사용 시, 게시글에서 모집 포지션 받아서 넣어야 함 (임시 데이터)
-const DUMMY_POSITIONS = ['PM', '디자인', '기획', '마케팅', '프론트엔드'];
-
-defineProps({
+const props = defineProps({
   isOpen: {
     type: Boolean,
     default: false,
   },
+  postId: {
+    type: Number,
+    required: true,
+  },
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['apply', 'close']);
 
-const selectedPositions = reactive([]);
+// 포지션 데이터 불러오기
+const fetchPositions = async () => {
+  if (!props.postId) return;
+
+  try {
+    const data = await getPostPositions(props.postId);
+    positions.value = data ?? [];
+  } catch (error) {
+    console.error('포지션 불러오기 실패:', error);
+  }
+};
+watch(
+  () => props.isOpen,
+  (newVal) => {
+    if (newVal) fetchPositions();
+  },
+);
 
 const togglePosition = (position) => {
-  const index = selectedPositions.indexOf(position);
+  const index = selectedPositions.value.indexOf(position);
   if (index === -1) {
-    if (selectedPositions.length >= APPLY_LIMIT) return;
-    selectedPositions.push(position);
+    if (selectedPositions.value.length >= APPLY_LIMIT) return;
+    selectedPositions.value.push(position);
   } else {
-    selectedPositions.splice(index, 1);
+    selectedPositions.value.splice(index, 1);
   }
 };
 
 const handleApply = () => {
-  // TODO: 신청하기 API 호출 하는 로직 어쩌구
+  if (!selectedPositions.value || selectedPositions.value.length === 0) {
+    alert('최소 1개의 포지션을 선택해주세요.');
+    return;
+  }
+  emit('apply', props.postId, selectedPositions.value);
   emit('close');
 };
 </script>
+
 <template>
   <div
     v-if="isOpen"
@@ -45,7 +71,7 @@ const handleApply = () => {
       </section>
       <section class="bg-white p-5 rounded-lg input-shadow grid grid-cols-3 gap-4">
         <PositionSelectButton
-          v-for="position in DUMMY_POSITIONS"
+          v-for="position in positions"
           :key="position"
           size="small"
           :isSelected="selectedPositions.includes(position)"
@@ -73,4 +99,3 @@ const handleApply = () => {
     </article>
   </div>
 </template>
-<style scoped></style>
