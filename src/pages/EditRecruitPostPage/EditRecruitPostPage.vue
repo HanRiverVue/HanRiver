@@ -45,9 +45,9 @@ const cancelPostModalObj = {
   onConfirm: handleCancelModalConfilm,
 };
 
-// 해당 포스트 게시글로 바로 이동시키기
-const handleAfterPostModalConfilm = () => {
-  router.push(`/PostList/study`);
+// 해당 포스트 게시글로 바로 이동시키기(sendData에서 데이터 받아줘야함)
+const handleAfterPostModalConfilm = (post_id) => {
+  router.push(`/RecruitPostDetail/${post_id}`);
 };
 const handleAfterModifyModalConfilm = () => {
   router.push(`/RecruitPostDetail/${route.params.postId}`);
@@ -144,7 +144,7 @@ watch(
       <EditDetailInfo v-model:userInfo="userInfo" />
     </article>
 
-    <article class="flex gap-2 justify-end">
+    <article class="flex justify-end gap-2">
       <AppButton
         type="default"
         text="취소"
