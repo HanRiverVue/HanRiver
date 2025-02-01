@@ -5,9 +5,9 @@ import FilterDropdown from '@/components/FilterDropdown.vue';
 import { useRouter } from 'vue-router';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
-import { getMyApplyPosts } from '@/api/supabase/post';
 import { usePagination } from '@/utils/usePagination';
 import { supabase } from '@/config/supabase';
+import { getMyApplyPosts } from '@/api/supabase/post';
 
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
 // queryClient.invalidateQueries({ queryKey: [키 값] })

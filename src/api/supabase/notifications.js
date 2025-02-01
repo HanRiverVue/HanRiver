@@ -77,7 +77,6 @@ export const getNotificationsHandle = async (userId) => {
 
 export const getNotifications = async () => {
   const user = await getUserInfo();
-  console.log(user);
 
   const { data, error } = await supabase
     .from('notifications')
