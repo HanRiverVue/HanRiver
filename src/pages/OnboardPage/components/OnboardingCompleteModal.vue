@@ -25,7 +25,7 @@ const props = defineProps({
           나중에 할게요
         </RouterLink>
         <RouterLink
-          :to="{ path: '/', replace: true }"
+          :to="{ path: '/EditProfile', replace: true }"
           class="flex justify-center items-center w-[179px] h-[45px] text-white rounded-lg body-r bg-primary-1 modal-button-shadow opacity-80"
         >
           네, 추가할게요
