@@ -9,6 +9,7 @@ import AppButton from '@/components/AppButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import { useBaseModalStore } from '@/stores/baseModal';
 import { useUserStore } from '@/stores/user';
+import { useUserProfileModalStore } from '@/stores/userProfileModal';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -142,6 +143,7 @@ const handleSubmitComment = async () => {
     // 댓글 추가정보 갱신 로직
     comments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
     formatComments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
+    console.log(comments);
   } catch (error) {
     console.error('댓글 등록 실패:', error);
   }
@@ -153,6 +155,17 @@ const formatDate = (dateString) => {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   return `${year}년 ${month}월 ${day}일`;
+};
+
+// 유저 프로필 모달 트리거
+const userProfileModalStore = useUserProfileModalStore();
+const openProfileModal = (user_id) => {
+  if (user_id) {
+    userProfileModalStore.fetchModalUserProfile(user_id);
+    userProfileModalStore.setUserProfileModal(true);
+  } else {
+    console.error('User ID is undefined');
+  }
 };
 
 onMounted(async () => {
@@ -221,7 +234,7 @@ onUnmounted(() => {
       <div v-for="(comment, index) in comments" :key="comment.id" class="flex flex-col gap-4">
         <!-- 유저 프로필 및 닉네임 -->
         <div class="flex items-center justify-between">
-          <div class="flex">
+          <div class="flex cursor-pointer" @click="openProfileModal(comment.comment_user_id)">
             <img
               :src="comment.commenter_image_path"
               alt="프로필 이미지"
