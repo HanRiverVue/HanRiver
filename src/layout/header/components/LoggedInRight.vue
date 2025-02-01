@@ -16,10 +16,13 @@ import { supabase } from '@/config/supabase';
 const router = useRouter();
 
 const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 const notificationModalStore = useNotificationModalStore();
 const { notifications, hasNewNotification } = storeToRefs(notificationModalStore);
 
 const subscribeRef = ref({});
+
+const user_img = user ? user.value.profile_img_path : default_user_img;
 
 const dropdownList = [
   {
@@ -80,7 +83,7 @@ onUnmounted(() => {
       <DropdownButton>
         <template #trigger="{ toggleDropdown }">
           <button @click="toggleDropdown" class="flex">
-            <img :src="default_user_img" alt="유저 기본 이미지 아이콘" class="w-10 rounded-full" />
+            <img :src="user_img" alt="유저 기본 이미지 아이콘" class="w-10 rounded-full" />
           </button>
         </template>
         <template #menu="{ isOpen, closeDropdown }">
