@@ -11,14 +11,6 @@ import { storeToRefs } from 'pinia';
 import { toggleBookmark, toggleLike } from '@/api/supabase/like_and_bookmark';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { useUserProfileModalStore } from '@/stores/userProfileModal';
-import { usePagination } from '@/utils/usePagination';
-
-// const queryClient = useQueryClient();
-// const postMutation = useMutation(fetchData, {
-//   onSuccess: () => {
-//     queryClient.invalidateQueries([queryKey]);
-//   },
-// });
 
 // 로그인 확인 여부
 const userStore = useUserStore();
