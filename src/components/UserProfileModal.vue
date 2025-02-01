@@ -4,6 +4,7 @@ import { useUserProfileModalStore } from '@/stores/userProfileModal';
 import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
+import { useUserStore } from '@/stores/user';
 
 const userProfileModalStore = useUserProfileModalStore();
 const { userProfileModal, userInfo, isLoading, error } = storeToRefs(userProfileModalStore);
@@ -14,6 +15,8 @@ const { DEFAULT_PROFILE_IMAGE_URL } = profileStore;
 const closeUserProfile = () => {
   userProfileModalStore.setUserProfileModal(false);
 };
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 const handleUserPageClick = () => {
   closeUserProfile();
@@ -60,11 +63,22 @@ const handleUserPageClick = () => {
           </ul>
           <p class="body-large-r text-gray-80">{{ userInfo.short_introduce || '' }}</p>
         </div>
-        <RouterLink :to="`/UserPage/${userInfo.id}`" @click="handleUserPageClick">
+        <RouterLink
+          v-if="user.user_id !== userInfo.id"
+          :to="`/UserPage/${userInfo.id}`"
+          @click="handleUserPageClick"
+        >
           <button
             class="w-[300px] h-[45px] py-3 px-[10px] rounded-lg body-r text-white bg-primary-hover/80"
           >
             유저 페이지로 이동하기
+          </button>
+        </RouterLink>
+        <RouterLink v-else :to="`/mypage`" @click="handleUserPageClick">
+          <button
+            class="w-[300px] h-[45px] py-3 px-[10px] rounded-lg body-r text-white bg-primary-hover/80"
+          >
+            마이 페이지로 이동하기
           </button>
         </RouterLink>
       </template>
