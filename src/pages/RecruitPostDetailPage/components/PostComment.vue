@@ -78,6 +78,7 @@ const handleSendEditClick = async (index, comment_id, comment, post_id) => {
   try {
     await updatePostComment(comment_id, comment, post_id);
     comments[index].isEditable = false;
+    formatComments[index].content = comment;
   } catch (error) {
     console.error(error);
   }
@@ -92,6 +93,7 @@ const handleDeleteModalClick = (index) => {
       try {
         await deletePostComment(comments[index].comment_id, comments[index].post_id);
         comments.splice(index, 1);
+        formatComments.splice(index, 1);
       } catch (error) {
         console.error(error);
       }
@@ -139,6 +141,7 @@ const handleSubmitComment = async () => {
 
     // 댓글 추가정보 갱신 로직
     comments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
+    formatComments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
   } catch (error) {
     console.error('댓글 등록 실패:', error);
   }
