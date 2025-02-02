@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/user';
 import { signOut } from '@/api/supabase/auth';
 import { useNotificationModalStore } from '@/stores/notificaionModal';
 import { storeToRefs } from 'pinia';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { subscribeToNotifications } from '@/api/supabase/notifications';
 import { supabase } from '@/config/supabase';
 
@@ -22,7 +22,9 @@ const { notifications, hasNewNotification } = storeToRefs(notificationModalStore
 
 const subscribeRef = ref({});
 
-const user_img = user ? user.value.profile_img_path : default_user_img;
+const user_img = computed(() => {
+  return user?.value?.profile_img_path ? user.value.profile_img_path : default_user_img;
+});
 
 const dropdownList = [
   {
@@ -84,9 +86,9 @@ onUnmounted(() => {
         <template #trigger="{ toggleDropdown }">
           <button
             @click="toggleDropdown"
-            class="flex w-10 overflow-hidden rounded-full user-Profile-img-shadow"
+            class="flex w-10 h-10 rounded-full overflow-hidden user-Profile-img-shadow"
           >
-            <img :src="user_img" alt="유저 기본 이미지 아이콘" />
+            <img :src="user_img" alt="유저 기본 이미지 아이콘" class="object-cover origin-center" />
           </button>
         </template>
         <template #menu="{ isOpen, closeDropdown }">
