@@ -9,15 +9,20 @@ import { useUserStore } from '@/stores/user';
 import { signOut } from '@/api/supabase/auth';
 import { useNotificationModalStore } from '@/stores/notificaionModal';
 import { storeToRefs } from 'pinia';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { subscribeToNotifications } from '@/api/supabase/notifications';
 import { supabase } from '@/config/supabase';
 
 const router = useRouter();
 
 const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 const notificationModalStore = useNotificationModalStore();
 const { notifications, hasNewNotification } = storeToRefs(notificationModalStore);
+
+const subscribeRef = ref({});
+
+const user_img = user ? user.value.profile_img_path : default_user_img;
 
 const dropdownList = [
   {
@@ -30,9 +35,11 @@ const dropdownList = [
   {
     label: '로그아웃',
     action: () => {
+      subscribeRef.value.unsubscribe();
       signOut();
       userStore.user = null;
-      userStore.isLoggedIn = null;
+      userStore.isLoggedIn = false;
+      userStore.userPostLikes = [];
       router.push('/');
     },
   },
@@ -46,13 +53,13 @@ onMounted(async () => {
   if (result.length > 0) {
     notificationModalStore.setHasNewNotificationTrue();
   }
-  subscribeToNotifications(
+  subscribeRef.value = subscribeToNotifications(
     notificationModalStore.addNotifications,
     notificationModalStore.setHasNewNotificationTrue,
   );
 });
 onUnmounted(() => {
-  supabase.removeChannel('notifications');
+  subscribeRef.value.unsubscribe();
 });
 </script>
 
@@ -72,11 +79,14 @@ onUnmounted(() => {
         ></div>
       </button>
     </li>
-    <li class="flex flex-col justify-center items-end" ref="targetElement">
+    <li class="flex flex-col items-end justify-center" ref="targetElement">
       <DropdownButton>
         <template #trigger="{ toggleDropdown }">
-          <button @click="toggleDropdown" class="flex">
-            <img :src="default_user_img" alt="유저 기본 이미지 아이콘" class="w-10 rounded-full" />
+          <button
+            @click="toggleDropdown"
+            class="flex w-10 overflow-hidden rounded-full user-Profile-img-shadow"
+          >
+            <img :src="user_img" alt="유저 기본 이미지 아이콘" />
           </button>
         </template>
         <template #menu="{ isOpen, closeDropdown }">

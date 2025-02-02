@@ -49,10 +49,9 @@ const handleUserPageClick = () => {
             class="w-[120px] h-[120px] mb-[18px] rounded-full overflow-hidden user-Profile-img-shadow"
           >
             <img
-              class="w-full h-full object-cover rounded-full"
+              class="object-cover w-full h-full rounded-full"
               :src="userInfo.profile_img_path || DEFAULT_PROFILE_IMAGE_URL"
-              :alt="`${userInfo.userName}의 프로필
-            사진`"
+              :alt="`${userInfo.userName}의 프로필 사진`"
             />
           </div>
           <span class="mb-3 h2-b text-gray-80">{{ userInfo.name }}</span>

@@ -23,6 +23,13 @@ export const useUserStore = defineStore('user', () => {
     // console.log('확인', user.value);
   };
 
+  const refetchUserInfo = async () => {
+    // 의도적인 재요청
+    const userInfo = await getUserInfo();
+    if (userInfo === null) return;
+    user.value = userInfo;
+  };
+
   const setUserPostLikes = async () => {
     const res = await getUserPostLikes();
     if (res) {
@@ -52,9 +59,10 @@ export const useUserStore = defineStore('user', () => {
   return {
     user,
     isLoggedIn,
+    userPostLikes,
     checkLoginStatus,
     fetchUserInfo,
-    userPostLikes,
+    refetchUserInfo,
     setUserPostLikes,
     updateLikes,
     updateBookmarks,

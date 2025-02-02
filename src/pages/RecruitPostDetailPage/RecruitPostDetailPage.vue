@@ -121,7 +121,7 @@ watchEffect(async () => {
                 v-if="postDetails.user.profile_img_path"
                 :src="postDetails.user.profile_img_path"
                 alt="User Profile Image"
-                class="w-[33px] h-[33px] rounded-full"
+                class="w-[33px] h-[33px] rounded-full user-Profile-img-shadow"
               />
             </div>
             <div>
@@ -154,7 +154,7 @@ watchEffect(async () => {
         <div class="mb-8">
           <p
             v-html="postDetails.body"
-            class="text-gray-700 leading-relaxed whitespace-pre-wrap"
+            class="leading-relaxed text-gray-700 whitespace-pre-wrap"
           ></p>
         </div>
         <hr class="my-10 text-gray-10" />

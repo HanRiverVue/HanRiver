@@ -15,7 +15,6 @@
     "@supabase/supabase-js": "^2.47.16",
     "@tanstack/vue-query": "^5.64.2",
     "@vueuse/core": "^12.5.0",
-    "axios": "^1.7.9",
     "pinia": "^2.3.0",
     "primevue": "^4.2.5",
     "quill": "^2.0.3",
