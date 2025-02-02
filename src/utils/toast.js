@@ -36,7 +36,7 @@ export const infoToast = (text, options = {}) => {
 export const warningToast = (text, options = {}) => {
   toast.info(text, {
     autoClose: 3000,
-    position: warning.POSITION.TOP_RIGHT,
+    position: toast.POSITION.TOP_RIGHT,
     ...options,
   });
 };

@@ -3,6 +3,9 @@ import { ref, watch } from 'vue';
 import { useBaseModalStore } from '@/stores/baseModal';
 import AppButton from '@/components/AppButton.vue';
 import ApplyModal from './ApplyModal.vue';
+import { useLoginModalStore } from '@/stores/loginModal';
+import { useUserStore } from '@/stores/user';
+
 
 const props = defineProps({
   postDetails: Object,
@@ -19,7 +22,6 @@ const props = defineProps({
 const baseModal = useBaseModalStore();
 const isApplyModalOpen = ref(false);
 
-// isRecruitmentClosed가 props.postDetails?.finished와 동기화되도록 watch 추가
 const isRecruitmentClosed = ref(props.postDetails?.finished);
 
 watch(() => props.postDetails?.finished, (newValue) => {
@@ -27,22 +29,45 @@ watch(() => props.postDetails?.finished, (newValue) => {
 });
 
 const openApplyModal = () => {
+  const store = useLoginModalStore();
+  const storeUser = useUserStore();
+
   if (props.isApplied) {
     baseModal.showModal({
-      title: '신청 취소 확인',
-      confirmText: '확인',
-      cancelText: '취소',
+      title: '신청을 취소 하시겠어요?',
+      confirmText: '취소하기',
+      cancelText: '돌아가기',
       onConfirm: () => {
         props.handleApplyOrCancel(props.postDetails.id);
       }
     });
   } else {
-    isApplyModalOpen.value = true;
+    if (!storeUser.isLoggedIn) {
+      store.setLoginModal(true);
+    } else {
+      isApplyModalOpen.value = true;
+    }
   }
+};
+
+const openCloseRecruitmentModal = () => {
+  baseModal.showModal({
+    title: '모집을 마감하시겠어요?',
+    confirmText: '마감하기',
+    cancelText: '돌아가기',
+    onConfirm: () => {
+      handleCloseRecruitmentClick();
+    }
+  });
 };
 
 const closeApplyModal = () => {
   isApplyModalOpen.value = false;
+};
+
+const handleCloseRecruitmentClick = () => {
+  props.handleCloseRecruitment(props.postDetails.id);
+  isRecruitmentClosed.value = true;
 };
 </script>
 
@@ -111,18 +136,18 @@ const closeApplyModal = () => {
                 @click="props.handleBackToPost"
               />
               <AppButton
-  :text="isRecruitmentClosed ? '모집 마감됨' : '모집 마감하기'"
+  :text="isRecruitmentClosed ? '모집이 마감되었습니다' : '모집 마감하기'"
   :type="isRecruitmentClosed ? 'disabled' : 'secondary'"
   class="w-[294px] h-11 mt-3 text-[16px]"
   :disabled="isRecruitmentClosed"
-  @click="props.handleCloseRecruitment(props.postDetails.id)"
+  @click="openCloseRecruitmentModal"
 />
             </div>
           </template>
           <template v-else>
             <AppButton
-              :text="isRecruitmentClosed ? '모집 마감됨' : (props.isApplied ? '신청 취소' : '참여 신청')"
-              :type="isRecruitmentClosed ? 'disabled' : (props.isApplied ? 'secondary' : 'primary')"
+              :text="isRecruitmentClosed ? '모집이 마감되었습니다' : (props.isApplied ? '신청 취소' : '참여 신청')"
+              :type="isRecruitmentClosed ? 'disabled' : (props.isApplied ? 'cancel' : 'primary')"
               class="w-[294px] h-11 mt-6"
               @click="openApplyModal"
               :disabled="isRecruitmentClosed"

@@ -38,33 +38,32 @@ watch(
   },
   { flush: 'sync' },
 );
-
 onMounted(async () => {
-  fetchPostsWithPagination();
-
   // 사용자 좋아요 업데이트
   await userStore.setUserPostLikes();
+  fetchPostsWithPagination();
 });
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchPostsWithPagination = async () => {
-  return await getAllPostsWithPagination(
-    {
-      position: selectedFilter.value.position,
-      techStack: selectedFilter.value.skills,
-      recruitArea: selectedFilter.value.recruitArea,
-      recruitType: currentPostType.value === 'project' ? '프로젝트' : '스터디',
-      onOffline: selectedFilter.value.meetingMethod,
-      finished:
-        selectedFilter.value.recruitStatus === '모집중'
-          ? false
-          : selectedFilter.value.recruitStatus === '모집완료'
-          ? true
-          : '',
-      searchResults: selectedFilter.value.searchResults,
-    },
-    currentPage.value,
-  );
+  const params = {
+    position: selectedFilter.value.position,
+    stacks: selectedFilter.value.skills, // 기술 스택 필터
+    recruitArea: selectedFilter.value.recruitArea,
+    recruitType: currentPostType.value === 'project' ? '프로젝트' : '스터디',
+    onOffline: selectedFilter.value.meetingMethod,
+    finished:
+      selectedFilter.value.recruitStatus === '모집중'
+        ? false
+        : selectedFilter.value.recruitStatus === '모집완료'
+        ? true
+        : '',
+    searchResults: selectedFilter.value.searchResults,
+  };
+
+  const response = await getAllPostsWithPagination(params, currentPage.value);
+
+  return response;
 };
 
 const {
@@ -77,11 +76,11 @@ const {
   handleUpdateFilter,
 } = usePagination(fetchPostsWithPagination, 'filteredPosts', {
   skills: [],
-  position: '',
-  recruitArea: '',
-  meetingMethod: '',
-  recruitStatus: '',
-  searchResults: '',
+  position: null,
+  recruitArea: null,
+  meetingMethod: null,
+  recruitStatus: null,
+  searchResults: null,
 });
 
 // 유형별 필터링 후 API 재호출
@@ -95,23 +94,27 @@ const handleSelectSkill = (skill) => {
   } else {
     skills.splice(skillIndex, 1);
   }
+  handleUpdateFilter({ skills });
 };
 const handleSelectPosition = (position) => {
+  position = position === '전체' ? null : position;
   handleUpdateFilter({ position });
 };
 const handleSelectRecruitArea = (recruitArea) => {
+  recruitArea = recruitArea === '전체' ? null : recruitArea;
   handleUpdateFilter({ recruitArea });
 };
 const handleSelectMeetingMethod = (meetingMethod) => {
+  meetingMethod = meetingMethod === '전체' ? null : meetingMethod;
   handleUpdateFilter({ meetingMethod });
 };
-
 const handleSelectRecruitStatus = (recruitStatus) => {
+  recruitStatus = recruitStatus === '전체' ? null : recruitStatus;
   handleUpdateFilter({ recruitStatus });
 };
 
 const handleInputSearch = (searchResults) => {
-  handleUpdateFilter({ searchResults });
+  searchInput.value = searchResults;
 };
 
 //검색에 디바운싱 적용
@@ -120,7 +123,7 @@ watch(searchInput, (newValue) => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
     handleUpdateFilter({ searchResults: newValue });
-  }, 400);
+  }, 1000);
   // });
 });
 
@@ -182,12 +185,13 @@ const handleInitFilter = () => {
     <section v-if="filteredPosts.length > 0" class="grid grid-cols-4 gap-7 mb-12 w-full">
       <PostCard
         v-for="(item, index) in filteredPosts"
+        :user_id="item.author"
         :key="index"
         :id="item.id"
         :userImage="item.profile_img_path"
         :userName="item.name"
         :projectTitle="item.title"
-        :skills="item.techStacks"
+        :skills="item.tech_stacks"
         :position="item.positions"
         :applicationDeadline="item.recruit_deadline"
       />

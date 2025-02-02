@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted, watchEffect } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed, onMounted, watch, watchEffect } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 import PostApplyList from './components/PostApplyList.vue';
@@ -14,13 +14,21 @@ import bookmark from '@/assets/icons/bookmark.svg';
 import bookmarkFill from '@/assets/icons/bookmark_fill.svg';
 import { useUserStore } from '@/stores/user';
 import {
+  getLikeCount,
   getPostLikes,
   getUserBookmarks,
   toggleBookmark,
   toggleLike,
 } from '@/api/supabase/like_and_bookmark';
+import { getUserInfoToUserId } from '@/api/supabase/user';
+import { deletePost } from '@/api/supabase/post_editor';
+import { useBaseModalStore } from '@/stores/baseModal';
+import { errorToast, warningToast } from '@/utils/toast';
+import { useLoginModalStore } from '@/stores/loginModal';
+import { storeToRefs } from 'pinia';
 
 const route = useRoute();
+const router = useRouter();
 const postId = ref(route.params.postId);
 const postDetails = ref(null);
 const loading = ref(true);
@@ -30,12 +38,18 @@ const isAuthor = ref(false);
 const isApplicantsPage = ref(false);
 const isApplied = ref(false);
 const userStore = useUserStore();
+const likeCount = ref(0);
+const baseModal = useBaseModalStore();
 
-const userPostLikes = computed(() => userStore.userPostLikes);
-const userBookmarks = computed(() => userStore.user?.bookmarks || []);
+const { user, isLoggedIn, userPostLikes } = storeToRefs(userStore);
 
-const isLiked = computed(() => userPostLikes.value.includes(postId.value));
-const isBookmarked = computed(() => userBookmarks.value.includes(postId.value));
+const loginModalStore = useLoginModalStore();
+
+const authorInfo = ref(null);
+
+const props = defineProps({
+  id: Number,
+});
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -45,70 +59,161 @@ const formatDate = (dateString) => {
   return `${year}년 ${month}월 ${day}일`;
 };
 
-// 좋아요 및 북마크 토글
-const handleToggleLike = async () => {
-  await toggleLike(postId.value);
-  userStore.updateLikes(postId.value);
+const formatList = (arr) => {
+  if (!arr || arr.length === 0) return '없음';
+  return arr.length > 2 ? `${arr.slice(0, 2).join(', ')} 외 ${arr.length - 2}개` : arr.join(', ');
 };
 
-const handleToggleBookmark = async () => {
-  await toggleBookmark(postId.value);
-  userStore.updateBookmarks(postId.value);
-};
+// 좋아요 및 북마크 상태 결정
+const isLiked = computed(() => {
+  // userPostLikes가 변화할 때마다 상태를 재계산하도록 하기
+  return userPostLikes.value?.includes(props.id) ?? false;
+});
+const isBookmarked = computed(() => {
+  // user의 bookmarks가 변화할 때마다 상태를 재계산하도록 하기
+  return user.value?.bookmarks?.includes(props.id) ?? false;
+});
 
-// 사용자 정보 및 좋아요/북마크 상태 가져오기
-onMounted(async () => {
+// 좋아요 토글
+const handleToggleLike = async (event) => {
+  event.preventDefault();
+  if (!isLoggedIn.value) {
+    loginModalStore.setLoginModal(true);
+    return;
+  }
   try {
-    const user = await getUserLoggedIn();
-    if (user) {
-      currentUserId.value = user.id;
+    const result = await toggleLike(props.id);
+    if (result !== null) {
+      // 상태 갱신 후 userStore 업데이트
+      userStore.updateLikes(props.id);
     }
-    const postData = await getPostDetails(postId.value);
+  } catch (error) {
+    console.error('Error toggling like:', error);
+  }
+};
 
+// 북마크 토글
+const handleToggleBookmark = async (event) => {
+  event.preventDefault();
+  if (!isLoggedIn.value) {
+    loginModalStore.setLoginModal(true);
+    return;
+  }
+  try {
+    const result = await toggleBookmark(props.id);
+    if (result !== null) {
+      // 상태 갱신 후 userStore 업데이트
+      userStore.updateBookmarks(props.id);
+    }
+  } catch (error) {
+    console.error('Error toggling bookmark:', error);
+  }
+};
+
+const fetchPostData = async () => {
+  try {
+    loading.value = true;
+    const postData = await getPostDetails(postId.value);
     if (postData && postData.id) {
       postDetails.value = postData;
-      isAuthor.value = postData.author === currentUserId.value;
+      const userInfo = await getUserInfoToUserId(postData.author);
+      if (userInfo) {
+        authorInfo.value = userInfo;
+      }
     } else {
       throw new Error('게시글을 불러오는 데 실패했습니다.');
     }
-
-    await Promise.all([userStore.fetchUserInfo(), userStore.setUserPostLikes()]);
-
-    const postLikes = await getPostLikes(postId.value);
-    if (postLikes) {
-      userStore.updateLikes(postId.value);
-    }
-
-    const userBookmarks = await getUserBookmarks();
-    if (userBookmarks) {
-      userStore.updateBookmarks(postId.value);
-    }
   } catch (err) {
+    console.error('Error fetching post data:', err);
     error.value = err.message || '데이터를 불러오는 데 실패했습니다.';
   } finally {
     loading.value = false;
   }
+};
+onMounted(fetchPostData);
+
+// postId가 변경될 때 실행
+watch(postId, async (newPostId, oldPostId) => {
+  if (newPostId !== oldPostId) {
+    await fetchPostData();
+  }
+});
+
+watch(
+  () => route.params.postId,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      postId.value = newVal;
+      fetchPostData();
+    }
+  },
+  { immediate: true },
+);
+
+watchEffect(async () => {
+  try {
+    likeCount.value = await getLikeCount(postId.value);
+  } catch (err) {
+    console.error('좋아요 개수 조회 실패:', err);
+  }
+});
+
+watchEffect(() => {
+  if (postDetails.value && user.value) {
+    console.log('User ID:', user.value);
+    isAuthor.value = postDetails.value.author === user.value.user_id;
+  }
 });
 
 // 신청 상태 확인
-watchEffect(async () => {
-  if (!postId.value || !currentUserId.value) return;
+watch(
+  [postId, currentUserId],
+  async ([newPostId, newUserId]) => {
+    if (!newPostId || !newUserId) return;
 
+    try {
+      const { data, error } = await supabase
+        .from('post_apply_list')
+        .select('id')
+        .eq('proposer_id', newUserId)
+        .eq('post_id', newPostId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      isApplied.value = !!data;
+    } catch (err) {
+      console.error('신청 상태 확인 오류:', err);
+    }
+  },
+  { immediate: true },
+);
+
+watch();
+
+// 게시물 삭제
+const handleDeletePost = async () => {
   try {
-    const { data, error } = await supabase
-      .from('post_apply_list')
-      .select('id')
-      .eq('proposer_id', currentUserId.value)
-      .eq('post_id', postId.value)
-      .maybeSingle();
-
-    if (error) throw error;
-
-    isApplied.value = !!data;
-  } catch (err) {
-    console.error('신청 상태 확인 오류:', err);
+    await deletePost(postId.value);
+    warningToast('게시물을 삭제했습니다.');
+    router.push(`/`);
+  } catch (error) {
+    errorToast('게시글 삭제에 실패했습니다.');
+    console.error('게시글 삭제 오류:', error);
   }
-});
+};
+
+const openDeleteModal = () => {
+  baseModal.showModal({
+    title: '게시글 삭제 확인',
+    message: '정말 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.',
+    confirmText: '삭제',
+    cancelText: '취소',
+    onConfirm: async () => {
+      await handleDeletePost();
+    },
+  });
+};
 
 // 참여 신청/취소 처리
 const handleApplyOrCancel = async (postId, selectedPositions) => {
@@ -141,16 +246,14 @@ const handleBackToPost = () => {
 const handleCloseRecruitment = async (postId) => {
   try {
     const { data, error } = await supabase
-      .from('post') // 테이블 이름을 'post'로 수정
+      .from('post')
       .update({ finished: true })
       .eq('id', postId)
-      .select(); // 업데이트 후 데이터를 반환받기 위해 .select() 추가
-
+      .select();
     if (error) {
       throw error;
     }
-
-    console.log('Updated Post:', data); // 업데이트된 데이터 출력
+    console.log('Updated Post:', data);
   } catch (error) {
     console.error('Error updating post:', error);
   }
@@ -165,16 +268,45 @@ const handleCloseRecruitment = async (postId) => {
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
           <h1 class="text-2xl font-bold">{{ postDetails.title }}</h1>
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-4" v-if="isAuthor">
+            <!-- 수정 버튼 -->
+            <button @click="router.push(`/ModifyRecruitPost/${postId}`)" class="">수정</button>
+            <!-- 삭제 버튼 -->
+            <button @click="openDeleteModal" class="">삭제</button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
             <div
-              class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-5"
+              v-if="postDetails && postDetails.user"
+              class="w-10 h-10 rounded-full flex items-center justify-center"
+            >
+              <img
+                v-if="postDetails.user.profile_img_path"
+                :src="postDetails.user.profile_img_path"
+                alt="User Profile Image"
+                class="w-[33px] h-[33px] rounded-full"
+              />
+            </div>
+            <div>
+              <p class="body-b">
+                {{ postDetails.user.name }}<span class="m-2">&middot;</span>
+                <span class="caption-r">{{ formatDate(postDetails.created_at) }}</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center border hover:bg-gray-5"
             >
               <button @click="handleToggleLike">
                 <img :src="isLiked ? likeFill : like" alt="Like" />
               </button>
             </div>
             <div
-              class="w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-5"
+              class="w-8 h-8 rounded-full flex items-center justify-center border hover:bg-gray-5"
             >
               <button @click="handleToggleBookmark">
                 <img :src="isBookmarked ? bookmarkFill : bookmark" alt="Bookmark" />
@@ -183,45 +315,54 @@ const handleCloseRecruitment = async (postId) => {
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <div
-            v-if="postDetails && postDetails.user"
-            class="w-10 h-10 rounded-full flex items-center justify-center"
-          >
-            <img
-              v-if="postDetails.user.profile_img_path"
-              :src="postDetails.user.profile_img_path"
-              alt="User Profile Image"
-              class="w-[33px] h-[33px] rounded-full"
-            />
-          </div>
-          <div>
-            <p class="font-semibold">
-              {{ postDetails.user.name }}<span class="m-2">&middot;</span>
-              <span class="text-sm font-normal text-gray-50">{{
-                formatDate(postDetails.created_at)
-              }}</span>
-            </p>
-          </div>
+        <div class="flex gap-4 caption-r">
+          <p>
+            <span class="text-gray-50">포지션 | </span>
+            <span class="text-gray-80">
+              {{
+                authorInfo?.positions?.length
+                  ? formatList(authorInfo.positions.map((p) => p.position))
+                  : '없음'
+              }}
+            </span>
+          </p>
+          <p>
+            <span class="text-gray-50">스킬 | </span>
+            <span class="text-gray-80">
+              {{
+                authorInfo.positions
+                  ? formatList(authorInfo.positions.flatMap((p) => p.stacks))
+                  : '없음'
+              }}
+            </span>
+          </p>
+          <p class="text-gray-500">
+            <span class="text-gray-50">응원해요! : </span>
+            <span class="text-gray-80">{{ likeCount }}</span>
+          </p>
         </div>
       </div>
 
       <hr class="my-5 text-gray-10" />
       <!-- 참여 신청자 목록 조회 -->
-      <PostApplyList v-if="isApplicantsPage" />
+      <PostApplyList :postDetails="postDetails" v-if="isApplicantsPage" />
 
       <!-- 게시물물 -->
       <div v-if="!isApplicantsPage">
         <!-- 게시물 이미지 -->
         <div class="mb-7 flex justify-center items-center">
-          <img :src="postDetails.post_img_path" alt="게시물 이미지" class="w-121 rounded-lg" />
+          <img
+            :src="postDetails.post_img_path.replace(/%/g, '')"
+            alt="게시물 이미지"
+            class="w-121 rounded-lg"
+          />
         </div>
 
         <!-- 게시물 내용 -->
         <div class="mb-8">
           <p
             v-html="postDetails.body"
-            class="text-gray-700 leading-relaxed whitespace-pre-wrap"
+            class="leading-relaxed text-gray-700 whitespace-pre-wrap"
           ></p>
         </div>
         <hr class="my-10 text-gray-10" />

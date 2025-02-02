@@ -48,9 +48,14 @@ const {
   selectedFilter,
   handleChangePage,
   handleUpdateFilter,
-} = usePagination(fetchUserPostsWithPagination, 'filteredUserPosts', {
-  order: '최신순',
-});
+} = usePagination(
+  fetchUserPostsWithPagination,
+  'filteredUserPosts',
+  {
+    order: '최신순',
+  },
+  false,
+);
 
 const handleSelectOrder = (order) => {
   handleUpdateFilter({ order });
@@ -68,19 +73,29 @@ const handleSelectOrder = (order) => {
       defaultText="정렬 순서"
       @click:select="handleSelectOrder"
     />
+
     <!-- 모집 글이 있을때 -->
-    <div v-if="filteredPosts?.length > 0" class="flex items-center gap-4 ml-1 flex-wrap">
-      <div v-for="post in filteredPosts" :key="post.id" class="cursor-pointer">
-        <PostCard
-          :id="post.id"
-          :user-image="userInfo.profile_img_path"
-          :user-name="userInfo.name"
-          :project-title="post.title"
-          :skills="post.tech_stacks"
-          :position="post.positions"
-          :application-deadline="post.end_date"
-        />
+    <div v-if="filteredPosts?.length > 0" class="flex flex-col gap-7">
+      <div class="flex items-center gap-4 ml-1 flex-wrap">
+        <div v-for="post in filteredPosts" :key="post.id" class="cursor-pointer">
+          <PostCard
+            :user_id="post.author"
+            :id="post.id"
+            :user-image="userInfo.profile_img_path"
+            :user-name="userInfo.name"
+            :project-title="post.title"
+            :skills="post.tech_stacks"
+            :position="post.positions"
+            :application-deadline="post.end_date"
+          />
+        </div>
       </div>
+      <PostPagination
+        :currentPage="currentPage"
+        :totalPage="totalPage"
+        @change="handleChangePage"
+        class="m-auto"
+      />
     </div>
 
     <!-- 모집 글이 없을때  -->
@@ -96,12 +111,6 @@ const handleSelectOrder = (order) => {
         모집하러 가볼까요?
       </button>
     </div>
-    <PostPagination
-      :currentPage="currentPage"
-      :totalPage="totalPage"
-      @change="handleChangePage"
-      class="m-auto"
-    />
   </div>
 </template>
 <style scoped></style>

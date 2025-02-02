@@ -23,14 +23,14 @@ const router = useRouter();
 const postId = ref(route.params.postId);
 
 // 스크롤 ref 3인방
-const stScrollRef = ref(null);
-const rdScrollRef = ref(null);
+const selectScrollRef = ref(null);
+const editScrollRef = ref(null);
 
 const scrollRefs = [];
 onMounted(() => {
-  if (stScrollRef.value && rdScrollRef.value) {
-    scrollRefs.push(stScrollRef.value.offsetTop);
-    scrollRefs.push(rdScrollRef.value.offsetTop);
+  if (selectScrollRef.value && editScrollRef.value) {
+    scrollRefs.push(selectScrollRef.value.offsetTop);
+    scrollRefs.push(editScrollRef.value.offsetTop);
   }
 });
 
@@ -45,9 +45,9 @@ const cancelPostModalObj = {
   onConfirm: handleCancelModalConfilm,
 };
 
-// 해당 포스트 게시글로 바로 이동시키기
-const handleAfterPostModalConfilm = () => {
-  router.push(`/PostList/study`);
+// 해당 포스트 게시글로 바로 이동시키기(sendData에서 데이터 받아줘야함)
+const handleAfterPostModalConfilm = (post_id) => {
+  router.push(`/RecruitPostDetail/${post_id}`);
 };
 const handleAfterModifyModalConfilm = () => {
   router.push(`/RecruitPostDetail/${route.params.postId}`);
@@ -118,11 +118,6 @@ onBeforeRouteLeave((to, from, next) => {
     return next(false);
   }
   next();
-  // if (confirm('정말 나가시겠습니까? 작업 내용이 초기화됩니다.')) {
-  //   next();
-  // } else {
-  //   next(false);
-  // }
 });
 watch(
   () => route.params.postId,
@@ -134,24 +129,23 @@ watch(
 
 <template>
   <section class="w-full pt-[50px] pb-20 flex flex-col">
-    <article ref="stScrollRef">
+    <article ref="selectScrollRef">
       <EditBasicInfo v-model:userInfo="userInfo" v-model:positionAndSkills="positionAndSkills" />
     </article>
-    <article ref="ndScrollRef">
+    <article>
       <EditPostImageInfo v-model:userInfo="userInfo" />
     </article>
-    <article ref="rdScrollRef">
+    <article ref="editScrollRef">
       <EditDetailInfo v-model:userInfo="userInfo" />
     </article>
 
-    <article class="flex gap-2 justify-end">
+    <article class="flex justify-end gap-2">
       <AppButton
         type="default"
         text="취소"
         class="px-3 py-1.5 border border-primary-1 bg-white rounded-lg body-m"
         @click="baseModalStore.showModal(cancelPostModalObj)"
       />
-
       <AppButton
         v-if="postId"
         type="default"

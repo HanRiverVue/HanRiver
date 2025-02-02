@@ -64,3 +64,18 @@ export const getUserBookmarksWithDetails = async () => {
     return data;
   }
 };
+
+// 특정 게시물의 좋아요 개수 조회
+export const getLikeCount = async (postId) => {
+  const { data, error } = await supabase
+    .from('post_like')
+    .select('post_id', { count: 'exact' })
+    .eq('post_id', postId);
+
+  if (error) {
+    console.error('좋아요 개수 조회 오류:', error);
+    return 0;
+  }
+
+  return data.length; // 조회된 데이터 길이가 좋아요 개수
+};

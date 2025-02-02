@@ -13,8 +13,8 @@ onMounted(async () => {
     if (isLoggedIn.value) {
       await userStore.fetchUserInfo();
     }
-    console.log('로그인 상태:', isLoggedIn.value);
-    console.log('User info:', user.value);
+    // console.log('로그인 상태:', isLoggedIn.value);
+    // console.log('User info:', user.value);
 
     // 사용자 정보가 없고 로그인 상태일 때 온보딩으로 이동
     if (!user.value && isLoggedIn.value) {
