@@ -39,6 +39,11 @@ const handleSubmit = async () => {
     return;
   }
 
+  if (Object.values(profileStore.positionWithSkills).some((skills) => skills.length === 0)) {
+    errorToast('포지션 스킬을\n최소 1개 이상 선택해주세요.');
+    return;
+  }
+
   const newProfile = profileStore.getNewProfile();
   const newPositions = profileStore.getNewPositions();
 
