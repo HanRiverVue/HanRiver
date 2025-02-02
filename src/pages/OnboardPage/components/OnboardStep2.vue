@@ -87,6 +87,7 @@ const prevStep = () => {
 
 // 유저 정보 전송
 const HandlePostUserInfoOnboard = () => {
+  if (!isFormValid.value) return;
   const userProfile = {
     name: props.registerData.name,
     short_introduce: props.registerData.short_introduce,

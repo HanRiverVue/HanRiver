@@ -25,6 +25,7 @@ const visiblePosts = computed(() => {
     const index = (startIndex.value + i) % props.posts.length;
     visiblePosts.push(props.posts[index]);
   }
+
   return visiblePosts;
 });
 

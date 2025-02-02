@@ -186,16 +186,7 @@ const putUpdateTechStack = async (postId, stacks) => {
 // 내가 작성한 게시물 삭제 API(🔒)  - DELETE
 export const deletePost = async (postId) => {
   try {
-    const user = await getAuthUser();
-
-    if (!user) {
-      throw new Error('로그인이 필요합니다!');
-    }
-    const { data, error } = await supabase
-      .from('post')
-      .delete()
-      .eq('id', postId)
-      .eq('author', user.id); // 자신이 작성한 글인지 확인
+    const { data, error } = await supabase.from('post').delete().eq('id', postId);
 
     if (error) {
       throw new Error(error);

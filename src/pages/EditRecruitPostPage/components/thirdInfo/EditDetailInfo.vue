@@ -24,15 +24,14 @@ const handleEditorFocusKeydown = (event) => {
 
 <template>
   <article
-    class="flex flex-col gap-7 w-full rounded-md px-6 py-9 mb-4 bg-white drop-shadow-post-editor-shadow"
+    class="flex flex-col w-full px-6 mb-4 bg-white rounded-md gap-7 py-9 drop-shadow-post-editor-shadow"
   >
     <EditTitle :index="3" title="프로젝트의 세부 내용을 작성해주세요" />
     <article class="flex flex-col gap-3">
       <BaseInput
         :value="props.userInfo.title"
-        v-model:userInfo="props.userInfo"
         placeholder="제목을 작성해주세요"
-        className="h3-b"
+        class="'border h3-b'"
         @input="handleBaseInputInput"
         @keydown="handleEditorFocusKeydown"
       />

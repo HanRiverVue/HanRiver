@@ -252,8 +252,14 @@ export const sendData = async (
     successToast('게시글 수정이 완료되었습니다.');
     return baseModalStore.showModal(afterPostModalObj.modify);
   } else {
-    await postCreatePost(resultUserInfo, positions, techStacks);
+    const res = await postCreatePost(resultUserInfo, positions, techStacks);
     successToast('게시글에 등록되었습니다.');
+
+    // 작성글 보러가기 버튼 함수에 게시글 id값 담기
+    const handleAfterPostModalConfilm = afterPostModalObj.edit.onConfirm;
+    afterPostModalObj.edit.onConfirm = () => {
+      handleAfterPostModalConfilm(res.data.id);
+    };
     return baseModalStore.showModal(afterPostModalObj.edit);
   }
 };
