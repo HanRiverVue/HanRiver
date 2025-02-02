@@ -54,7 +54,7 @@ export const getAllPosts = async (filters, size = 10) => {
   }
 };
 
-// // 특정 페이지의 게시물을 보여주는 API (1페이지당 12개 보여주기)
+// 특정 페이지의 게시물을 보여주는 API (1페이지당 12개 보여주기)
 // export const getAllPostsWithPagination = async (filters, page = 1, pageSize = 12) => {
 //   try {
 //     const from = (page - 1) * pageSize;
@@ -139,18 +139,13 @@ export const getAllPosts = async (filters, size = 10) => {
 
 export const getAllPostsWithPagination = async (filters, page = 1, page_size = 12) => {
   try {
-    console.log('Filters before sending:', filters);
-    // filters 객체의 타입도 확인
-    console.log('Type of stacks:', Array.isArray(filters.stacks) ? 'array' : typeof filters.stacks);
-
     let { data, error } = await supabase.rpc('get_filtered_posts_with_pagination', {
       filters,
       page,
       page_size,
     });
     if (error) console.error(error);
-    else console.log(data);
-    return data;
+    else return data;
   } catch (error) {
     console.error(error);
     return { posts: [], total_post: 0, page, total_page: 0 };

@@ -14,7 +14,7 @@ export const usePagination = (fetchData, queryKey, filters = {}, enableCache = t
 
   // const queryKeys = computed(() => [queryKey, selectedFilter.value, currentPage.value]);
   const { isLoading, data, refetch } = useQuery({
-    queryKey: [queryKey, { ...selectedFilter.value }, currentPage.value],
+    queryKey: [queryKey, selectedFilter.value, currentPage.value],
     queryFn: fetchData,
     staleTime: enableCache ? 1000 * 60 * 5 : 0, // 유통기한
     gcTime: enableCache ? 1000 * 60 * 5 : 0,
@@ -37,7 +37,6 @@ export const usePagination = (fetchData, queryKey, filters = {}, enableCache = t
   //  필터링 업데이트 함수
   const handleUpdateFilter = (newFilter) => {
     selectedFilter.value = { ...selectedFilter.value, ...newFilter };
-    console.log(selectedFilter.value);
   };
 
   return {

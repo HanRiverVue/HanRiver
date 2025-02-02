@@ -46,8 +46,6 @@ onMounted(async () => {
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchPostsWithPagination = async () => {
-  console.log(selectedFilter.value.skills);
-
   const params = {
     position: selectedFilter.value.position,
     stacks: selectedFilter.value.skills, // 기술 스택 필터
@@ -99,21 +97,23 @@ const handleSelectSkill = (skill) => {
   handleUpdateFilter({ skills });
 };
 const handleSelectPosition = (position) => {
+  position = position === '전체' ? null : position;
   handleUpdateFilter({ position });
 };
 const handleSelectRecruitArea = (recruitArea) => {
+  recruitArea = recruitArea === '전체' ? null : recruitArea;
   handleUpdateFilter({ recruitArea });
 };
 const handleSelectMeetingMethod = (meetingMethod) => {
+  meetingMethod = meetingMethod === '전체' ? null : meetingMethod;
   handleUpdateFilter({ meetingMethod });
 };
-
 const handleSelectRecruitStatus = (recruitStatus) => {
+  recruitStatus = recruitStatus === '전체' ? null : recruitStatus;
   handleUpdateFilter({ recruitStatus });
 };
 
 const handleInputSearch = (searchResults) => {
-  // handleUpdateFilter({ searchResults });
   searchInput.value = searchResults;
 };
 
