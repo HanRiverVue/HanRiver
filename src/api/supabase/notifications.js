@@ -86,6 +86,8 @@ export const getNotifications = async () => {
   if (error) {
     console.error(error);
   }
+  console.log(data);
+
   return data;
 };
 

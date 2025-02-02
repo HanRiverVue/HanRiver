@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/vue-query';
 import { computed, ref, watch } from 'vue';
 
-export const usePagination = (fetchData, queryKey, filters = {}) => {
+export const usePagination = (fetchData, queryKey, filters = {}, enableCache = true) => {
   // 현재 페이지, 전체 페이지
   const currentPage = ref(1);
   const totalPage = computed(() => data?.value?.total_page || 1);
@@ -12,13 +12,12 @@ export const usePagination = (fetchData, queryKey, filters = {}) => {
   // 필터링
   const selectedFilter = ref(filters);
 
-  const queryKeys = computed(() => [queryKey, selectedFilter.value, currentPage.value]);
-
+  // const queryKeys = computed(() => [queryKey, selectedFilter.value, currentPage.value]);
   const { isLoading, data, refetch } = useQuery({
-    queryKey: queryKeys,
+    queryKey: [queryKey, selectedFilter.value, currentPage.value],
     queryFn: fetchData,
-    staleTime: 1000 * 60 * 5, // 유통기한
-    gcTime: 1000 * 60 * 5,
+    staleTime: enableCache ? 1000 * 60 * 5 : 0, // 유통기한
+    gcTime: enableCache ? 1000 * 60 * 5 : 0,
     structuralSharing: true, // 변경되지않은 데이터 재사용
     placeholderData: (prev) => prev, // 대기 상태때 표시해줄 데이터
   });
@@ -32,7 +31,7 @@ export const usePagination = (fetchData, queryKey, filters = {}) => {
   // 페이지 전환시
   const handleChangePage = (page) => {
     currentPage.value = page;
-    // refetch();
+    refetch();
   };
 
   //  필터링 업데이트 함수
@@ -42,11 +41,11 @@ export const usePagination = (fetchData, queryKey, filters = {}) => {
 
   return {
     isLoading,
-    refetch,
     filteredPosts,
     currentPage,
     totalPage,
     selectedFilter,
+    refetch,
     handleChangePage,
     handleUpdateFilter,
   };

@@ -108,7 +108,6 @@ router.beforeEach(async (to, from, next) => {
   // const isAuthenticated = await getSession();
   // console.log(isAuthenticated);
 
-
   // 온보딩이 완료된 사용자는 접근 차단
   const { useUserStore } = await import('@/stores/user');
   const userStore = useUserStore();

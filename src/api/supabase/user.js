@@ -125,7 +125,7 @@ export const getUserInfo = async () => {
   );
 
   const realProfile = { ...getProfile, link: getProfile.link.split('*') };
-  console.log({ ...realProfile, positions: positions });
+  // console.log({ ...realProfile, positions: positions });
   return { ...realProfile, positions: positions };
 };
 

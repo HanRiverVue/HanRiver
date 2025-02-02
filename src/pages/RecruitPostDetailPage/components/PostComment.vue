@@ -11,7 +11,7 @@ import { useBaseModalStore } from '@/stores/baseModal';
 import { useUserStore } from '@/stores/user';
 import { useUserProfileModalStore } from '@/stores/userProfileModal';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const props = defineProps({
@@ -238,7 +238,7 @@ onUnmounted(() => {
             <img
               :src="comment.commenter_image_path"
               alt="프로필 이미지"
-              class="w-10 h-10 rounded-full object-cover mr-4 card-shadow"
+              class="object-cover w-10 h-10 mr-4 rounded-full user-Profile-img-shadow"
             />
             <div>
               <p class="font-semibold text-gray-800">{{ comment.commenter_name }}</p>

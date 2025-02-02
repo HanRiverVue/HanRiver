@@ -82,8 +82,11 @@ onUnmounted(() => {
     <li class="flex flex-col items-end justify-center" ref="targetElement">
       <DropdownButton>
         <template #trigger="{ toggleDropdown }">
-          <button @click="toggleDropdown" class="flex">
-            <img :src="user_img" alt="유저 기본 이미지 아이콘" class="w-10 rounded-full" />
+          <button
+            @click="toggleDropdown"
+            class="flex w-10 overflow-hidden rounded-full user-Profile-img-shadow"
+          >
+            <img :src="user_img" alt="유저 기본 이미지 아이콘" />
           </button>
         </template>
         <template #menu="{ isOpen, closeDropdown }">

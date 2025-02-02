@@ -46,7 +46,13 @@ const introduceToggle = ref(true);
     <div v-if="links !== ''" class="flex flex-col gap-2.5">
       <span class="h3-b text-gray-80">링크</span>
       <ul class="flex flex-col gap-2.5">
-        <a :href="link" rel="noopener noreferrer" v-for="(link, index) in links" :key="index">
+        <a
+          :href="link"
+          rel="noopener noreferrer"
+          target="_blank"
+          v-for="(link, index) in links"
+          :key="index"
+        >
           <li class="flex items-center gap-5 bg-secondary-3 rounded-lg input-shadow py-[5.5px]">
             <img :src="linkIcon" alt="링크 아이콘" class="pl-4" />
             <span class="text-black body-r">{{ link }}</span>
@@ -58,9 +64,9 @@ const introduceToggle = ref(true);
     <!-- 포지션 & 스킬 -->
     <div class="flex flex-col gap-2.5">
       <span class="h3-b text-gray-80">포지션 & 스킬</span>
-      <div class="bg-secondary-3 rounded-lg input-shadow">
+      <div class="bg-secondary-3 rounded-lg input-shadow flex flex-col gap-7 p-7">
         <!-- 포지션별 기술스택 -->
-        <div class="p-7 flex flex-col gap-2.5" v-for="position in positions" :key="position.id">
+        <div class="flex flex-col gap-2.5" v-for="position in positions" :key="position.id">
           <span class="body-large-m text-black">{{ position.position }}</span>
           <div class="flex items-center gap-4">
             <div v-for="stack in position.stacks" :key="stack.id">
