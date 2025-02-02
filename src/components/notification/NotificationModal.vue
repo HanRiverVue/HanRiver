@@ -29,7 +29,7 @@ onUnmounted(() => {
     class="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black/50 backdrop-blur-sm"
   >
     <div
-      class="relative w-[526px] max-w-[526px] p-10 bg-secondary-2 rounded-[20px] flex flex-col gap-5"
+      class="relative w-[550px] max-w-[550px] p-10 bg-secondary-2 rounded-[20px] flex flex-col gap-5"
     >
       <button class="p-1 absolute top-6 right-6">
         <img
