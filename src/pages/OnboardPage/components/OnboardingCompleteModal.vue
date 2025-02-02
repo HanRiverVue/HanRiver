@@ -19,13 +19,13 @@ const props = defineProps({
       <img class="w-[119px]" :src="onboardIcon" alt="온보딩 아이콘" />
       <div class="flex gap-[10px] mt-4">
         <RouterLink
-          to="/"
+          :to="{ path: '/', replace: true }"
           class="flex justify-center items-center w-[179px] h-[45px] bg-white rounded-lg body-r text-gray-70 modal-button-shadow"
         >
           나중에 할게요
         </RouterLink>
         <RouterLink
-          to="/EditProfile"
+          :to="{ path: '/EditProfile', replace: true }"
           class="flex justify-center items-center w-[179px] h-[45px] text-white rounded-lg body-r bg-primary-1 modal-button-shadow opacity-80"
         >
           네, 추가할게요

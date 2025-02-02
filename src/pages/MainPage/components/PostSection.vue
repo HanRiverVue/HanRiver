@@ -57,7 +57,19 @@ defineProps({
         </div>
       </template>
       <!-- 데이터 호출 완료된 뒤 -->
-      <PostCard v-else v-for="post in posts" :key="post.id" v-bind="post" />
+      <PostCard
+        v-else
+        v-for="post in posts"
+        :key="post.id"
+        :id="post.id"
+        :user_id="post.author"
+        :user-image="post.profile_img_path"
+        :user-name="post.name"
+        :project-title="post.title"
+        :skills="post.tech_stacks"
+        :position="post.positions"
+        :application-deadline="post.recruit_deadline"
+      />
     </div>
   </article>
 </template>

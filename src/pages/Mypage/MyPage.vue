@@ -12,6 +12,7 @@ import { useRoute } from 'vue-router';
 import LoadingPage from '../LoadingPage.vue';
 import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
+import { successToast } from '@/utils/toast';
 
 const items = ['내 정보', '작성한 모집글', '신청 목록', '찜 목록'];
 const activeIndex = ref(0);
@@ -40,7 +41,14 @@ onMounted(async () => {
 
 // 사용자 좋아요 업데이트
 onMounted(async () => {
-  await userStore.setUserPostLikes();
+  // edit에서 넘어온 경우 완료되었다는 토스트 메시지 보여주기
+  if (history.state.isCompleteEdit) {
+    successToast('프로필 수정이 완료되었습니다.');
+    history.replaceState(null, '', location.href);
+    await userStore.refetchUserInfo();
+  } else {
+    await userStore.setUserPostLikes();
+  }
 });
 
 // 탭의 인덱스 변경
@@ -61,7 +69,11 @@ const handleUpdateIndex = (index = 0) => {
     >
       <!-- 프로필 이미지 -->
       <div class="w-[124px] h-[124px]">
-        <img class="w-full h-full rounded-full" :src="user.profile_img_path" alt="프로필 이미지" />
+        <img
+          class="w-full h-full rounded-full user-Profile-img-shadow"
+          :src="user.profile_img_path"
+          alt="프로필 이미지"
+        />
       </div>
       <!-- 프로필 정보 -->
       <div class="flex flex-col items-start gap-[16px] flex-1">

@@ -87,28 +87,30 @@ const handleFileChange = (event) => {
     <section class="flex flex-col items-center">
       <DropdownButton>
         <template #trigger="{ toggleDropdown }">
-          <div class="group w-[190px] h-[190px] rounded-full relative overflow-hidden input-shadow">
+          <div
+            class="group w-[190px] h-[190px] rounded-full relative overflow-hidden user-Profile-img-shadow"
+          >
             <button
               type="button"
               class="absolute w-[190px] h-[190px] bg-black/60 hidden group-hover:flex items-center justify-center"
               @click="toggleDropdown"
             >
-              <PencilIcon class="text-white w-6 h-6" />
+              <PencilIcon class="w-6 h-6 text-white" />
             </button>
             <img
               v-if="profileImage.local"
               :src="profileImage.local"
               alt="프로필 이미지"
-              class="w-full h-full object-cover object-bottom"
+              class="object-cover object-bottom w-full h-full"
             />
-            <div else class="bg-primary-5 w-full h-full" />
+            <div else class="w-full h-full bg-primary-5" />
           </div>
         </template>
         <template #menu="{ isOpen, closeDropdown }">
           <DropdownMenu
             :isOpen="isOpen"
             :dropdownList="dropdownList"
-            class="top-1/2 -translate-y-1/2 left-1/2 ml-6"
+            class="ml-6 -translate-y-1/2 top-1/2 left-1/2"
             @onClose="closeDropdown"
           />
         </template>
@@ -122,7 +124,7 @@ const handleFileChange = (event) => {
           :value="newNickname"
           placeholder="닉네임"
           :maxLength="MAX_NICKNAME_LENGTH"
-          class="pr-2 py-2"
+          class="py-2 pr-2"
           @input="handleNickNameInput"
         >
           <template #rightIcon>
@@ -149,7 +151,7 @@ const handleFileChange = (event) => {
           :maxLength="MAX_SHORT_INTRODUCE_LENGTH"
           @input="handleShortIntroductionInput"
         />
-        <p class="body-r text-gray-50 justify-self-end mt-1">
+        <p class="mt-1 body-r text-gray-50 justify-self-end">
           {{ shortIntroduction.length }}/{{ MAX_SHORT_INTRODUCE_LENGTH }}
         </p>
       </section>

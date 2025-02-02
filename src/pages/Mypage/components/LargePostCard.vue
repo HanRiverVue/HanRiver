@@ -40,6 +40,8 @@ const baseModal = useBaseModalStore();
 const handleOpenModal = () => {
   baseModal.showModal({
     title: '신청을 취소하시겠습니까?',
+    confirmText: '취소하기',
+    cancelText: '돌아가기',
     onConfirm: async () => await deleteApplicationHandle(props.postId),
   });
 };

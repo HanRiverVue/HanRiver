@@ -69,15 +69,15 @@ const handleUpdateIndex = (index = 0) => {
         <img
           :src="userInfo.profile_img_path"
           alt="프로필 이미지"
-          class="w-[165px] h-[165px] rounded-full"
+          class="w-[165px] h-[165px] rounded-full user-Profile-img-shadow"
         />
       </div>
       <!-- 프로필 정보 -->
-      <div class="flex flex-col items-start gap-4 flex-1">
+      <div class="flex flex-col items-start flex-1 gap-4">
         <div class="flex flex-col items-start flex-1 w-full gap-1">
-          <p class="h2-b text-black">{{ userInfo.name }}</p>
+          <p class="text-black h2-b">{{ userInfo.name }}</p>
 
-          <div class="flex justify-between items-center w-full">
+          <div class="flex items-center justify-between w-full">
             <p class="body-large-r text-gray-40">{{ userInfo.short_introduce }}</p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 <script setup>
 import AppButton from '@/components/AppButton.vue';
 import { ref, onMounted } from 'vue';
-import { getApplicationsForMyPosts, getMyApplicationsList } from '@/api/supabase/apply';
+import { getApplicationsForMyPosts } from '@/api/supabase/apply';
 import { supabase } from '@/config/supabase';
 
 const postId = 92;
@@ -112,7 +112,7 @@ const handleReject = async (proposerId) => {
             <img
               src="@/assets/images/default_user_img.png"
               alt="Profile Image"
-              class="w-12 h-12 rounded-full"
+              class="w-12 h-12 rounded-full user-Profile-img-shadow"
             />
             <div>
               <p class="font-semibold flex items-center gap-2 text-base">
