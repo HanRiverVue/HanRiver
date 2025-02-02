@@ -123,7 +123,7 @@ watch(searchInput, (newValue) => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
     handleUpdateFilter({ searchResults: newValue });
-  }, 1000);
+  }, 500);
   // });
 });
 

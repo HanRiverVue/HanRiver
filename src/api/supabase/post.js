@@ -152,54 +152,72 @@ export const getAllPostsWithPagination = async (filters, page = 1, page_size = 1
   }
 };
 
-// // 내가 신청한 목록
-export const getMyApplyPosts = async (filters, page = 1, pageSize = 8) => {
+// 내가 신청한 게시물 목록
+// export const getMyApplyPosts = async (user_id, filters, page = 1, pageSize = 4) => {
+//   try {
+//     const from = (page - 1) * pageSize;
+//     const to = page * pageSize - 1;
+
+//     let query = supabase
+//       .from('post_apply_list')
+//       .select('*', { count: 'exact' })
+//       .eq('proposer_id', user_id)
+//       .order('created_at', { ascending: false });
+
+//     // 필터링 로직 개선
+//     if (filters.status === '수락 완료') {
+//       query = query.eq('accepted', true).eq('finished', false);
+//     } else if (filters.status === '수락 대기중') {
+//       query = query.eq('accepted', false).eq('finished', false);
+//     } else if (filters.status === '모집 마감') {
+//       query = query.eq('finished', true);
+//     }
+
+//     query = query.range(from, to);
+//     const { data, error, count } = await query;
+
+//     if (error) {
+//       console.error('내가 신청한 목록 가져오기 실패:', error.message);
+//     }
+
+//     if (!data) {
+//       return { posts: [], total_page: 0, total_post: 0, page };
+//     }
+
+//     const total_page = Math.ceil((count || 0) / pageSize);
+
+//     const newData = await Promise.all(
+//       data.map(async (item) => {
+//         try {
+//           const post = await getPostDetails(item.post_id);
+//           return { ...item, ...post };
+//         } catch (error) {
+//           console.error(`게시물 ID ${item.post_id} 상세 정보 가져오기 실패:`, error);
+//           return item; // 에러 발생 시 기본 정보만 반환
+//         }
+//       }),
+//     );
+
+//     return {
+//       posts: newData,
+//       total_page,
+//       total_post: count,
+//       page,
+//     };
+//   } catch (error) {
+//     console.error('내가 신청한 목록 처리 중 오류 발생:', error);
+//   }
+// };
+
+export const getMyApplyPosts = async (filters, page = 1, page_size = 4) => {
   try {
-    const from = (page - 1) * pageSize;
-    const to = page * pageSize - 1;
-
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError) {
-      console.error('사용자 정보 가져오기 실패:', userError.message);
-      return;
-    }
-
-    let query = supabase
-      .from('post_apply_list')
-      .select('*', { count: 'exact' })
-      .eq('proposer_id', user.id)
-      .order('created_at', { ascending: false });
-
-    if (filters.status === '수락 완료') {
-      query = query.eq('accepted', true);
-    } else if (filters.status === '수락 대기중') {
-      query = query.eq('finished', false);
-    } else if (filters.status === '모집 마감') {
-      query = query.eq('finished', true);
-    }
-    query = query.range(from, to);
-    const { data, error, count } = await query; // 수정된 부분
-
-    if (error) {
-      console.error('내가 신청한 목록 가져오기 실패:', error.message);
-      return;
-    }
-    const total_page = Math.ceil((count || 0) / pageSize);
-
-    // 비동기 처리를 위해 Promise.all 사용
-    const newData = await Promise.all(
-      data.map(async (item) => {
-        const postId = item.post_id;
-        const post = await getPostDetails(postId);
-        return { ...item, ...post };
-      }),
-    );
-
-    return { posts: newData, total_page, total_post: count, page };
+    let { data, error } = await supabase.rpc('get_my_apply_posts', {
+      filters,
+      page,
+      page_size,
+    });
+    if (error) console.error(error);
+    else return data;
   } catch (error) {
     console.error('내가 신청한 목록 처리 중 오류 발생:', error);
   }

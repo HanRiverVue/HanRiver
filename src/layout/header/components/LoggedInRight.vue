@@ -22,7 +22,7 @@ const { notifications, hasNewNotification } = storeToRefs(notificationModalStore
 
 const subscribeRef = ref({});
 
-const user_img = user ? user.value.profile_img_path : default_user_img;
+const user_img = user?.value?.profile_img_path ? user.value.profile_img_path : default_user_img;
 
 const dropdownList = [
   {
