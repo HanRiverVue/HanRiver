@@ -19,7 +19,6 @@ onMounted(async () => {
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchMyApplyPostsWithPagination = async () => {
   return await getMyApplyPosts(
-    // user.value.user_id,
     {
       status: selectedFilter.value.status,
     },

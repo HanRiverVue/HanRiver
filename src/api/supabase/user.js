@@ -1,8 +1,6 @@
 import { supabase } from '@/config/supabase';
 import { getUserLoggedIn } from '@/api/supabase/auth';
 
-// 온보딩 post API /////////////////////////////////////////////////////////////////////////
-
 // 온보드 데이터 전송 API(본체) - 해당 요청의 return값으로 온보딩 값이 온전하게 담겨있습니다. 필요시 유저 온보딩 정보를 업데이트 하는 용도로 사용할 수 있습니다.
 export const postUserInfoOnboard = async (userProfile, userPositions) => {
   const userList = await postUserProfile(userProfile);
@@ -283,41 +281,6 @@ const postUpdateUserStacks = async (insertObject, position) => {
   return data;
 };
 
-// 마이페이지 유저 정보 수정 put API ////////////////////////////////////////////////////////////
-//
-//
-//
-// 모든 유저 온보드 get API - 모든 유저 데이터를 불러옵니다.
-export const getAllUserInfo = async () => {
-  const { data: lists } = await supabase.from('user_list').select('*');
-
-  const listsArr = lists.map((list) => ({ ...list, link: list.link.split('*') }));
-
-  const result = [];
-  for (const list of listsArr) {
-    const { data: positions } = await supabase
-      .from('user_list_positions')
-      .select()
-      .eq('profile_id', list.id);
-
-    const positionsArr = [];
-    for (const position of positions) {
-      const { data: stacks } = await supabase
-        .from('user_list_stacks')
-        .select()
-        .eq('position_id', position.id)
-        .single();
-      positionsArr.push({
-        id: position.id,
-        position: position.position,
-        stacks: stacks.stacks.split('/'),
-      });
-    }
-    result.push({ ...list, positions: positionsArr });
-  }
-  return result;
-};
-
 // 닉네임 중복 여부 확인 API
 export const checkDuplicateNickname = async (nickname) => {
   const { data, error } = await supabase.rpc('check_username_duplicate', {
@@ -329,10 +292,4 @@ export const checkDuplicateNickname = async (nickname) => {
   }
 
   return data; // 중복이면 true, 중복이 아니면 false
-};
-
-// 내 사용자 유저정보 받아오기 테스트(잘 작동됨)
-export const getUserInfoTest = async () => {
-  const { error } = await supabase.rpc('get_user_info_test');
-  if (error) console.error(error);
 };

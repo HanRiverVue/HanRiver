@@ -3,7 +3,7 @@ import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { ref } from 'vue';
 import AppButton from '@/components/AppButton.vue';
-import { deleteApplicationHandle } from '@/api/supabase/apply';
+import { deleteApplication } from '@/api/supabase/apply';
 import { SKILLS } from '@/constants/skill';
 import { useBaseModalStore } from '@/stores/baseModal';
 
@@ -42,7 +42,7 @@ const handleOpenModal = () => {
     title: '신청을 취소하시겠습니까?',
     confirmText: '취소하기',
     cancelText: '돌아가기',
-    onConfirm: async () => await deleteApplicationHandle(props.postId),
+    onConfirm: async () => await deleteApplication(props.postId),
   });
 };
 

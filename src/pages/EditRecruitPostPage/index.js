@@ -251,9 +251,9 @@ export const sendData = async (
     successToast('게시글에 등록되었습니다.');
 
     // 작성글 보러가기 버튼 함수에 게시글 id값 담기
-    const handleAfterPostModalConfilm = afterPostModalObj.edit.onConfirm;
+    const handleAfterPostModalConfirm = afterPostModalObj.edit.onConfirm;
     afterPostModalObj.edit.onConfirm = () => {
-      handleAfterPostModalConfilm(res.data.id);
+      handleAfterPostModalConfirm(res.data.id);
     };
     return baseModalStore.showModal(afterPostModalObj.edit);
   }

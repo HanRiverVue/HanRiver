@@ -22,7 +22,6 @@ const emit = defineEmits(['selectSkill']);
 const isDropdownOpen = ref(false); // 드롭다운 상태
 const selectedTab = ref('전체');
 const dropdownRef = ref(null);
-//const filterList = ref(['전체', ...POSITION]);
 
 const handleDropdownClick = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
