@@ -23,8 +23,6 @@ const { user, isLoggedIn } = storeToRefs(userStore);
 
 const loginModalStore = useLoginModalStore();
 
-const loginModalStore = useLoginModalStore();
-
 const handleUserPageClick = () => {
   closeUserProfile();
   if (userInfo.value && userInfo.value.id) {
