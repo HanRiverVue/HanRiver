@@ -226,7 +226,7 @@ const handleUserProfileImageClick = async (proposerId) => {
 
       <!-- 참여자 카드 -->
       <div class="grid gap-4">
-        <div v-if="loading" class="text-gray-50">로딩 중...</div>
+        <div v-if="loading" class="text-gray-50"></div>
         <div
           v-for="application in filteredApplications"
           :key="application.id"

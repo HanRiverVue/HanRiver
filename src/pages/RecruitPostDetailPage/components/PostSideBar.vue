@@ -77,9 +77,7 @@ const handleCloseRecruitmentClick = () => {
   <div
     class="flex w-full md:w-[350px] bg-secondary-3 rounded-lg shadow-lg p-4 sticky top-[80px] md:shrink-0"
   >
-    <div v-if="props.loading">
-      <p>로딩 중...</p>
-    </div>
+    <div v-if="props.loading"></div>
     <div v-else-if="props.postDetails" class="flex-1 max-w-full">
       <div class="p-4 relative">
         <ul class="space-y-2 text-gray-80 text-xs">

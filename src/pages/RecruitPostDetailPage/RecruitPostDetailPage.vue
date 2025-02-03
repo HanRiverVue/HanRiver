@@ -21,6 +21,7 @@ import { errorToast, warningToast } from '@/utils/toast';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { storeToRefs } from 'pinia';
 import { useUserProfileModalStore } from '@/stores/userProfileModal';
+import LoadingPage from '../LoadingPage.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -28,7 +29,7 @@ const postId = ref(Number(route.params.postId));
 const postDetails = ref(null);
 const loading = ref(true);
 const error = ref(null);
-const currentUserId = ref(null);
+const currentUserId = computed(() => user.value?.user_id);
 const isAuthor = ref(false);
 const isApplicantsPage = ref(false);
 const isApplied = ref(false);
@@ -164,7 +165,6 @@ watch(
         .maybeSingle();
 
       if (error) throw error;
-
       isApplied.value = !!data;
     } catch (err) {
       console.error('신청 상태 확인 오류:', err);
@@ -249,6 +249,13 @@ const handleUserProfileImageClick = () => {
 
 <template>
   <div class="container mx-auto p-4 md:p-8 flex flex-col items-start md:flex-row gap-8">
+    <div
+      v-if="loading"
+      class="absolute inset-0 flex justify-center items-center z-10 bg-gray-900 bg-opacity-50"
+    >
+      <LoadingPage />
+    </div>
+
     <NotFound
       v-if="!loading && !postDetails"
       message="존재하지 않거나 삭제된 게시물입니다."
@@ -257,7 +264,7 @@ const handleUserProfileImageClick = () => {
     <!-- 왼쪽 콘텐츠 영역 -->
     <div v-else class="flex-none w-[738px]" v-if="!loading && postDetails">
       <!-- 게시물 헤더 -->
-      <div class="mb-8">
+      <div class="mb-2">
         <div class="flex justify-between items-center mb-4">
           <h1 class="text-2xl font-bold break-words w-[80%]">
             {{ postDetails.title }}
@@ -311,7 +318,7 @@ const handleUserProfileImageClick = () => {
           </div>
         </div>
 
-        <div class="flex gap-4 caption-r">
+        <div class="flex gap-4 caption-r mt-2">
           <p>
             <span class="text-gray-50">포지션 | </span>
             <span class="text-gray-80">
@@ -332,9 +339,11 @@ const handleUserProfileImageClick = () => {
               }}
             </span>
           </p>
-          <p class="text-gray-500">
-            <span class="text-gray-50">응원해요! : </span>
-            <span class="text-gray-80">{{ likeCount }}</span>
+          <p class="flex items-center gap-1 text-gray-50">
+            <span class="text-gray-50">
+              <img :src="like" alt="" class="w-4 h-4" />
+            </span>
+            <span class="text-gray-80">: {{ likeCount }}</span>
           </p>
         </div>
       </div>
@@ -357,10 +366,7 @@ const handleUserProfileImageClick = () => {
 
         <!-- 게시물 내용 -->
         <div class="mb-8">
-          <p
-            v-html="postDetails.body"
-            class="leading-relaxed text-gray-700 whitespace-pre-wrap"
-          ></p>
+          <p v-html="postDetails.body" class="leading-relaxed text-gray-70 whitespace-pre-wrap"></p>
         </div>
         <hr class="my-10 text-gray-10" />
 
@@ -379,7 +385,7 @@ const handleUserProfileImageClick = () => {
       :handleCloseRecruitment="handleCloseRecruitment"
       :handleApplyOrCancel="handleApplyOrCancel"
       :isApplied="isApplied"
-      v-if="!error"
+      v-if="!loading && !error"
     />
   </div>
 </template>
