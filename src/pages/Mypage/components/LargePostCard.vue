@@ -67,7 +67,7 @@ if (props.status === 'success') {
 
 <template>
   <div
-    class="w-[522px] p-6 rounded-lg text-gray-80 input-shadow hover:card-shadow"
+    class="w-[522px] h-[200px] p-6 rounded-lg text-gray-80 input-shadow hover:card-shadow"
     @click="$emit('click')"
   >
     <!-- 제목 & 상태   -->

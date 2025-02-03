@@ -102,7 +102,6 @@ export const subscribeToNotifications = (addNotifications, setHasNewNotification
         const { useUserStore } = await import('@/stores/user');
         const userStore = useUserStore();
         const { user } = storeToRefs(userStore);
-
         if (payload.new.user_id === user.value.user_id) {
           console.log('새로운 알림 도착!', payload.new);
           addNotifications(payload.new);

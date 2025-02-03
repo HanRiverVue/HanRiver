@@ -8,6 +8,7 @@ import {
 import AppButton from '@/components/AppButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
 import { useBaseModalStore } from '@/stores/baseModal';
+import { useLoginModalStore } from '@/stores/loginModal';
 import { useUserStore } from '@/stores/user';
 import { useUserProfileModalStore } from '@/stores/userProfileModal';
 import { storeToRefs } from 'pinia';
@@ -128,12 +129,22 @@ const handleClickOutside = (event) => {
 
 // 댓글 등록 처리
 const handleSubmitComment = async () => {
-  try {
-    if (!newComment.value.trim()) {
-      console.warn('댓글 내용이 비어있습니다.');
-      return;
-    }
+  const store = useLoginModalStore(); // 로그인 모달 상태를 관리하는 store
+  const storeUser = useUserStore(); // 유저 상태를 관리하는 store
 
+  // 로그인되지 않은 상태일 때
+  if (!storeUser.isLoggedIn) {
+    store.setLoginModal(true); // 로그인 모달을 띄운다
+    return; // 댓글 등록을 진행하지 않고 종료
+  }
+
+  // 댓글 내용이 비어있을 경우
+  if (!newComment.value.trim()) {
+    console.warn('댓글 내용이 비어있습니다.');
+    return;
+  }
+
+  try {
     // 댓글 등록 요청
     const result = await addPostComment(postId.value, newComment.value);
 

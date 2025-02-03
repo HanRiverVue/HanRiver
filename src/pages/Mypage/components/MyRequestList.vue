@@ -8,25 +8,27 @@ import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import { usePagination } from '@/utils/usePagination';
 import { supabase } from '@/config/supabase';
 import { getMyApplyPosts } from '@/api/supabase/post';
+import { useUserStore } from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
-// queryClient.invalidateQueries({ queryKey: [키 값] })
-// const queryClient = useQueryClient()
 const router = useRouter();
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
 
 onMounted(async () => {
-  await fetchMyApplyPostsWithPagination();
-  await subscribeCancelPostApply();
+  fetchMyApplyPostsWithPagination();
+  subscribeCancelPostApply();
 });
 
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchMyApplyPostsWithPagination = async () => {
   return await getMyApplyPosts(
+    // user.value.user_id,
     {
       status: selectedFilter.value.status,
     },
     currentPage.value,
-    4,
   );
 };
 const {
@@ -42,12 +44,13 @@ const {
   fetchMyApplyPostsWithPagination,
   'filteredApplyPosts',
   {
-    status: '',
+    status: null,
   },
   false,
 );
 
 const handleGetStatus = (status) => {
+  status = status === '전체' ? null : status;
   handleUpdateFilter({ status });
 };
 
@@ -58,8 +61,7 @@ const subscribeCancelPostApply = async () => {
     .on(
       'postgres_changes',
       { event: 'DELETE', schema: 'public', table: 'post_apply_list' },
-      (payload) => {
-        console.log('신청 취소 변경 감지됨!', payload);
+      async (payload) => {
         refetch();
       },
     )
@@ -75,7 +77,7 @@ const subscribeCancelPostApply = async () => {
     <div class="max-w-[126px] ml-auto">
       <FilterDropdown
         :items="statusFilterList"
-        :selected="filteredPosts.status"
+        :selected="selectedFilter.status"
         default-text="수락 상태"
         @click:select="handleGetStatus"
       />
@@ -85,23 +87,18 @@ const subscribeCancelPostApply = async () => {
       <div class="flex flex-col justify-center gap-6">
         <!-- 신청 목록 -->
         <div class="flex flex-wrap items-center gap-7">
-          <LargePostCard
-            class="cursor-pointer"
-            v-for="(post, index) in filteredPosts"
-            :key="index"
-            v-if="
-              filteredPosts.status === '전체' ||
-              !filteredPosts.status ||
-              filteredPosts.status === '수락 완료'
-            "
-            :post-id="post.id"
-            :project-title="post.title"
-            :skills="post.techStack"
-            :position="post.position"
-            :application-deadline="post.recruit_deadline"
-            :status="post.accepted ? 'success' : post.finished ? 'done' : 'warning'"
-            @click="router.push(`/RecruitPostDetail/${post.post_id}`)"
-          />
+          <div v-for="post in filteredPosts" :key="post.id" class="cursor-pointer">
+            <LargePostCard
+              class="cursor-pointer"
+              :post-id="post.id"
+              :project-title="post.title"
+              :skills="post.techStack"
+              :position="post.position"
+              :application-deadline="post.recruit_deadline"
+              :status="post.accepted ? 'success' : post.finished ? 'done' : 'warning'"
+              @click="router.push(`/RecruitPostDetail/${post.id}`)"
+            />
+          </div>
         </div>
       </div>
       <PostPagination

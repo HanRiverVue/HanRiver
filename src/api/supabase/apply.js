@@ -1,6 +1,5 @@
 import { supabase } from '@/config/supabase';
 import { getPostDetails } from './post';
-import { getUserInfo } from './user';
 
 // 신청하기 함수
 export const postApplication = async (postId, selectedPositions) => {
@@ -42,11 +41,12 @@ export const postApplication = async (postId, selectedPositions) => {
 
     const { data: userList } = await supabase
       .from('user_list')
-      .select('name')
+      .select('name, profile_img_path')
       .eq('user_id', user.id)
       .single();
 
     const proposerName = userList?.name || '이름 없음';
+    const proposerImgPath = userList?.profile_img_path || '기본 이미지 경로';
 
     // 신청 데이터 생성
     const { data, error } = await supabase
@@ -57,6 +57,7 @@ export const postApplication = async (postId, selectedPositions) => {
           proposer_id: user.id,
           post_id: postId,
           proposer_name: proposerName,
+          proposer_img_path: proposerImgPath,
           post_title: postDetails.title,
           accepted: false,
           finished: false,
@@ -149,7 +150,7 @@ export const getMyApplicationsList = async () => {
 };
 
 // 내가 작성한 글에 대한 신청 목록
-export const getApplicationsForMyPosts = async () => {
+export const getApplicationsForMyPosts = async (postId) => {
   try {
     const {
       data: { user },
@@ -164,16 +165,16 @@ export const getApplicationsForMyPosts = async () => {
     const { data, error } = await supabase
       .from('post_apply_list')
       .select(
-        'created_at, proposer_name, proposer_id, proposer_positions, post_id, post_title, accepted, finished',
+        'created_at, proposer_name, proposer_id, proposer_positions, proposer_img_path, post_id, post_title, accepted, finished',
       )
-      .eq('host_id', user.id);
+      .eq('host_id', user.id)
+      .eq('post_id', postId);
 
     if (error) {
       console.error('내가 작성한 글에 대한 신청 목록 가져오기 실패:', error.message);
       return;
     }
 
-    // console.log('내가 작성한 글에 대한 신청 목록:', data);
     return data;
   } catch (error) {
     console.error('내가 작성한 글에 대한 신청 목록 처리 중 오류 발생:', error);
