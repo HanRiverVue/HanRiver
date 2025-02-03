@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -17,8 +17,7 @@ const props = defineProps({
   isLoading: Boolean,
 });
 
-// 각섹션마다 고유한 ID 생성
-const swiperId = `swiper-${Math.random().toString(36).substr(2, 9)}`;
+const swiperId = computed(() => `swiper-${props.title.replace(/\s+/g, '-')}`);
 const swiperInstance = ref(null);
 
 const handleSwiper = (swiper) => {
@@ -75,7 +74,6 @@ watch(() => props.posts, updateSwiper, { deep: true });
           />
         </swiper-slide>
       </swiper>
-      <!-- 고유한 ID 적용 -->
       <div :id="swiperId" class="mt-2 flex justify-end space-x-2">
         <button class="scroll-arrow left-arrow">
           <img :src="ArrowLeft" alt="left" />
