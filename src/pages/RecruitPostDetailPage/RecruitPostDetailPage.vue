@@ -23,6 +23,7 @@ import { storeToRefs } from 'pinia';
 import { useUserProfileModalStore } from '@/stores/userProfileModal';
 import LoadingPage from '../LoadingPage.vue';
 
+
 const route = useRoute();
 const router = useRouter();
 const postId = ref(Number(route.params.postId));
@@ -386,6 +387,7 @@ const handleUserProfileImageClick = () => {
       :handleApplyOrCancel="handleApplyOrCancel"
       :isApplied="isApplied"
       v-if="!loading && !error"
+
     />
   </div>
 </template>

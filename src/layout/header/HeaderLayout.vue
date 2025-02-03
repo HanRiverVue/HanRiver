@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import logo from '@/assets/icons/logo.svg';
 import NonLoggedInRight from '@/layout/header/components/NonLoggedInRight.vue';
@@ -18,12 +18,28 @@ const setPath = () => {
   currentPath.value = window.location.pathname;
 };
 
+const isScrollTopShow = ref(false);
+const handleHeaderShadow = () => {
+  if (window.scrollY + window.innerHeight > window.innerHeight) {
+    isScrollTopShow.value = 'shadow-md';
+  } else {
+    isScrollTopShow.value = '';
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleHeaderShadow);
+});
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleHeaderShadow);
+});
+
 watch(route, setPath, { immediate: true });
 </script>
 
 <template>
   <header>
-    <nav class="fixed top-0 left-0 z-40 w-full bg-white">
+    <nav :class="`fixed top-0 left-0 z-40 w-full bg-white ${isScrollTopShow} duration-300`">
       <article class="w-full max-w-[1200px] flex items-center justify-between mx-auto px-10 py-3">
         <article class="w-full max-w-[610px] flex items-center justify-between">
           <RouterLink to="/" class="px-[22px]">
