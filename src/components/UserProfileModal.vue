@@ -5,6 +5,7 @@ import { useProfileStore } from '@/stores/profile';
 import { storeToRefs } from 'pinia';
 import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import { useUserStore } from '@/stores/user';
+import { useLoginModalStore } from '@/stores/loginModal';
 
 const userProfileModalStore = useUserProfileModalStore();
 const { userProfileModal, userInfo, isLoading, error } = storeToRefs(userProfileModalStore);
@@ -18,8 +19,16 @@ const closeUserProfile = () => {
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 
+const loginModalStore = useLoginModalStore();
+
 const handleUserPageClick = () => {
   closeUserProfile();
+};
+
+// 비회원일시 로그인모달
+const openLoginModal = () => {
+  closeUserProfile();
+  loginModalStore.setLoginModal(true);
 };
 </script>
 
@@ -63,7 +72,7 @@ const handleUserPageClick = () => {
           <p class="body-large-r text-gray-80">{{ userInfo.short_introduce || '' }}</p>
         </div>
         <RouterLink
-          v-if="user.user_id !== userInfo.id"
+          v-if="isLoggedIn && user.user_id !== userInfo.id"
           :to="`/UserPage/${userInfo.id}`"
           @click="handleUserPageClick"
         >
@@ -73,13 +82,20 @@ const handleUserPageClick = () => {
             유저 페이지로 이동하기
           </button>
         </RouterLink>
-        <RouterLink v-else :to="`/mypage`" @click="handleUserPageClick">
+        <RouterLink v-else-if="isLoggedIn" :to="`/mypage`" @click="handleUserPageClick">
           <button
             class="w-[300px] h-[45px] py-3 px-[10px] rounded-lg body-r text-white bg-primary-hover/80"
           >
             마이 페이지로 이동하기
           </button>
         </RouterLink>
+        <button
+          v-else
+          @click="openLoginModal"
+          class="w-[300px] h-[45px] py-3 px-[10px] rounded-lg body-r text-white bg-primary-hover/80"
+        >
+          로그인하고 더 보기
+        </button>
       </template>
     </div>
   </div>
