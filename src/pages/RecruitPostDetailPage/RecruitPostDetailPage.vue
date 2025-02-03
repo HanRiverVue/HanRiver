@@ -96,7 +96,6 @@ const handleToggleBookmark = async (event) => {
     if (result !== null) {
       // 상태 갱신 후 userStore 업데이트
       userStore.updateBookmarks(postId.value);
-      console.log(user.value?.bookmarks);
     }
   } catch (error) {
     console.error('Error toggling bookmark:', error);
@@ -141,18 +140,8 @@ watch(
   { immediate: true },
 );
 
-// watchEffect(async () => {
-//   try {
-//     // likeCount.value = await getLikeCount(postId.value);
-//     console.log(likeCount.value);
-//   } catch (err) {
-//     console.error('좋아요 개수 조회 실패:', err);
-//   }
-// });
-
 watchEffect(() => {
   if (postDetails.value && user.value) {
-    console.log('User ID:', user.value);
     isAuthor.value = postDetails.value.author === user.value.user_id;
   }
 });
@@ -211,11 +200,9 @@ const handleApplyOrCancel = async (postId, selectedPositions) => {
     if (isApplied.value) {
       await deleteApplication(postId);
       isApplied.value = false;
-      console.log('신청이 취소되었습니다.');
     } else {
       await postApplication(postId, selectedPositions);
       isApplied.value = true;
-      console.log('신청이 완료되었습니다.');
     }
   } catch (error) {
     console.error('신청 처리 중 오류 발생:', error);
@@ -225,17 +212,15 @@ const handleApplyOrCancel = async (postId, selectedPositions) => {
 // 버튼 클릭 이벤트 정의
 const handleViewApplicants = () => {
   isApplicantsPage.value = true;
-  console.log('참여 신청자 목록 조회 버튼 클릭');
 };
 
 const handleBackToPost = () => {
   isApplicantsPage.value = false;
-  console.log('게시물로 돌아가기');
 };
 
 const handleCloseRecruitment = async (postId) => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('post')
       .update({ finished: true })
       .eq('id', postId)
@@ -243,7 +228,6 @@ const handleCloseRecruitment = async (postId) => {
     if (error) {
       throw error;
     }
-    console.log('Updated Post:', data);
   } catch (error) {
     console.error('Error updating post:', error);
   }

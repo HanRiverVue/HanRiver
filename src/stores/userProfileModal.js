@@ -26,7 +26,6 @@ export const useUserProfileModalStore = defineStore('userProfileModal', () => {
         id: userId,
         profile_img_path: data.profile_img_path || DEFAULT_PROFILE_IMAGE_URL,
       };
-      console.log('User profile fetched:', userInfo.value);
     } catch (err) {
       console.error('Error fetching user profile info:', err);
       error.value = err.message;

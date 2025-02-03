@@ -7,11 +7,11 @@ import { getUserLoggedIn } from '@/api/supabase/auth';
 export const postUserInfoOnboard = async (userProfile, userPositions) => {
   const userList = await postUserProfile(userProfile);
   if (userList === 'user_id_error' || userList === 'name_error') {
-    return console.log(
+    return console.error(
       `중복된 닉네임 혹은 이미 생성된 온보드임을 확인해 전송을 중단합니다. 에러명 : ${userList}`,
     );
   } else if (userList === 'other_error') {
-    return console.log(
+    return console.error(
       `예상하지 못 한 오류가 발생해 전송을 중단합니다. 콘솔창에서 에러를 확인해주세요 ${userList}`,
     );
   }
@@ -31,7 +31,6 @@ export const postUserInfoOnboard = async (userProfile, userPositions) => {
 
   const result = { ...userList, positions: positionArr };
 
-  // console.log('결과', result);
   return result;
 };
 
@@ -47,18 +46,17 @@ const postUserProfile = async (insertObject) => {
   if (error) {
     if (error.code === '23505') {
       if (error.message.includes('user_id')) {
-        console.log('이미 생성된 온보드 정보가 있습니다. 마이페이지에서 정보를 수정해주세요.');
+        console.error('이미 생성된 온보드 정보가 있습니다. 마이페이지에서 정보를 수정해주세요.');
         return 'user_id_error';
       } else if (error.message.includes('name')) {
-        console.log('중복된 닉네임이 있습니다.');
+        console.error('중복된 닉네임이 있습니다.');
         return 'name_error';
       }
     } else {
-      console.log('오류 발생', error);
+      console.error('오류 발생', error);
       return 'other_error';
     }
   }
-  // console.log('data', data);
   return data;
 };
 
@@ -71,7 +69,7 @@ const postUserPositions = async (insertObject, user_id) => {
     .single();
 
   if (error) {
-    return console.log(error);
+    return console.error(error);
   }
   return data;
 };
@@ -87,7 +85,7 @@ const postUserStacks = async (insertObject, positionId) => {
     .single();
 
   if (error) {
-    return console.log(error);
+    return console.error(error);
   }
   return data;
 };
@@ -115,7 +113,6 @@ export const getUserInfo = async () => {
   );
 
   const realProfile = { ...getProfile, link: getProfile.link.split('*') };
-  // console.log({ ...realProfile, positions: positions });
   return { ...realProfile, positions: positions };
 };
 
@@ -124,7 +121,6 @@ export const getUserInfoToUserId = async (user_id) => {
   const getProfile = await getUserProfile(user_id);
 
   if (!getProfile) {
-    console.log('해당 유저의 유저 정보가 없습니다.');
     return null;
   }
   const realProfile = { ...getProfile, link: getProfile.link.split('*') };
@@ -135,7 +131,6 @@ export const getUserInfoToUserId = async (user_id) => {
       return { ...position, stacks: stacks.stacks.split('/') };
     }),
   );
-  // console.log({ ...realProfile, positions: positions });
   return { ...realProfile, positions: positions };
 };
 
@@ -150,7 +145,7 @@ const getUserProfile = async (user_id) => {
   if (data) {
     return data;
   } else {
-    console.log(error);
+    console.error(error);
     return null;
   }
 };
@@ -165,7 +160,7 @@ const getUserPositions = async (profile_id) => {
   if (data) {
     return data;
   } else {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -180,7 +175,7 @@ const getUserStacks = async (position_id) => {
   if (data) {
     return data;
   } else {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -196,14 +191,13 @@ export const putUserInfo = async (updatingUserProfile, updatingUserPositions) =>
 
   const realLink = updatingUserProfile.link.join('*');
   const realUpdatingUserProfile = { ...updatingUserProfile, link: realLink };
-  console.log(realLink, realUpdatingUserProfile);
 
   const userList = await putUserProfile(realUpdatingUserProfile, user.id);
 
   if (userList === 'name_error') {
-    return console.log(`중복된 닉네임이 존재해 수정 요청을 종료합니다. 에러명 ${userList}`);
+    return console.error(`중복된 닉네임이 존재해 수정 요청을 종료합니다. 에러명 ${userList}`);
   } else if (userList === 'other_error') {
-    return console.log(
+    return console.error(
       `예상하지 못 한 오류가 발생해 수정 요청을 중단합니다. 콘솔창에서 에러를 확인해주세요 ${userList}`,
     );
   }
@@ -244,10 +238,10 @@ const putUserProfile = async (updateObject, user_id) => {
 
   if (error) {
     if (error.code === '23505' && error.details.includes('name')) {
-      console.log('닉네임 중복 오류');
+      console.error('닉네임 중복 오류');
       return 'name_error';
     } else {
-      console.log('오류발생', error);
+      console.error('오류발생', error);
       return 'other_error';
     }
   }
@@ -268,7 +262,7 @@ const postUpdateUserPositions = async (insertObject, profile) => {
     .single();
 
   if (error) {
-    return console.log(error);
+    return console.error(error);
   }
   return data;
 };
@@ -284,7 +278,7 @@ const postUpdateUserStacks = async (insertObject, position) => {
     .single();
 
   if (error) {
-    return console.log(error);
+    return console.error(error);
   }
   return data;
 };
@@ -326,7 +320,6 @@ export const getAllUserInfo = async () => {
 
 // 닉네임 중복 여부 확인 API
 export const checkDuplicateNickname = async (nickname) => {
-  console.log(nickname);
   const { data, error } = await supabase.rpc('check_username_duplicate', {
     user_name: nickname,
   });
@@ -340,7 +333,6 @@ export const checkDuplicateNickname = async (nickname) => {
 
 // 내 사용자 유저정보 받아오기 테스트(잘 작동됨)
 export const getUserInfoTest = async () => {
-  const { data, error } = await supabase.rpc('get_user_info_test');
+  const { error } = await supabase.rpc('get_user_info_test');
   if (error) console.error(error);
-  else console.log(data);
 };

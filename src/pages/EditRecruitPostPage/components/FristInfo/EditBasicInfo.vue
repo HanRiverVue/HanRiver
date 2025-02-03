@@ -13,7 +13,6 @@ const props = defineProps({
   userInfo: Object,
   positionAndSkills: Array,
 });
-const emit = defineEmits(['update:data']);
 
 const selectedPositions = reactive([]);
 
@@ -76,7 +75,7 @@ watch(
     <!-- 기본 정보 -->
     <article class="mt-4 flex gap-10">
       <article class="flex flex-col gap-7 w-[calc(50%-20px)] justify-between">
-        <template v-for="select of selects">
+        <template v-for="select of selects" :key="select.title">
           <BasicInfoSelect
             :title="select.title"
             :items="select.items"
@@ -112,7 +111,7 @@ watch(
         <span class="text-red-500">*</span>
       </article>
       <article class="w-full p-7 rounded-md flex items-center justify-between input-shadow">
-        <template v-for="(position, index) of props.positionAndSkills">
+        <template v-for="(position, index) of props.positionAndSkills" :key="position.position">
           <PositionSelectButton
             size="small"
             v-bind:is-selected="position.positionSelected"
@@ -124,7 +123,7 @@ watch(
     </article>
     <!-- 사용 예정 스킬 -->
     <article class="flex flex-col gap-[10px]">
-      <template v-for="(position, pIndex) of selectedPositions">
+      <template v-for="(position, pIndex) of selectedPositions" :key="position.position">
         <article class="body-large-m flex gap-1">
           <span>{{ position.position }}</span>
           <span class="text-red-500">*</span>
@@ -132,6 +131,7 @@ watch(
         <article class="w-full p-7 rounded-md flex flex-wrap items-center gap-4 input-shadow">
           <SkillSelectButton
             v-for="skill of position.skills"
+            :key="skill"
             @click="handleSkillButtonClick(pIndex, skill)"
             :is-selected="position.selectedSkills.includes(skill)"
           >

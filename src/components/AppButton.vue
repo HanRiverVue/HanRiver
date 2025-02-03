@@ -40,8 +40,6 @@ const buttonClass = computed(() => {
 const handleClick = (event) => {
   if (event && event.stopPropagation) {
     event.stopPropagation();
-  } else {
-    console.error('이벤트 에러');
   }
   emit('click', event);
 };

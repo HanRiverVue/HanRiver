@@ -29,14 +29,12 @@ const dropdownList = reactive([
   {
     label: '이미지 변경하기',
     action: () => {
-      console.log('프로필 사진 변경');
       fileInputRef.value.click();
     },
   },
   {
     label: '이미지 삭제하기',
     action: () => {
-      console.log('프로필 삭제');
       deleteProfileImage();
     },
   },
@@ -66,7 +64,6 @@ const handleCheckNickname = () => {
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
-  console.log(event.target.files, file);
 
   if (!file) return;
 

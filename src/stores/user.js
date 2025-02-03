@@ -20,7 +20,6 @@ export const useUserStore = defineStore('user', () => {
     const userInfo = await getUserInfo();
     if (userInfo === null) return;
     user.value = userInfo;
-    // console.log('확인', user.value);
   };
 
   const refetchUserInfo = async () => {

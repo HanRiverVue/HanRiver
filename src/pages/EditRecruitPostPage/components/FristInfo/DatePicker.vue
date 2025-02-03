@@ -1,6 +1,6 @@
 <script setup>
 import DatePicker from 'primevue/datepicker';
-import { computed, onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   pickerType: {

@@ -83,7 +83,6 @@ const handlePositionsSelect = (value) => {
   } else if (localRegisterData.position.length < 3) {
     // 선택 가능 개수를 초과하지 않으면 추가
     localRegisterData.position.push(value);
-    console.log(localRegisterData.position);
   } else {
     alert('최대 3개의 포지션만 선택 가능합니다.');
   }

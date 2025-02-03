@@ -4,7 +4,7 @@ import { computed } from 'vue';
 const props = defineProps({
   userInfo: {
     type: Object,
-    default: '',
+    default: () => {},
   },
   title: {
     type: String,

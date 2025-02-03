@@ -16,8 +16,6 @@ const insertNotification = async (receiverId, senderId, postId, type, message) =
 
   if (error) {
     console.error('알림 생성 중 오류 발생:', error);
-  } else {
-    // console.log('알림 생성 완료:', data);
   }
 };
 
@@ -33,27 +31,6 @@ const createLikeOrApplyNotification = async (userId, postId, notificationType) =
     notificationType === 'like' ? '게시글에 좋아요를 눌렀습니다.' : '게시글에 신청을 했습니다.';
   await insertNotification(userId, userId, postId, notificationType, message);
 };
-
-// // 알림 목록을 가져오는 함수 (승현님이 만드신거)
-// const getNotifications = async (userId) => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('notifications')
-//       .select('*')
-//       .eq('receiver_id', userId) // 사용자의 알림만 가져오기
-//       .order('created_at', { ascending: false }); // 생성일 기준으로 내림차순 정렬
-
-//     if (error) {
-//       throw error;
-//     }
-
-//     // console.log('알림 목록:', data);
-//     return data;
-//   } catch (error) {
-//     console.error('알림을 가져오는 중 오류 발생:', error);
-//     return [];
-//   }
-// };
 
 // 알림 생성 핸들러
 export const insertNotificationHandle = async (receiverId, senderId, postId, type, message) => {

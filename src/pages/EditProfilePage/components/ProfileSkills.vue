@@ -7,13 +7,6 @@ import { computed } from 'vue';
 
 const profileStore = useProfileStore();
 
-/* const skillsBySelectedPositions = computed(() => {
-  return props.selectedPositions.map((position) => ({
-    name: position,
-    skills: POSITION_SKILLS[position],
-  }));
-}); */
-
 const positions = computed(() => Object.keys(profileStore.positionWithSkills));
 const skillsByPositions = computed(() => {
   return positions.value.map((position) => ({

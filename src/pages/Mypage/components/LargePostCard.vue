@@ -47,7 +47,7 @@ const handleOpenModal = () => {
 };
 
 // 전달받은 포스트 카드 클릭이벤트
-const emit = defineEmits(['click']);
+defineEmits(['click']);
 
 // 게시물의 신청 상태에 따른 신청 상태,버튼 종류 설정
 const text = ref('');

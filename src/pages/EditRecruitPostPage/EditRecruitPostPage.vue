@@ -13,7 +13,7 @@ import {
 } from '@/pages/EditRecruitPostPage/index';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
-import { useBaseModalStore } from '../../stores/baseModal';
+import { useBaseModalStore } from '@/stores/baseModal';
 
 // 베이스 모달 스토어
 const baseModalStore = useBaseModalStore();
@@ -82,7 +82,6 @@ onMounted(async () => {
   if (getAuthor) {
     userInfo.author = getAuthor.id;
   } else {
-    console.log('유저정보가 담기지 않았습니다.');
     return;
   }
   // 수정시 기존의 post 정보 업데이트

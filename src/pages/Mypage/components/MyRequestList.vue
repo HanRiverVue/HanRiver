@@ -8,14 +8,9 @@ import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import { usePagination } from '@/hooks/usePagination';
 import { supabase } from '@/config/supabase';
 import { getMyApplyPosts } from '@/api/supabase/post';
-import { useUserStore } from '@/stores/user';
-import { storeToRefs } from 'pinia';
 
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
 const router = useRouter();
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-
 onMounted(async () => {
   fetchMyApplyPostsWithPagination();
   subscribeCancelPostApply();
@@ -61,7 +56,7 @@ const subscribeCancelPostApply = async () => {
     .on(
       'postgres_changes',
       { event: 'DELETE', schema: 'public', table: 'post_apply_list' },
-      async (payload) => {
+      async () => {
         refetch();
       },
     )

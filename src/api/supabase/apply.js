@@ -3,9 +3,6 @@ import { getPostDetails } from './post';
 
 // 신청하기 함수
 export const postApplication = async (postId, selectedPositions) => {
-  console.log('postId in postApplication:', postId);
-  console.log('Selected Positions:', selectedPositions);
-
   try {
     const postDetails = await getPostDetails(postId);
     if (!postDetails) {
@@ -70,8 +67,6 @@ export const postApplication = async (postId, selectedPositions) => {
       console.error('신청 생성 실패:', error.message);
       return;
     }
-
-    console.log('신청이 완료되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 처리 중 오류 발생:', error);
@@ -102,8 +97,6 @@ export const deleteApplication = async (postId) => {
       console.error('신청 취소 실패:', error.message);
       return;
     }
-
-    // console.log('신청이 취소되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 취소 처리 중 오류 발생:', error);

@@ -9,7 +9,7 @@ import { SKILLS } from '@/constants/skill';
 const props = defineProps({
   selected: {
     type: Array,
-    default: [],
+    default: () => [],
   },
   class: {
     type: String,

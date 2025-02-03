@@ -33,7 +33,6 @@ const loadApplications = async () => {
     const data = await getApplicationsForMyPosts(postId.value);
     if (data) {
       applications.value = data;
-      console.log('받아온 신청 목록:', data);
     }
   } catch (err) {
     error.value = '신청 목록을 불러오는 데 실패했습니다.';
@@ -86,7 +85,6 @@ const handleAccept = async (proposerId) => {
       console.error('수락 처리 실패:', error.message);
       return;
     }
-    console.log(`${proposerId}번 신청자를 수락했습니다.`);
     await loadApplications();
   } catch (err) {
     console.error('수락 처리 중 오류 발생:', err);
@@ -106,7 +104,6 @@ const handleReject = async (proposerId) => {
       console.error('거절 처리 실패:', error.message);
       return;
     }
-    console.log(`${proposerId}번 신청자를 거절했습니다.`);
     await loadApplications(); // 새로고침
   } catch (err) {
     console.error('거절 처리 중 오류 발생:', err);

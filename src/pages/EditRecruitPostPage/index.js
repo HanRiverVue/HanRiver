@@ -133,13 +133,8 @@ export const sendData = async (
   afterPostModalObj,
 ) => {
   let filePath;
-  const defaultFilePath =
-    'https://hfrulsqohffbfxdsozkk.supabase.co/storage/v1/object/public/post_images/programmers.png';
 
-  if (userInfo.post_img_path === '') {
-    // 선택된 이미지 없으면 기본이미지 제공
-    filePath = defaultFilePath;
-  } else if (typeof userInfo.post_img_path === 'object') {
+  if (typeof userInfo.post_img_path === 'object') {
     filePath = await postUploadPostImage(userInfo.post_img_path);
   } else {
     filePath = userInfo.post_img_path;

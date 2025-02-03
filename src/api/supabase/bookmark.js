@@ -33,8 +33,6 @@ const toggleBookmark = async (postId) => {
         .eq('post_id', postId);
       if (deleteError) {
         console.error('북마크 삭제 오류:', deleteError);
-      } else {
-        console.log(`북마크 삭제 완료: ${postId}`);
       }
     } else {
       // 북마크 추가
@@ -44,8 +42,6 @@ const toggleBookmark = async (postId) => {
 
       if (insertError) {
         console.error('북마크 추가 오류:', insertError);
-      } else {
-        console.log(`북마크 추가 완료: ${postId}`);
       }
     }
   } catch (e) {
@@ -66,7 +62,6 @@ const getBookmarkedPosts = async () => {
       return [];
     }
 
-    console.log('북마크 목록:', bookmarks);
     return bookmarks.map((bookmark) => bookmark.post_id);
   } catch (e) {
     console.error('북마크 목록 처리 중 오류 발생:', e);
@@ -77,22 +72,12 @@ const getBookmarkedPosts = async () => {
 // 래핑한 함수
 // 북마크 추가/삭제 핸들러
 export const toggleBookmarkHandle = async (postId) => {
-  if (!postId) {
-    console.error('postId를 전달해야 합니다.');
-    return;
-  }
-  console.log(`북마크 처리 중... (postId: ${postId})`);
+  if (!postId) return;
   await toggleBookmark(postId);
 };
 
 // 북마크 목록 가져오기 핸들러
 export const getBookmarkedPostsHandle = async () => {
-  console.log('북마크 목록 가져오는 중...');
   const bookmarks = await getBookmarkedPosts();
-  if (bookmarks.length === 0) {
-    console.log('북마크한 게시물이 없습니다.');
-  } else {
-    console.log('북마크한 게시물 ID 목록:', bookmarks);
-  }
   return bookmarks;
 };

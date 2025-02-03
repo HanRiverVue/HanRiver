@@ -52,7 +52,6 @@ const router = createRouter({
             if (author) {
               next();
             } else {
-              console.log(author);
               alert('글 작성자가 아닙니다.');
               next(from.path);
             }
@@ -102,17 +101,14 @@ router.beforeEach(async (to, from, next) => {
   if (isLoggedIn.value) {
     await userStore.fetchUserInfo();
   }
-  console.log('index', isLoggedIn.value, user.value);
   if (to.path === '/Onboard' && isLoggedIn.value && user.value) {
     alert('이미 온보딩을 완료한 사용자입니다.');
     next('/');
     return;
   }
-  console.log(to.path);
 
   // 온보딩 이탈
   if (sessionStorage.getItem('to') === '/Onboard') {
-    console.log('onboard out');
     await signOut();
     const userStore = useUserStore();
     userStore.isLoggedIn = null;
