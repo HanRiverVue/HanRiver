@@ -23,6 +23,8 @@ const { user, isLoggedIn } = storeToRefs(userStore);
 
 const loginModalStore = useLoginModalStore();
 
+const loginModalStore = useLoginModalStore();
+
 const handleUserPageClick = () => {
   closeUserProfile();
   if (userInfo.value && userInfo.value.id) {
@@ -30,6 +32,12 @@ const handleUserPageClick = () => {
   }
 };
 
+const openLoginModal = () => {
+  closeUserProfile();
+  loginModalStore.setLoginModal(true);
+};
+
+// 비회원일시 로그인모달
 const openLoginModal = () => {
   closeUserProfile();
   loginModalStore.setLoginModal(true);
