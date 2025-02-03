@@ -23,7 +23,6 @@ import { storeToRefs } from 'pinia';
 import { useUserProfileModalStore } from '@/stores/userProfileModal';
 import LoadingPage from '../LoadingPage.vue';
 
-
 const route = useRoute();
 const router = useRouter();
 const postId = ref(Number(route.params.postId));
@@ -250,10 +249,7 @@ const handleUserProfileImageClick = () => {
 
 <template>
   <div class="container mx-auto p-4 md:p-8 flex flex-col items-start md:flex-row gap-8">
-    <div
-      v-if="loading"
-      class="absolute inset-0 flex justify-center items-center z-10 bg-gray-900 bg-opacity-50"
-    >
+    <div v-if="loading" class="absolute inset-0 flex justify-center items-center z-10">
       <LoadingPage />
     </div>
 
@@ -263,7 +259,7 @@ const handleUserProfileImageClick = () => {
       :handleBackToPost="handleBackToPost"
     />
     <!-- 왼쪽 콘텐츠 영역 -->
-    <div v-else class="flex-none w-[738px]" v-if="!loading && postDetails">
+    <div class="flex-none w-[738px]" v-if="!loading && postDetails">
       <!-- 게시물 헤더 -->
       <div class="mb-2">
         <div class="flex justify-between items-center mb-4">
@@ -387,7 +383,6 @@ const handleUserProfileImageClick = () => {
       :handleApplyOrCancel="handleApplyOrCancel"
       :isApplied="isApplied"
       v-if="!loading && !error"
-
     />
   </div>
 </template>
