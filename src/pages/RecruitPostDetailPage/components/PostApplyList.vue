@@ -44,7 +44,6 @@ const loadApplications = async () => {
   } finally {
     loading.value = false;
   }
-  console.log(applications);
 };
 
 onMounted(() => {
@@ -127,9 +126,7 @@ const handleSelectClick = (item, closeDropdown) => {
 };
 
 const handleToggle = () => {
-  console.log('드롭다운 상태 변경 전:', isOpen.value);
   isOpen.value = !isOpen.value;
-  console.log('드롭다운 상태 변경 후:', isOpen.value);
 };
 
 const handleDropdownClose = () => {

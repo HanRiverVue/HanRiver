@@ -52,7 +52,6 @@ const {
 
 const handleSelectOrder = (order) => {
   handleUpdateFilter({ order });
-  console.log(filteredPosts.value);
 };
 </script>
 
