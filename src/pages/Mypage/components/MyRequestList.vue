@@ -5,7 +5,7 @@ import FilterDropdown from '@/components/FilterDropdown.vue';
 import { useRouter } from 'vue-router';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
-import { usePagination } from '@/utils/usePagination';
+import { usePagination } from '@/hooks/usePagination';
 import { supabase } from '@/config/supabase';
 import { getMyApplyPosts } from '@/api/supabase/post';
 import { useUserStore } from '@/stores/user';

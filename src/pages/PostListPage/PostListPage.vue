@@ -13,7 +13,7 @@ import { getAllPostsWithPagination } from '@/api/supabase/post';
 import { useRoute } from 'vue-router';
 import LoadingPage from '../LoadingPage.vue';
 import InitFilterButton from './components/InitFilterButton.vue';
-import { usePagination } from '@/utils/usePagination';
+import { usePagination } from '@/hooks/usePagination';
 import { useUserStore } from '@/stores/user';
 
 const positionFilterList = ['전체', ...POSITION];

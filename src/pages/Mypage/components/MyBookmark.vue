@@ -4,7 +4,7 @@ import FilterDropdown from '@/components/FilterDropdown.vue';
 import PostCard from '@/components/PostCard.vue';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
-import { usePagination } from '@/utils/usePagination';
+import { usePagination } from '@/hooks/usePagination';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
