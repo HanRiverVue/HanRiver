@@ -4,12 +4,12 @@ import dropdown_arrow_up from '@/assets/icons/dropdown_arrow_up.svg';
 import linkIcon from '@/assets/icons/link_icon.svg';
 import SkillBadge from '@/components/SkillBadge.vue';
 import { SKILLS } from '@/constants/skill';
-import { useUserStore } from '@/stores/user';
-import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
+defineProps({
+  userInfo: Object,
+});
+
 const introduceToggle = ref(true);
 </script>
 <template>
@@ -30,20 +30,20 @@ const introduceToggle = ref(true);
           v-if="introduceToggle"
           class="p-6 bg-secondary-3 rounded-lg input-shadow body-r whitespace-pre-wrap break-all"
         >
-          {{ user.long_introduce }}
+          {{ userInfo.long_introduce }}
         </p>
       </Transition>
     </div>
 
     <!-- 링크 -->
-    <div v-if="user.link !== ''" class="flex flex-col gap-2.5">
+    <div v-if="userInfo.link !== ''" class="flex flex-col gap-2.5">
       <span class="h3-b text-gray-80">링크</span>
       <ul class="flex flex-col gap-2.5">
         <a
           :href="link"
           rel="noopener noreferrer"
           target="_blank"
-          v-for="(link, index) in user.link"
+          v-for="(link, index) in userInfo.link"
           :key="index"
         >
           <li class="flex items-center gap-5 bg-secondary-3 rounded-lg input-shadow py-[5.5px]">
@@ -59,7 +59,11 @@ const introduceToggle = ref(true);
       <span class="h3-b text-gray-80">포지션 & 스킬</span>
       <div class="bg-secondary-3 rounded-lg input-shadow flex flex-col gap-7 p-7">
         <!-- 포지션별 기술스택 -->
-        <div class="flex flex-col gap-2.5" v-for="position in user.positions" :key="position.id">
+        <div
+          class="flex flex-col gap-2.5"
+          v-for="position in userInfo.positions"
+          :key="position.id"
+        >
           <span class="body-large-m text-black">{{ position.position }}</span>
           <div class="flex items-center gap-4">
             <div v-for="stack in position.stacks" :key="stack.id">

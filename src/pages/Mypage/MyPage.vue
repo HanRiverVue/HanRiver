@@ -111,7 +111,7 @@ const handleUpdateIndex = (index = 0) => {
       <TabMenu :menu-items="items" :activeIndex="activeIndex" @update-Index="handleUpdateIndex" />
       <!-- 탭 내용 -->
       <div>
-        <div v-if="activeIndex === 0"><MyInfo /></div>
+        <div v-if="activeIndex === 0"><MyInfo :userInfo="user" /></div>
         <div v-else-if="activeIndex === 1"><MyRecruitmentList /></div>
         <div v-else-if="activeIndex === 2"><MyRequestList /></div>
         <div v-else-if="activeIndex === 3"><MyBookmark /></div>
