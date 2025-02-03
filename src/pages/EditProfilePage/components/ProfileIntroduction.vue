@@ -4,8 +4,11 @@ import { useProfileStore } from '@/stores/profile';
 
 const profileStore = useProfileStore();
 
-const handleIntroductionInput = ($event) => {
-  profileStore.setLongIntroduction($event.target.value);
+const handleIntroductionInput = (event) => {
+  if (event.target.value.length > MAX_INTRODUCE_LENGTH) {
+    event.target.value = event.target.value.slice(0, MAX_INTRODUCE_LENGTH);
+  }
+  profileStore.setLongIntroduction(event.target.value);
 };
 </script>
 <template>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import AppButton from '@/components/AppButton.vue';
 import { getApplicationsForMyPosts } from '@/api/supabase/apply';
@@ -17,6 +17,7 @@ const postId = ref(route.params.postId);
 const applications = ref([]);
 const loading = ref(true);
 const error = ref(null);
+const isOpen = ref(false);
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -41,10 +42,18 @@ const loadApplications = async () => {
   } finally {
     loading.value = false;
   }
+  console.log(applications);
 };
 
 onMounted(() => {
   loadApplications();
+  // 화면 밖 클릭 시 드롭다운을 닫는 리스너 추가
+  document.addEventListener('click', handleOutsideClick);
+});
+
+onBeforeUnmount(() => {
+  // 화면 밖 클릭 이벤트 리스너 제거
+  document.removeEventListener('click', handleOutsideClick);
 });
 
 const tabs = ['전체', '수락된 참여자'];
@@ -56,15 +65,12 @@ const handleTabChange = (tab) => {
 
 // 필터링된 신청자 목록
 const filteredApplications = computed(() => {
-  // 탭에 따른 필터링
   let filtered = applications.value;
-
   if (activeTab.value === '수락된 참여자') {
     filtered = filtered.filter((application) => application.accepted === true);
   }
 
-  // 포지션에 따른 2차 필터링
-  if (selectedItem.value) {
+  if (selectedItem.value && selectedItem.value !== '모집 포지션') {
     filtered = filtered.filter((application) =>
       application.proposer_positions.includes(selectedItem.value),
     );
@@ -73,7 +79,6 @@ const filteredApplications = computed(() => {
   return filtered;
 });
 
-// 신청 수락
 const handleAccept = async (proposerId) => {
   try {
     const { error } = await supabase
@@ -93,7 +98,6 @@ const handleAccept = async (proposerId) => {
   }
 };
 
-// 신청 거절
 const handleReject = async (proposerId) => {
   try {
     const { error } = await supabase
@@ -107,7 +111,7 @@ const handleReject = async (proposerId) => {
       return;
     }
     console.log(`${proposerId}번 신청자를 거절했습니다.`);
-    await loadApplications(); // 새로고침
+    await loadApplications();
   } catch (err) {
     console.error('거절 처리 중 오류 발생:', err);
   }
@@ -115,16 +119,28 @@ const handleReject = async (proposerId) => {
 
 const items = computed(() => props.postDetails?.position || []);
 const selectedItem = ref('');
-const defaultText = '모집 포지션';
-const isDropdownOpen = ref(false);
 
-const handleSelectClick = (item) => {
-  if (item === '모집 포지션') {
-    selectedItem.value = '';
-  } else {
-    selectedItem.value = item;
+const handleSelectClick = (item, closeDropdown) => {
+  selectedItem.value = item;
+  isOpen.value = false;
+  closeDropdown();
+};
+
+const handleToggle = () => {
+  console.log('드롭다운 상태 변경 전:', isOpen.value);
+  isOpen.value = !isOpen.value;
+  console.log('드롭다운 상태 변경 후:', isOpen.value);
+};
+
+const handleDropdownClose = () => {
+  isOpen.value = false;
+};
+
+// 화면 밖 클릭 시 드롭다운을 닫는 함수
+const handleOutsideClick = (event) => {
+  if (isOpen.value && !event.target.closest('.relative')) {
+    isOpen.value = false;
   }
-  isDropdownOpen.value = false;
 };
 </script>
 
@@ -154,14 +170,17 @@ const handleSelectClick = (item) => {
         </div>
 
         <DropdownButton>
-          <template #trigger="{ toggleDropdown, isOpen }">
+          <template #trigger="{ toggleDropdown }">
             <button
-              :class="[
-                'w-[126px] h-[32px] flex items-center justify-between px-2 border border-gray-300 rounded-md',
-              ]"
-              @click="toggleDropdown"
+              class="w-[126px] h-[32px] flex items-center justify-between px-2 border border-gray-300 rounded-md"
+              @click="
+                () => {
+                  handleToggle();
+                  toggleDropdown();
+                }
+              "
             >
-              <span class="truncate pl-3 text-[14px]">{{ selectedItem || defaultText }}</span>
+              <span class="truncate pl-3 text-[14px]">{{ selectedItem || '모집 포지션' }}</span>
               <img
                 :src="isOpen ? dropdown_arrow_up_icon : dropdown_arrow_icon"
                 alt="드롭다운 화살표"
@@ -170,19 +189,26 @@ const handleSelectClick = (item) => {
             </button>
           </template>
 
-          <template #menu="{ isOpen, closeDropdown }">
+          <template #menu="{ isOpen: dropdownOpen, closeDropdown }">
             <DropdownMenu
-              :isOpen="isOpen"
+              :isOpen="dropdownOpen"
               :dropdownList="[
-                { label: '모집 포지션', action: () => handleSelectClick('모집 포지션') },
-                ...items.map((item) => ({ label: item, action: () => handleSelectClick(item) })),
+                {
+                  label: '모집 포지션',
+                  action: () => handleSelectClick('모집 포지션', closeDropdown),
+                },
+                ...items.map((item) => ({
+                  label: item,
+                  action: () => handleSelectClick(item, closeDropdown),
+                })),
               ]"
-              @onClose="closeDropdown"
+              @onClose="handleDropdownClose"
               class="absolute right-0 my-2 py-1 bg-white rounded-lg card-shadow text-gray-50 overflow-hidden z-20 w-[126px]"
             />
           </template>
         </DropdownButton>
       </div>
+
       <!-- 참여자 카드 -->
       <div class="grid gap-4">
         <div v-if="loading" class="text-gray-50">로딩 중...</div>
@@ -193,7 +219,7 @@ const handleSelectClick = (item) => {
         >
           <div class="flex items-center gap-4">
             <img
-              src="@/assets/images/default_user_img.png"
+              :src="application.proposer_img_path"
               alt="Profile Image"
               class="w-12 h-12 rounded-full user-Profile-img-shadow"
             />
@@ -211,17 +237,14 @@ const handleSelectClick = (item) => {
               <p class="text-xs text-gray-50">신청일 | {{ formatDate(application.created_at) }}</p>
             </div>
           </div>
-          <!-- 신청 상태에 따른 버튼 및 텍스트 표시 -->
+
           <div class="flex gap-2">
-            <!-- 수락된 참여자일 경우 -->
             <template v-if="application.accepted">
               <span class="caption-r text-primary-3 mr-5">수락됨</span>
             </template>
-            <!-- 거절된 참여자일 경우 -->
             <template v-if="application.finished">
-              <span class="caption-r">거절됨</span>
+              <span class="caption-r mr-5">거절됨</span>
             </template>
-            <!-- 수락 및 거절 버튼이 나타날 경우 -->
             <template v-if="!application.accepted && !application.finished">
               <AppButton
                 text="수락"

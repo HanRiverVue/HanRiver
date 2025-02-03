@@ -2,7 +2,6 @@
 import { ref, computed, onMounted, watch, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
-import { getUserLoggedIn } from '@/api/supabase/auth';
 import PostApplyList from './components/PostApplyList.vue';
 import PostSideBar from './components/PostSideBar.vue';
 import { deleteApplication, postApplication } from '@/api/supabase/apply';
@@ -13,24 +12,17 @@ import likeFill from '@/assets/icons/like_fill.svg';
 import bookmark from '@/assets/icons/bookmark.svg';
 import bookmarkFill from '@/assets/icons/bookmark_fill.svg';
 import { useUserStore } from '@/stores/user';
-import {
-  getLikeCount,
-  getPostLikes,
-  getUserBookmarks,
-  toggleBookmark,
-  toggleLike,
-} from '@/api/supabase/like_and_bookmark';
+import { getLikeCount, toggleBookmark, toggleLike } from '@/api/supabase/like_and_bookmark';
 import { getUserInfoToUserId } from '@/api/supabase/user';
 import { deletePost } from '@/api/supabase/post_editor';
 import { useBaseModalStore } from '@/stores/baseModal';
 import { errorToast, warningToast } from '@/utils/toast';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { storeToRefs } from 'pinia';
-import NotFound from './components/NotFound.vue';
 
 const route = useRoute();
 const router = useRouter();
-const postId = ref(route.params.postId);
+const postId = ref(Number(route.params.postId));
 const postDetails = ref(null);
 const loading = ref(true);
 const error = ref(null);
@@ -48,10 +40,6 @@ const loginModalStore = useLoginModalStore();
 
 const authorInfo = ref(null);
 
-const props = defineProps({
-  id: Number,
-});
-
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -68,11 +56,11 @@ const formatList = (arr) => {
 // 좋아요 및 북마크 상태 결정
 const isLiked = computed(() => {
   // userPostLikes가 변화할 때마다 상태를 재계산하도록 하기
-  return userPostLikes.value?.includes(props.id) ?? false;
+  return userPostLikes.value?.includes(postId.value) ?? false;
 });
 const isBookmarked = computed(() => {
   // user의 bookmarks가 변화할 때마다 상태를 재계산하도록 하기
-  return user.value?.bookmarks?.includes(props.id) ?? false;
+  return user.value?.bookmarks?.includes(postId.value) ?? false;
 });
 
 // 좋아요 토글
@@ -83,11 +71,14 @@ const handleToggleLike = async (event) => {
     return;
   }
   try {
-    const result = await toggleLike(props.id);
+    const result = await toggleLike(postId.value);
+
     if (result !== null) {
       // 상태 갱신 후 userStore 업데이트
-      userStore.updateLikes(props.id);
+      userStore.updateLikes(postId.value);
     }
+    if (isLiked.value) likeCount.value++;
+    else likeCount.value--;
   } catch (error) {
     console.error('Error toggling like:', error);
   }
@@ -101,10 +92,11 @@ const handleToggleBookmark = async (event) => {
     return;
   }
   try {
-    const result = await toggleBookmark(props.id);
+    const result = await toggleBookmark(postId.value);
     if (result !== null) {
       // 상태 갱신 후 userStore 업데이트
-      userStore.updateBookmarks(props.id);
+      userStore.updateBookmarks(postId.value);
+      console.log(user.value?.bookmarks);
     }
   } catch (error) {
     console.error('Error toggling bookmark:', error);
@@ -126,11 +118,68 @@ const fetchPostData = async () => {
     }
   } catch (err) {
     console.error('Error fetching post data:', err);
-    error.value = '존재하지 않거나 삭제된 글입니다.';
+    error.value = err.message || '데이터를 불러오는 데 실패했습니다.';
   } finally {
     loading.value = false;
   }
 };
+onMounted(async () => {
+  userStore.setUserPostLikes();
+  fetchPostData();
+  likeCount.value = await getLikeCount(postId.value);
+});
+
+// postId가 변경될 때 실행
+watch(
+  () => route.params.postId,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      postId.value = Number(newVal);
+      fetchPostData();
+    }
+  },
+  { immediate: true },
+);
+
+// watchEffect(async () => {
+//   try {
+//     // likeCount.value = await getLikeCount(postId.value);
+//     console.log(likeCount.value);
+//   } catch (err) {
+//     console.error('좋아요 개수 조회 실패:', err);
+//   }
+// });
+
+watchEffect(() => {
+  if (postDetails.value && user.value) {
+    console.log('User ID:', user.value);
+    isAuthor.value = postDetails.value.author === user.value.user_id;
+  }
+});
+
+// 신청 상태 확인
+watch(
+  [postId, currentUserId],
+  async ([newPostId, newUserId]) => {
+    if (!newPostId || !newUserId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('post_apply_list')
+        .select('id')
+        .eq('proposer_id', newUserId)
+        .eq('post_id', newPostId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      isApplied.value = !!data;
+    } catch (err) {
+      console.error('신청 상태 확인 오류:', err);
+    }
+  },
+  { immediate: true },
+);
 
 // 게시물 삭제
 const handleDeletePost = async () => {
@@ -199,78 +248,12 @@ const handleCloseRecruitment = async (postId) => {
     console.error('Error updating post:', error);
   }
 };
-
-onMounted(fetchPostData);
-
-// postId가 변경될 때 실행
-watch(postId, async (newPostId, oldPostId) => {
-  if (newPostId !== oldPostId) {
-    await fetchPostData();
-  }
-});
-
-watch(
-  () => route.params.postId,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      postId.value = newVal;
-      fetchPostData();
-    }
-  },
-  { immediate: true },
-);
-
-watchEffect(async () => {
-  try {
-    likeCount.value = await getLikeCount(postId.value);
-  } catch (err) {
-    console.error('좋아요 개수 조회 실패:', err);
-  }
-});
-
-watchEffect(() => {
-  if (postDetails.value && user.value) {
-    console.log('User ID:', user.value);
-    isAuthor.value = postDetails.value.author === user.value.user_id;
-  }
-});
-
-// 신청 상태 확인
-watch(
-  [postId, currentUserId],
-  async ([newPostId, newUserId]) => {
-    if (!newPostId || !newUserId) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('post_apply_list')
-        .select('id')
-        .eq('proposer_id', newUserId)
-        .eq('post_id', newPostId)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      isApplied.value = !!data;
-    } catch (err) {
-      console.error('신청 상태 확인 오류:', err);
-    }
-  },
-  { immediate: true },
-);
 </script>
 
 <template>
   <div class="container mx-auto p-4 md:p-8 flex flex-col items-start md:flex-row gap-8">
-    <!-- 게시물이 정상적으로 로드되지 않았을 때 NotFound 컴포넌트를 표시 -->
-    <NotFound
-      v-if="!loading && !postDetails"
-      message="존재하지 않거나 삭제된 게시물입니다."
-      :handleBackToPost="handleBackToPost"
-    />
-
     <!-- 왼쪽 콘텐츠 영역 -->
-    <div v-else class="flex-none w-[738px]" v-if="!loading && postDetails">
+    <div class="flex-none w-[738px]" v-if="!loading && postDetails">
       <!-- 게시물 헤더 -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
@@ -378,7 +361,6 @@ watch(
         <PostComment v-model:error="error" v-model:loading="loading" />
       </div>
     </div>
-
     <!-- 오른쪽 고정 박스 -->
     <PostSideBar
       :postDetails="postDetails"
@@ -390,7 +372,6 @@ watch(
       :handleCloseRecruitment="handleCloseRecruitment"
       :handleApplyOrCancel="handleApplyOrCancel"
       :isApplied="isApplied"
-      v-if="!error"
     />
   </div>
 </template>

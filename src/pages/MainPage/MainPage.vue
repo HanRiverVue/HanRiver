@@ -21,14 +21,6 @@ const loading = ref(true);
 // 포스트 카드 렌더링 상수
 const VISIBLE_POSTS = 4;
 
-// 포스트 정렬
-// const sortPosts = {
-//   hot: (posts) => posts.sort((a, b) => b.likes - a.likes),
-//   deadline: (posts) =>
-//     posts.sort((a, b) => new Date(a.applicationDeadline) - new Date(b.applicationDeadline)),
-//   new: (posts) => posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
-// };
-
 // 포스트카드 API 호출
 const fetchPosts = async () => {
   loading.value = true;
