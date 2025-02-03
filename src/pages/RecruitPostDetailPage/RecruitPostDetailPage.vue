@@ -326,6 +326,7 @@ const handleCloseRecruitment = async (postId) => {
         <!-- 게시물 이미지 -->
         <div class="mb-7 flex justify-center items-center">
           <img
+            v-if="postDetails.post_img_path"
             :src="postDetails.post_img_path.replace(/%/g, '')"
             alt="게시물 이미지"
             class="w-121 rounded-lg"
