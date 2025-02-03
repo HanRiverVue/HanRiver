@@ -72,7 +72,7 @@ watch(() => props.posts, updateSwiper, { deep: true });
           1024: { slidesPerView: 4 },
         }"
       >
-        <swiper-slide v-for="post in posts" :key="post.id">
+        <swiper-slide v-for="post in posts" :key="post.id" class="pl-[20px] py-[20px]">
           <PostCard
             :id="post.id"
             :user_id="post.author"
