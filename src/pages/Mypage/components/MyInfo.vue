@@ -26,7 +26,10 @@ const introduceToggle = ref(true);
         </button>
       </div>
       <Transition>
-        <p v-if="introduceToggle" class="p-6 bg-secondary-3 rounded-lg input-shadow body-r">
+        <p
+          v-if="introduceToggle"
+          class="p-6 bg-secondary-3 rounded-lg input-shadow body-r whitespace-pre-wrap break-all"
+        >
           {{ user.long_introduce }}
         </p>
       </Transition>
