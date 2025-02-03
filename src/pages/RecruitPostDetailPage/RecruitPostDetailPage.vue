@@ -26,6 +26,7 @@ import { useBaseModalStore } from '@/stores/baseModal';
 import { errorToast, warningToast } from '@/utils/toast';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { storeToRefs } from 'pinia';
+import NotFound from './components/NotFound.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -125,71 +126,11 @@ const fetchPostData = async () => {
     }
   } catch (err) {
     console.error('Error fetching post data:', err);
-    error.value = err.message || '데이터를 불러오는 데 실패했습니다.';
+    error.value = '존재하지 않거나 삭제된 글입니다.';
   } finally {
     loading.value = false;
   }
 };
-onMounted(fetchPostData);
-
-// postId가 변경될 때 실행
-watch(postId, async (newPostId, oldPostId) => {
-  if (newPostId !== oldPostId) {
-    await fetchPostData();
-  }
-});
-
-watch(
-  () => route.params.postId,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      postId.value = newVal;
-      fetchPostData();
-    }
-  },
-  { immediate: true },
-);
-
-watchEffect(async () => {
-  try {
-    likeCount.value = await getLikeCount(postId.value);
-  } catch (err) {
-    console.error('좋아요 개수 조회 실패:', err);
-  }
-});
-
-watchEffect(() => {
-  if (postDetails.value && user.value) {
-    console.log('User ID:', user.value);
-    isAuthor.value = postDetails.value.author === user.value.user_id;
-  }
-});
-
-// 신청 상태 확인
-watch(
-  [postId, currentUserId],
-  async ([newPostId, newUserId]) => {
-    if (!newPostId || !newUserId) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('post_apply_list')
-        .select('id')
-        .eq('proposer_id', newUserId)
-        .eq('post_id', newPostId)
-        .maybeSingle();
-
-      if (error) throw error;
-
-      isApplied.value = !!data;
-    } catch (err) {
-      console.error('신청 상태 확인 오류:', err);
-    }
-  },
-  { immediate: true },
-);
-
-watch();
 
 // 게시물 삭제
 const handleDeletePost = async () => {
@@ -258,12 +199,78 @@ const handleCloseRecruitment = async (postId) => {
     console.error('Error updating post:', error);
   }
 };
+
+onMounted(fetchPostData);
+
+// postId가 변경될 때 실행
+watch(postId, async (newPostId, oldPostId) => {
+  if (newPostId !== oldPostId) {
+    await fetchPostData();
+  }
+});
+
+watch(
+  () => route.params.postId,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      postId.value = newVal;
+      fetchPostData();
+    }
+  },
+  { immediate: true },
+);
+
+watchEffect(async () => {
+  try {
+    likeCount.value = await getLikeCount(postId.value);
+  } catch (err) {
+    console.error('좋아요 개수 조회 실패:', err);
+  }
+});
+
+watchEffect(() => {
+  if (postDetails.value && user.value) {
+    console.log('User ID:', user.value);
+    isAuthor.value = postDetails.value.author === user.value.user_id;
+  }
+});
+
+// 신청 상태 확인
+watch(
+  [postId, currentUserId],
+  async ([newPostId, newUserId]) => {
+    if (!newPostId || !newUserId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('post_apply_list')
+        .select('id')
+        .eq('proposer_id', newUserId)
+        .eq('post_id', newPostId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      isApplied.value = !!data;
+    } catch (err) {
+      console.error('신청 상태 확인 오류:', err);
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
   <div class="container mx-auto p-4 md:p-8 flex flex-col items-start md:flex-row gap-8">
+    <!-- 게시물이 정상적으로 로드되지 않았을 때 NotFound 컴포넌트를 표시 -->
+    <NotFound
+      v-if="!loading && !postDetails"
+      message="존재하지 않거나 삭제된 게시물입니다."
+      :handleBackToPost="handleBackToPost"
+    />
+
     <!-- 왼쪽 콘텐츠 영역 -->
-    <div class="flex-none w-[738px]" v-if="!loading && postDetails">
+    <div v-else class="flex-none w-[738px]" v-if="!loading && postDetails">
       <!-- 게시물 헤더 -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
@@ -371,6 +378,7 @@ const handleCloseRecruitment = async (postId) => {
         <PostComment v-model:error="error" v-model:loading="loading" />
       </div>
     </div>
+
     <!-- 오른쪽 고정 박스 -->
     <PostSideBar
       :postDetails="postDetails"
@@ -382,6 +390,7 @@ const handleCloseRecruitment = async (postId) => {
       :handleCloseRecruitment="handleCloseRecruitment"
       :handleApplyOrCancel="handleApplyOrCancel"
       :isApplied="isApplied"
+      v-if="!error"
     />
   </div>
 </template>
