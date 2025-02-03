@@ -69,6 +69,7 @@ const handleFileChange = (event) => {
 
   const fileURL = URL.createObjectURL(file);
   updateProfileImage(fileURL, file);
+  event.target.value = '';
 };
 </script>
 <template>

@@ -19,6 +19,7 @@ const handleImageSelectClick = async (e) => {
   };
   reader.readAsDataURL(file);
   // 최종 전달 데이터엔 일단 정제안된 file 데이터만 보냄(보낼때 정제 필요)
+  e.target.value = '';
 };
 
 const handleImgButtonClick = () => {
