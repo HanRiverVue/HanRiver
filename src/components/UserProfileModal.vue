@@ -7,41 +7,28 @@ import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import { useUserStore } from '@/stores/user';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
 const userProfileModalStore = useUserProfileModalStore();
 const { userProfileModal, userInfo, isLoading, error } = storeToRefs(userProfileModalStore);
-
 const profileStore = useProfileStore();
 const { DEFAULT_PROFILE_IMAGE_URL } = profileStore;
-
 const closeUserProfile = () => {
   userProfileModalStore.setUserProfileModal(false);
 };
 const userStore = useUserStore();
 const { user, isLoggedIn } = storeToRefs(userStore);
-
 const loginModalStore = useLoginModalStore();
-
 const handleUserPageClick = () => {
   closeUserProfile();
   if (userInfo.value && userInfo.value.id) {
     router.push(`/UserPage/${userInfo.value.id}`);
   }
 };
-
-const openLoginModal = () => {
-  closeUserProfile();
-  loginModalStore.setLoginModal(true);
-};
-
-// 비회원일시 로그인모달
 const openLoginModal = () => {
   closeUserProfile();
   loginModalStore.setLoginModal(true);
 };
 </script>
-
 <template>
   <div
     v-if="userProfileModal"
