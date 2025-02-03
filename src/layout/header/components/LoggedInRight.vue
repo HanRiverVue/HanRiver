@@ -11,7 +11,6 @@ import { useNotificationModalStore } from '@/stores/notificaionModal';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { subscribeToNotifications } from '@/api/supabase/notifications';
-import { supabase } from '@/config/supabase';
 
 const router = useRouter();
 
@@ -88,7 +87,11 @@ onUnmounted(() => {
             @click="toggleDropdown"
             class="flex w-10 h-10 rounded-full overflow-hidden user-Profile-img-shadow"
           >
-            <img :src="user_img" alt="유저 기본 이미지 아이콘" class="object-cover origin-center" />
+            <img
+              :src="user_img"
+              alt="유저 기본 이미지 아이콘"
+              class="object-cover origin-center w-full h-full"
+            />
           </button>
         </template>
         <template #menu="{ isOpen, closeDropdown }">

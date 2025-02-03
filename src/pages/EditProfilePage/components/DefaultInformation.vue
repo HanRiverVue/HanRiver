@@ -101,7 +101,7 @@ const handleFileChange = (event) => {
               v-if="profileImage.local"
               :src="profileImage.local"
               alt="프로필 이미지"
-              class="object-cover object-bottom w-full h-full"
+              class="object-cover object-center w-full h-full"
             />
             <div else class="w-full h-full bg-primary-5" />
           </div>

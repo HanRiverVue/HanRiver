@@ -70,7 +70,7 @@ const handleUpdateIndex = (index = 0) => {
       <!-- 프로필 이미지 -->
       <div class="w-[124px] h-[124px]">
         <img
-          class="w-full h-full rounded-full user-Profile-img-shadow"
+          class="w-full h-full rounded-full user-Profile-img-shadow object-cover object-center"
           :src="user.profile_img_path"
           alt="프로필 이미지"
         />
