@@ -123,7 +123,7 @@ const handleCloseRecruitmentClick = () => {
         </li>
         <li class="grid grid-cols-[82px_1fr]">
           <strong class="caption-b">연락 방법</strong>
-          <span class="caption-r"
+          <span class="caption-r break-all"
             >{{ props.postDetails.call_method }} | {{ props.postDetails.call_link }}</span
           >
         </li>
