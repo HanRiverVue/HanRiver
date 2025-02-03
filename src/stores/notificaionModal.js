@@ -27,8 +27,7 @@ export const useNotificationModalStore = defineStore('notificationModal', () => 
 
   // 읽음처리(checked) 함수
   const updateChecked = async (id) => {
-    const res = await markAsChecked(id);
-    console.log(res);
+    await markAsChecked(id);
   };
 
   // 읽음처리(checked) UI 업데이트 함수
@@ -56,7 +55,6 @@ export const useNotificationModalStore = defineStore('notificationModal', () => 
   // 로그인한 사용자의 알림 목록 가져오기
   const fetchNotifications = async () => {
     notifications.value = await getNotifications();
-    console.log('결과', notifications.value);
     // 알림 테이블 구독
     // subscribeToNotifications(notifications.value, hasNewNotification.value);
   };
