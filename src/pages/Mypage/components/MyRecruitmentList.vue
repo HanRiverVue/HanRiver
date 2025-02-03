@@ -52,6 +52,7 @@ const {
 
 const handleSelectOrder = (order) => {
   handleUpdateFilter({ order });
+  console.log(filteredPosts.value);
 };
 </script>
 
@@ -80,7 +81,7 @@ const handleSelectOrder = (order) => {
             :project-title="post.title"
             :skills="post.tech_stacks"
             :position="post.positions"
-            :application-deadline="post.end_date"
+            :application-deadline="post.recruit_deadline"
           />
         </div>
       </div>

@@ -72,7 +72,7 @@ if (props.status === 'success') {
   >
     <!-- 제목 & 상태   -->
     <div class="flex justify-between items-center mb-[14px]">
-      <p class="body-large-b text-gray-80 line-clamp-3">
+      <p class="body-large-b text-gray-80 line-clamp-1 w-[80%]">
         {{ projectTitle }}
       </p>
       <StatusBadge :status="status">{{ text }}</StatusBadge>

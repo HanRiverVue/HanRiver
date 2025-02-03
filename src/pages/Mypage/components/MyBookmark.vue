@@ -72,7 +72,7 @@ const handleSelectOrder = (order) => {
             :project-title="post.title"
             :skills="post.stack"
             :position="post.post_position"
-            :application-deadline="post.end_date"
+            :application-deadline="post.recruit_deadline"
           />
         </div>
       </div>
