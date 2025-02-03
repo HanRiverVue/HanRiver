@@ -36,14 +36,25 @@ watch(() => props.posts, updateSwiper, { deep: true });
 </script>
 
 <template>
-  <article>
-    <div class="flex flex-wrap items-center gap-2.5 mb-6">
-      <h2 class="h1-b text-gray-90">{{ title }}</h2>
-      <StatusBadge :status="badgeStatus" class="px-2.5 py-[3px]">
-        {{ badgeText }}
-      </StatusBadge>
-    </div>
+  <article class="relative">
     <div class="swiper-wrap relative mb-[60px]">
+      <div class="mb-6 flex justify-between items-center">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <h2 class="h1-b text-gray-90">{{ title }}</h2>
+          <StatusBadge :status="badgeStatus" class="px-2.5 py-[3px]">
+            {{ badgeText }}
+          </StatusBadge>
+        </div>
+
+        <div :id="swiperId" class="flex justify-end space-x-2">
+          <button class="scroll-arrow left-arrow">
+            <img :src="ArrowLeft" alt="left" />
+          </button>
+          <button class="scroll-arrow right-arrow">
+            <img :src="ArrowRight" alt="right" />
+          </button>
+        </div>
+      </div>
       <swiper
         :modules="[Navigation]"
         :slides-per-view="4"
@@ -74,14 +85,6 @@ watch(() => props.posts, updateSwiper, { deep: true });
           />
         </swiper-slide>
       </swiper>
-      <div :id="swiperId" class="mt-2 flex justify-end space-x-2">
-        <button class="scroll-arrow left-arrow">
-          <img :src="ArrowLeft" alt="left" />
-        </button>
-        <button class="scroll-arrow right-arrow">
-          <img :src="ArrowRight" alt="right" />
-        </button>
-      </div>
     </div>
   </article>
 </template>
