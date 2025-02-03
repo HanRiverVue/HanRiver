@@ -2,9 +2,8 @@
 import OnboardAside from './components/OnboardAside.vue';
 import OnboardStep1 from './components/OnboardStep1.vue';
 import OnboardStep2 from './components/OnboardStep2.vue';
-import { onBeforeMount, reactive, ref, watch } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import OnboardingCompleteModal from './components/OnboardingCompleteModal.vue';
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 
 const step = ref(1); // 온보딩 단계
 const maxPage = 2; // 최대 온보딩 단계

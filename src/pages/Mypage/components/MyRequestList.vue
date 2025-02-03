@@ -5,17 +5,12 @@ import FilterDropdown from '@/components/FilterDropdown.vue';
 import { useRouter } from 'vue-router';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
-import { usePagination } from '@/utils/usePagination';
+import { usePagination } from '@/hooks/usePagination';
 import { supabase } from '@/config/supabase';
 import { getMyApplyPosts } from '@/api/supabase/post';
-import { useUserStore } from '@/stores/user';
-import { storeToRefs } from 'pinia';
 
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
 const router = useRouter();
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-
 onMounted(async () => {
   fetchMyApplyPostsWithPagination();
   subscribeCancelPostApply();
@@ -24,7 +19,6 @@ onMounted(async () => {
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchMyApplyPostsWithPagination = async () => {
   return await getMyApplyPosts(
-    // user.value.user_id,
     {
       status: selectedFilter.value.status,
     },
@@ -61,7 +55,7 @@ const subscribeCancelPostApply = async () => {
     .on(
       'postgres_changes',
       { event: 'DELETE', schema: 'public', table: 'post_apply_list' },
-      async (payload) => {
+      async () => {
         refetch();
       },
     )

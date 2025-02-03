@@ -1,5 +1,5 @@
-import js from '@eslint/js'
-import pluginVue from 'eslint-plugin-vue'
+import js from '@eslint/js';
+import pluginVue from 'eslint-plugin-vue';
 
 export default [
   {
@@ -14,4 +14,12 @@ export default [
 
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
-]
+
+  {
+    rules: {
+      'vue/no-mutating-props': 'off', // 규칙 완전 비활성화
+      // 또는
+      // 'vue/no-mutating-props': 'warn'  // 경고로 변경
+    },
+  },
+];

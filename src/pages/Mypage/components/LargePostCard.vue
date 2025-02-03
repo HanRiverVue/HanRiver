@@ -3,7 +3,7 @@ import PositionSmallBadge from '@/components/PositionSmallBadge.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { ref } from 'vue';
 import AppButton from '@/components/AppButton.vue';
-import { deleteApplicationHandle } from '@/api/supabase/apply';
+import { deleteApplication } from '@/api/supabase/apply';
 import { SKILLS } from '@/constants/skill';
 import { useBaseModalStore } from '@/stores/baseModal';
 
@@ -42,12 +42,12 @@ const handleOpenModal = () => {
     title: '신청을 취소하시겠습니까?',
     confirmText: '취소하기',
     cancelText: '돌아가기',
-    onConfirm: async () => await deleteApplicationHandle(props.postId),
+    onConfirm: async () => await deleteApplication(props.postId),
   });
 };
 
 // 전달받은 포스트 카드 클릭이벤트
-const emit = defineEmits(['click']);
+defineEmits(['click']);
 
 // 게시물의 신청 상태에 따른 신청 상태,버튼 종류 설정
 const text = ref('');

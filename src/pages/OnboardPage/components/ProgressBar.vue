@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps({
+defineProps({
   currentPage: {
     type: Number,
     required: true,

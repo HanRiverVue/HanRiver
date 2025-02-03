@@ -2,22 +2,21 @@
 import BaseInput from '@/components/BaseInput.vue';
 import EditTitle from '@/pages/EditRecruitPostPage/components/EditTitle.vue';
 import Editor from 'primevue/editor';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   userInfo: Object,
 });
-const emit = defineEmits(['update:data']);
 
 const handleBaseInputInput = (value) => {
   props.userInfo.title = value;
 };
 
-const editerRef = ref(null);
+const editorRef = ref(null);
 const handleEditorFocusKeydown = (event) => {
   if (event.key === 'Tab') {
     event.preventDefault();
-    editerRef.value.quill.focus();
+    editorRef.value.quill.focus();
   }
 };
 </script>
@@ -35,7 +34,7 @@ const handleEditorFocusKeydown = (event) => {
         @input="handleBaseInputInput"
         @keydown="handleEditorFocusKeydown"
       />
-      <Editor v-model="props.userInfo.body" editorStyle="height: 600px" ref="editerRef" />
+      <Editor v-model="props.userInfo.body" editorStyle="height: 600px" ref="editorRef" />
     </article>
   </article>
 </template>

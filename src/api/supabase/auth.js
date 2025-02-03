@@ -2,34 +2,32 @@ import { supabase } from '@/config/supabase';
 
 // 깃허브 로그인 API
 export const signInWithGithub = async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const { error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
   });
-  console.log(data);
 
   if (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 // 카카오 로그인 API
 export const signInWithKakao = async () => {
-  let { data, error } = await supabase.auth.signInWithOAuth({
+  let { error } = await supabase.auth.signInWithOAuth({
     provider: 'kakao',
   });
   if (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 // 구글 로그인 API
 export const signInWithGoogle = async () => {
-  let { data, error } = await supabase.auth.signInWithOAuth({
+  let { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
   });
-  console.log(data);
   if (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -37,7 +35,7 @@ export const signInWithGoogle = async () => {
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
@@ -46,7 +44,5 @@ export const getUserLoggedIn = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  // console.log(user);
   return user;
 };

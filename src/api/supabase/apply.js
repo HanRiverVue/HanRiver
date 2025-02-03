@@ -3,9 +3,6 @@ import { getPostDetails } from './post';
 
 // 신청하기 함수
 export const postApplication = async (postId, selectedPositions) => {
-  console.log('postId in postApplication:', postId);
-  console.log('Selected Positions:', selectedPositions);
-
   try {
     const postDetails = await getPostDetails(postId);
     if (!postDetails) {
@@ -70,8 +67,6 @@ export const postApplication = async (postId, selectedPositions) => {
       console.error('신청 생성 실패:', error.message);
       return;
     }
-
-    console.log('신청이 완료되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 처리 중 오류 발생:', error);
@@ -102,50 +97,9 @@ export const deleteApplication = async (postId) => {
       console.error('신청 취소 실패:', error.message);
       return;
     }
-
-    // console.log('신청이 취소되었습니다:', data);
     return data;
   } catch (error) {
     console.error('신청 취소 처리 중 오류 발생:', error);
-  }
-};
-
-// 내가 신청한 목록
-export const getMyApplicationsList = async () => {
-  try {
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    if (userError) {
-      console.error('사용자 정보 가져오기 실패:', userError.message);
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('post_apply_list')
-      .select()
-      .eq('proposer_id', user.id);
-
-    if (error) {
-      console.error('내가 신청한 목록 가져오기 실패:', error.message);
-      return;
-    }
-
-    // 비동기 처리를 위해 Promise.all 사용
-    const newData = await Promise.all(
-      data.map(async (item) => {
-        const postId = item.post_id;
-        const post = await getPostDetails(postId);
-        const positionArr = item.proposer_positions.split('/');
-        return { ...item, proposer_positions: positionArr, ...post };
-      }),
-    );
-
-    return newData;
-  } catch (error) {
-    console.error('내가 신청한 목록 처리 중 오류 발생:', error);
   }
 };
 
@@ -179,24 +133,4 @@ export const getApplicationsForMyPosts = async (postId) => {
   } catch (error) {
     console.error('내가 작성한 글에 대한 신청 목록 처리 중 오류 발생:', error);
   }
-};
-
-// 신청하기 핸들러
-export const postApplicationHandle = async (postId, postTitle, hostId) => {
-  return await postApplication(postId, postTitle, hostId);
-};
-
-// 신청 취소 핸들러
-export const deleteApplicationHandle = async (postId) => {
-  return await deleteApplication(postId);
-};
-
-// 내가 신청한 목록 핸들러
-export const getMyApplicationsListHandle = async () => {
-  return await getMyApplicationsList();
-};
-
-// 내가 작성한 글에 대한 신청 목록 핸들러
-export const getApplicationsForMyPostsHandle = async () => {
-  return await getApplicationsForMyPosts();
 };

@@ -16,12 +16,10 @@ export const postUploadUserImage = async (file) => {
   });
 
   if (addData) {
-    const { data, error } = await supabase.storage
-      .from('user_images')
-      .upload(encodedFileName, file, {
-        cacheControl: '3600',
-        upsert: false,
-      });
+    const { error } = await supabase.storage.from('user_images').upload(encodedFileName, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
     if (error) {
       console.error(error);
     }

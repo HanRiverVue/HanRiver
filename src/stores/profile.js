@@ -59,7 +59,6 @@ export const useProfileStore = defineStore('profile', () => {
       return;
     }
 
-    // TODO: 닉네임 중복 확인 API 호출
     const result = await checkDuplicateNickname(newNickname);
 
     if (result) {

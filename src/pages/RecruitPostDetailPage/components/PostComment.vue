@@ -154,7 +154,6 @@ const handleSubmitComment = async () => {
     // 댓글 추가정보 갱신 로직
     comments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
     formatComments.unshift({ ...result[0], isDropdownOpen: false, isEditable: false });
-    console.log(comments);
   } catch (error) {
     console.error('댓글 등록 실패:', error);
   }

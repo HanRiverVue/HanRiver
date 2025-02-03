@@ -12,7 +12,6 @@ export const usePagination = (fetchData, queryKey, filters = {}, enableCache = t
   // 필터링
   const selectedFilter = ref(filters);
 
-  // const queryKeys = computed(() => [queryKey, selectedFilter.value, currentPage.value]);
   const { isLoading, data, refetch } = useQuery({
     queryKey: [queryKey, selectedFilter.value, currentPage.value],
     queryFn: fetchData,

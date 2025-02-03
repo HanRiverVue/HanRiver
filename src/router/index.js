@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MainPage from '@/pages/MainPage/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
 import { supabase } from '@/config/supabase';
@@ -53,7 +52,6 @@ const router = createRouter({
             if (author) {
               next();
             } else {
-              console.log(author);
               alert('글 작성자가 아닙니다.');
               next(from.path);
             }
@@ -90,24 +88,11 @@ const router = createRouter({
       component: () => import('@/pages/OnboardPage/OnboardPage.vue'),
       meta: { requiredAuth: true },
     },
-    {
-      path: '/test',
-      name: 'testage',
-      component: () => import('@/pages/test_api_page_hw/LoginAndUserTest.vue'),
-    },
-    {
-      path: '/testhw',
-      name: 'testhw',
-      component: () => import('@/pages/test_api_page_hw/Post.vue'),
-    },
   ],
 });
 
 // 로그인 페이지 이동제어
 router.beforeEach(async (to, from, next) => {
-  // const isAuthenticated = await getSession();
-  // console.log(isAuthenticated);
-
   // 온보딩이 완료된 사용자는 접근 차단
   const { useUserStore } = await import('@/stores/user');
   const userStore = useUserStore();
@@ -116,17 +101,14 @@ router.beforeEach(async (to, from, next) => {
   if (isLoggedIn.value) {
     await userStore.fetchUserInfo();
   }
-  console.log('index', isLoggedIn.value, user.value);
   if (to.path === '/Onboard' && isLoggedIn.value && user.value) {
     alert('이미 온보딩을 완료한 사용자입니다.');
     next('/');
     return;
   }
-  console.log(to.path);
 
   // 온보딩 이탈
   if (sessionStorage.getItem('to') === '/Onboard') {
-    console.log('onboard out');
     await signOut();
     const userStore = useUserStore();
     userStore.isLoggedIn = null;

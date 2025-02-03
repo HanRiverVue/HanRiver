@@ -143,15 +143,6 @@ watch(
   { immediate: true },
 );
 
-// watchEffect(async () => {
-//   try {
-//     // likeCount.value = await getLikeCount(postId.value);
-//     console.log(likeCount.value);
-//   } catch (err) {
-//     console.error('좋아요 개수 조회 실패:', err);
-//   }
-// });
-
 watchEffect(() => {
   if (postDetails.value && user.value) {
     isAuthor.value = postDetails.value.author === user.value.user_id;
@@ -232,7 +223,7 @@ const handleBackToPost = () => {
 
 const handleCloseRecruitment = async (postId) => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('post')
       .update({ finished: true })
       .eq('id', postId)
@@ -240,7 +231,6 @@ const handleCloseRecruitment = async (postId) => {
     if (error) {
       throw error;
     }
-    console.log('Updated Post:', data);
   } catch (error) {
     console.error('Error updating post:', error);
   }

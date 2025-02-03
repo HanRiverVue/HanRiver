@@ -8,7 +8,7 @@ import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import { useUserStore } from '@/stores/user';
 import { storeToRefs } from 'pinia';
-import { usePagination } from '@/utils/usePagination';
+import { usePagination } from '@/hooks/usePagination';
 
 const router = useRouter();
 

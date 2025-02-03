@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 import LoadingPage from '@/pages/LoadingPage.vue';
 import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import FilterDropdown from '@/components/FilterDropdown.vue';
-import { usePagination } from '@/utils/usePagination';
+import { usePagination } from '@/hooks/usePagination';
 
 const props = defineProps({
   userInfo: {

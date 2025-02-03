@@ -93,8 +93,6 @@ const HandlePostUserInfoOnboard = () => {
     short_introduce: props.registerData.short_introduce,
   };
   const userPositions = props.registerData.userPositions;
-
-  console.log('전송', JSON.stringify(userProfile, null, 2), JSON.stringify(userPositions, null, 2));
   postUserInfoOnboard(userProfile, userPositions);
   emit('completeOnboarding');
 };

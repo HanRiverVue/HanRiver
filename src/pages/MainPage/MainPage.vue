@@ -33,7 +33,6 @@ const fetchPosts = async () => {
     hotPosts.value = hot.posts;
     deadlinePosts.value = deadline.posts;
     newPosts.value = recently.posts;
-    console.log(hotPosts.value);
   } catch (error) {
     console.error('게시글 로딩 중 오류 발생:', error);
   } finally {

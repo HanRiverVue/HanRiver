@@ -24,7 +24,7 @@ const members = [
         <span class="text-gray-50 body-b">team.han-river-vue</span>
       </a>
       <ul class="flex justify-between mb-2">
-        <template v-for="(member, index) of members">
+        <template v-for="(member, index) of members" :key="member.name">
           <li class="caption-m text-gray-50">
             <a :href="member.href" target="_blank" rel="noopener noreferrer">{{ member.name }}</a>
           </li>

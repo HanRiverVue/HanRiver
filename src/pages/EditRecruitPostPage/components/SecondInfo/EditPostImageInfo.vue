@@ -1,8 +1,6 @@
 <script setup>
-import { postUploadPostImage } from '@/api/supabase/post_editor';
 import EditTitle from '../EditTitle.vue';
 import caution_notice_icon from '@/assets/icons/caution_notice_icon.svg';
-import AppButton from '@/components/AppButton.vue';
 import { ref, watch } from 'vue';
 
 const props = defineProps({
@@ -44,7 +42,6 @@ watch(
       // supabase 이미지 가져올때 왜 중간중간에 %가 끼는거지
       const fixedUrl = props.userInfo.post_img_path.replace(/%/g, '');
       imgPreview.value = fixedUrl;
-      console.log(fixedUrl);
       isWatched = true;
     }
   },
