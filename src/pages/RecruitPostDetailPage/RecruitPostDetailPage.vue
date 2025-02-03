@@ -20,6 +20,7 @@ import { useBaseModalStore } from '@/stores/baseModal';
 import { errorToast, warningToast } from '@/utils/toast';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { storeToRefs } from 'pinia';
+import { useUserProfileModalStore } from '@/stores/userProfileModal';
 
 const route = useRoute();
 const router = useRouter();
@@ -34,6 +35,9 @@ const isApplied = ref(false);
 const userStore = useUserStore();
 const likeCount = ref(0);
 const baseModal = useBaseModalStore();
+
+// 유저프로필 모달
+const userProfileModalStore = useUserProfileModalStore();
 
 const { user, isLoggedIn, userPostLikes } = storeToRefs(userStore);
 
@@ -75,7 +79,6 @@ const handleToggleLike = async (event) => {
     const result = await toggleLike(postId.value);
 
     if (result !== null) {
-      // 상태 갱신 후 userStore 업데이트
       userStore.updateLikes(postId.value);
     }
     if (isLiked.value) likeCount.value++;
@@ -95,9 +98,7 @@ const handleToggleBookmark = async (event) => {
   try {
     const result = await toggleBookmark(postId.value);
     if (result !== null) {
-      // 상태 갱신 후 userStore 업데이트
       userStore.updateBookmarks(postId.value);
-      console.log(user.value?.bookmarks);
     }
   } catch (error) {
     console.error('Error toggling bookmark:', error);
@@ -153,7 +154,6 @@ watch(
 
 watchEffect(() => {
   if (postDetails.value && user.value) {
-    console.log('User ID:', user.value);
     isAuthor.value = postDetails.value.author === user.value.user_id;
   }
 });
@@ -212,11 +212,9 @@ const handleApplyOrCancel = async (postId, selectedPositions) => {
     if (isApplied.value) {
       await deleteApplication(postId);
       isApplied.value = false;
-      console.log('신청이 취소되었습니다.');
     } else {
       await postApplication(postId, selectedPositions);
       isApplied.value = true;
-      console.log('신청이 완료되었습니다.');
     }
   } catch (error) {
     console.error('신청 처리 중 오류 발생:', error);
@@ -226,12 +224,10 @@ const handleApplyOrCancel = async (postId, selectedPositions) => {
 // 버튼 클릭 이벤트 정의
 const handleViewApplicants = () => {
   isApplicantsPage.value = true;
-  console.log('참여 신청자 목록 조회 버튼 클릭');
 };
 
 const handleBackToPost = () => {
   isApplicantsPage.value = false;
-  console.log('게시물로 돌아가기');
 };
 
 const handleCloseRecruitment = async (postId) => {
@@ -249,6 +245,16 @@ const handleCloseRecruitment = async (postId) => {
     console.error('Error updating post:', error);
   }
 };
+
+const handleUserProfileImageClick = () => {
+  if (!postDetails.value.author) {
+    console.error('User ID is undefined');
+    return;
+  }
+
+  userProfileModalStore.fetchModalUserProfile(postDetails.value.author);
+  userProfileModalStore.setUserProfileModal(true);
+};
 </script>
 
 <template>
@@ -263,7 +269,9 @@ const handleCloseRecruitment = async (postId) => {
       <!-- 게시물 헤더 -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
-          <h1 class="text-2xl font-bold">{{ postDetails.title }}</h1>
+          <h1 class="text-2xl font-bold break-words w-[80%]">
+            {{ postDetails.title }}
+          </h1>
           <div class="flex items-center gap-4" v-if="isAuthor">
             <!-- 수정 버튼 -->
             <button @click="router.push(`/ModifyRecruitPost/${postId}`)" class="">수정</button>
@@ -273,11 +281,12 @@ const handleCloseRecruitment = async (postId) => {
         </div>
 
         <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <div
-              v-if="postDetails && postDetails.user"
-              class="w-10 h-10 rounded-full flex items-center justify-center"
-            >
+          <div
+            v-if="postDetails && postDetails.user"
+            class="flex items-center gap-2 cursor-pointer"
+            @click="handleUserProfileImageClick(postDetails.user.id)"
+          >
+            <div class="w-10 h-10 rounded-full flex items-center justify-center">
               <img
                 v-if="postDetails.user.profile_img_path"
                 :src="postDetails.user.profile_img_path"
@@ -287,7 +296,8 @@ const handleCloseRecruitment = async (postId) => {
             </div>
             <div>
               <p class="body-b">
-                {{ postDetails.user.name }}<span class="m-2">&middot;</span>
+                <span>{{ postDetails.user.name }}</span>
+                <span class="m-2">&middot;</span>
                 <span class="caption-r">{{ formatDate(postDetails.created_at) }}</span>
               </p>
             </div>
@@ -348,6 +358,7 @@ const handleCloseRecruitment = async (postId) => {
         <!-- 게시물 이미지 -->
         <div class="mb-7 flex justify-center items-center">
           <img
+            v-if="postDetails.post_img_path"
             :src="postDetails.post_img_path.replace(/%/g, '')"
             alt="게시물 이미지"
             class="w-121 rounded-lg"

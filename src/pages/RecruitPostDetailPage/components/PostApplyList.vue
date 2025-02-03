@@ -7,6 +7,7 @@ import { supabase } from '@/config/supabase';
 import { dropdown_arrow_icon, dropdown_arrow_up_icon } from '@/assets/icons';
 import DropdownButton from '@/components/DropdownButton.vue';
 import DropdownMenu from '@/components/DropdownMenu.vue';
+import { useUserProfileModalStore } from '@/stores/userProfileModal';
 
 const props = defineProps({
   postDetails: Object,
@@ -18,6 +19,8 @@ const applications = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const isOpen = ref(false);
+// 유저프로필 모달
+const userProfileModalStore = useUserProfileModalStore();
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -142,6 +145,21 @@ const handleOutsideClick = (event) => {
     isOpen.value = false;
   }
 };
+
+const handleUserProfileImageClick = async (proposerId) => {
+  if (!proposerId) {
+    console.error('Proposer ID is undefined');
+    return;
+  }
+
+  try {
+    // 신청자 프로필 정보 불러오기
+    await userProfileModalStore.fetchModalUserProfile(proposerId);
+    userProfileModalStore.setUserProfileModal(true);
+  } catch (err) {
+    console.error('프로필 정보 로드 오류:', err);
+  }
+};
 </script>
 
 <template>
@@ -221,7 +239,8 @@ const handleOutsideClick = (event) => {
             <img
               :src="application.proposer_img_path"
               alt="Profile Image"
-              class="w-12 h-12 rounded-full user-Profile-img-shadow"
+              class="w-12 h-12 rounded-full user-Profile-img-shadow cursor-pointer hover:ring-2 hover:ring-primary-3 hover:ring-offset-2"
+              @click="handleUserProfileImageClick(application.proposer_id)"
             />
             <div>
               <p class="font-semibold flex items-center gap-2 text-base">

@@ -6,7 +6,6 @@ import ApplyModal from './ApplyModal.vue';
 import { useLoginModalStore } from '@/stores/loginModal';
 import { useUserStore } from '@/stores/user';
 
-
 const props = defineProps({
   postDetails: Object,
   loading: Boolean,
@@ -24,9 +23,12 @@ const isApplyModalOpen = ref(false);
 
 const isRecruitmentClosed = ref(props.postDetails?.finished);
 
-watch(() => props.postDetails?.finished, (newValue) => {
-  isRecruitmentClosed.value = newValue;
-});
+watch(
+  () => props.postDetails?.finished,
+  (newValue) => {
+    isRecruitmentClosed.value = newValue;
+  },
+);
 
 const openApplyModal = () => {
   const store = useLoginModalStore();
@@ -39,7 +41,7 @@ const openApplyModal = () => {
       cancelText: '돌아가기',
       onConfirm: () => {
         props.handleApplyOrCancel(props.postDetails.id);
-      }
+      },
     });
   } else {
     if (!storeUser.isLoggedIn) {
@@ -57,7 +59,7 @@ const openCloseRecruitmentModal = () => {
     cancelText: '돌아가기',
     onConfirm: () => {
       handleCloseRecruitmentClick();
-    }
+    },
   });
 };
 
@@ -72,50 +74,68 @@ const handleCloseRecruitmentClick = () => {
 </script>
 
 <template>
- <div class="flex w-full md:w-[350px] bg-secondary-3 rounded-lg shadow-lg p-4 sticky top-[80px] md:shrink-0">
+  <div
+    class="flex w-full md:w-[350px] bg-secondary-3 rounded-lg shadow-lg p-4 sticky top-[80px] md:shrink-0"
+  >
     <div v-if="props.loading">
       <p>로딩 중...</p>
     </div>
-    <div v-else-if="props.postDetails" class="flex-1">
+    <div v-else-if="props.postDetails" class="flex-1 max-w-full">
       <div class="p-4 relative">
         <ul class="space-y-2 text-gray-80 text-xs">
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">모집 인원</strong>
-            <span class="caption-r"> {{ props.postDetails.recruit_count }}명 </span>
+            <span class="caption-r break-words overflow-hidden">
+              {{ props.postDetails.recruit_count }}명
+            </span>
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="font-semibold">진행 기간</strong>
-            <span class="caption-r"> {{ props.postDetails.start_date }} ~ {{ props.postDetails.end_date }} </span>
+            <span class="caption-r break-words overflow-hidden">
+              {{ props.postDetails.start_date }} ~ {{ props.postDetails.end_date }}
+            </span>
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">모집 마감일</strong>
-            <span>
+            <span class="caption-r break-words overflow-hidden">
               {{ props.postDetails.recruit_deadline }}
-            </span class="caption-r">
+            </span>
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">포지션</strong>
-            <span class="caption-r" v-if="props.postDetails && props.postDetails.techStack">
+            <span
+              class="caption-r break-words overflow-hidden"
+              v-if="props.postDetails && props.postDetails.techStack"
+            >
               {{ props.postDetails.position.join(', ') }}
             </span>
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">스킬</strong>
-            <span class="caption-r" v-if="props.postDetails && props.postDetails.techStack">
+            <span
+              class="caption-r break-words overflow-hidden"
+              v-if="props.postDetails && props.postDetails.techStack"
+            >
               {{ props.postDetails.techStack.join(', ') }}
             </span>
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">모집 지역</strong>
-            <span class="caption-r"> {{ props.postDetails.recruit_area }}</span>
+            <span class="caption-r break-words overflow-hidden">
+              {{ props.postDetails.recruit_area }}</span
+            >
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">진행 방식</strong>
-            <span class="caption-r"> {{ props.postDetails.on_offline }}</span>
+            <span class="caption-r break-words overflow-hidden">
+              {{ props.postDetails.on_offline }}</span
+            >
           </li>
           <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">연락 방법</strong>
-            <span class="caption-r">{{ props.postDetails.call_method }} | {{ props.postDetails.call_link }}</span>
+            <span class="caption-r break-words overflow-hidden"
+              >{{ props.postDetails.call_method }} | {{ props.postDetails.call_link }}</span
+            >
           </li>
         </ul>
         <div>
@@ -136,18 +156,24 @@ const handleCloseRecruitmentClick = () => {
                 @click="props.handleBackToPost"
               />
               <AppButton
-  :text="isRecruitmentClosed ? '모집이 마감되었습니다' : '모집 마감하기'"
-  :type="isRecruitmentClosed ? 'disabled' : 'secondary'"
-  class="w-[294px] h-11 mt-3 text-[16px]"
-  :disabled="isRecruitmentClosed"
-  @click="openCloseRecruitmentModal"
-/>
+                :text="isRecruitmentClosed ? '모집이 마감되었습니다' : '모집 마감하기'"
+                :type="isRecruitmentClosed ? 'disabled' : 'secondary'"
+                class="w-[294px] h-11 mt-3 text-[16px]"
+                :disabled="isRecruitmentClosed"
+                @click="openCloseRecruitmentModal"
+              />
             </div>
           </template>
           <template v-else>
             <AppButton
-              :text="isRecruitmentClosed ? '모집이 마감되었습니다' : (props.isApplied ? '신청 취소' : '참여 신청')"
-              :type="isRecruitmentClosed ? 'disabled' : (props.isApplied ? 'cancel' : 'primary')"
+              :text="
+                isRecruitmentClosed
+                  ? '모집이 마감되었습니다'
+                  : props.isApplied
+                  ? '신청 취소'
+                  : '참여 신청'
+              "
+              :type="isRecruitmentClosed ? 'disabled' : props.isApplied ? 'cancel' : 'primary'"
               class="w-[294px] h-11 mt-6"
               @click="openApplyModal"
               :disabled="isRecruitmentClosed"
@@ -158,7 +184,7 @@ const handleCloseRecruitmentClick = () => {
     </div>
   </div>
 
-<ApplyModal
+  <ApplyModal
     v-if="props.postDetails"
     :isOpen="isApplyModalOpen"
     :postId="props.postDetails.id"
