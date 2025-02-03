@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { getPostDetails } from '@/api/supabase/post';
 import PostApplyList from './components/PostApplyList.vue';
 import PostSideBar from './components/PostSideBar.vue';
+import NotFound from './components/NotFound.vue';
 import { deleteApplication, postApplication } from '@/api/supabase/apply';
 import { supabase } from '@/config/supabase';
 import PostComment from './components/PostComment.vue';
@@ -252,8 +253,13 @@ const handleCloseRecruitment = async (postId) => {
 
 <template>
   <div class="container mx-auto p-4 md:p-8 flex flex-col items-start md:flex-row gap-8">
+    <NotFound
+      v-if="!loading && !postDetails"
+      message="존재하지 않거나 삭제된 게시물입니다."
+      :handleBackToPost="handleBackToPost"
+    />
     <!-- 왼쪽 콘텐츠 영역 -->
-    <div class="flex-none w-[738px]" v-if="!loading && postDetails">
+    <div v-else class="flex-none w-[738px]" v-if="!loading && postDetails">
       <!-- 게시물 헤더 -->
       <div class="mb-8">
         <div class="flex justify-between items-center mb-4">
@@ -372,6 +378,7 @@ const handleCloseRecruitment = async (postId) => {
       :handleCloseRecruitment="handleCloseRecruitment"
       :handleApplyOrCancel="handleApplyOrCancel"
       :isApplied="isApplied"
+      v-if="!error"
     />
   </div>
 </template>
