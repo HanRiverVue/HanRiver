@@ -11,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div class="flex items-center justify-center h-[calc(100vh-72px)]">
-    <img class="rotate" :class="class" src="/logo.svg" alt="로고 아이콘" />
+    <img class="rotate" :class="props.class" src="/logo.svg" alt="로고 아이콘" />
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import logo from '@/assets/icons/logo.svg';
 import NonLoggedInRight from '@/layout/header/components/NonLoggedInRight.vue';

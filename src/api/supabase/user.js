@@ -3,16 +3,6 @@ import { getUserLoggedIn } from '@/api/supabase/auth';
 
 // 온보딩 post API /////////////////////////////////////////////////////////////////////////
 
-// 테스트 데이터(이 형식에 맞춰서 데이터를 만들면 됩니다.)
-const userProfile = {
-  name: '지원',
-  short_introduce: '안녕하세요 저는 안지원입니다.',
-};
-const userPositions = [
-  { position: '기획', stacks: ['adobe'] },
-  { position: '백엔드', stacks: ['jango', 'php'] },
-];
-
 // 온보드 데이터 전송 API(본체) - 해당 요청의 return값으로 온보딩 값이 온전하게 담겨있습니다. 필요시 유저 온보딩 정보를 업데이트 하는 용도로 사용할 수 있습니다.
 export const postUserInfoOnboard = async (userProfile, userPositions) => {
   const userList = await postUserProfile(userProfile);
@@ -200,19 +190,6 @@ const getUserStacks = async (position_id) => {
 //
 // 마이페이지 유저 정보 수정 put API ////////////////////////////////////////////////////////////
 
-// 테스트 데이터(이 형식에 맞춰서 데이터를 만들면 됩니다.)
-const updatingUserProfile = {
-  name: '지원2',
-  short_introduce: '안녕하세요 테스트 하고 있어요요.',
-  long_introduce: '달디달고달디단밤양갱',
-  profile_img_path: '22이미지 주소',
-  link: ['https://github.com', 'https://naver.com'],
-};
-const updatingUserPositions = [
-  { position: '프론트엔드', stacks: ['react', 'vue'] },
-  { position: '디자이너', stacks: ['adobe', 'figma'] },
-];
-
 // 마이페이지 온보딩 수정 API(본체) - 해당 요청의 return값으로 온보딩 값이 온전하게 담겨있습니다. 필요시 유저 온보딩 정보를 업데이트 하는 용도로 사용할 수 있습니다.
 export const putUserInfo = async (updatingUserProfile, updatingUserPositions) => {
   const user = await getUserLoggedIn();
@@ -279,10 +256,7 @@ const putUserProfile = async (updateObject, user_id) => {
 
 // 이전 유저 포지션 delete API
 const deleteUserPositions = async (profile) => {
-  const { error } = await supabase
-    .from('user_list_positions')
-    .delete()
-    .eq('profile_id', profile.id);
+  await supabase.from('user_list_positions').delete().eq('profile_id', profile.id);
 };
 
 // 수정된 유저 포지션 post API
@@ -321,20 +295,20 @@ const postUpdateUserStacks = async (insertObject, position) => {
 //
 // 모든 유저 온보드 get API - 모든 유저 데이터를 불러옵니다.
 export const getAllUserInfo = async () => {
-  const { data: lists, error } = await supabase.from('user_list').select('*');
+  const { data: lists } = await supabase.from('user_list').select('*');
 
   const listsArr = lists.map((list) => ({ ...list, link: list.link.split('*') }));
 
   const result = [];
   for (const list of listsArr) {
-    const { data: positions, error } = await supabase
+    const { data: positions } = await supabase
       .from('user_list_positions')
       .select()
       .eq('profile_id', list.id);
 
     const positionsArr = [];
     for (const position of positions) {
-      const { data: stacks, err } = await supabase
+      const { data: stacks } = await supabase
         .from('user_list_stacks')
         .select()
         .eq('position_id', position.id)

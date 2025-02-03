@@ -14,7 +14,7 @@ export const signInWithGithub = async () => {
 
 // 카카오 로그인 API
 export const signInWithKakao = async () => {
-  let { data, error } = await supabase.auth.signInWithOAuth({
+  let { error } = await supabase.auth.signInWithOAuth({
     provider: 'kakao',
   });
   if (error) {

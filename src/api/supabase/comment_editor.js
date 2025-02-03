@@ -51,11 +51,7 @@ export const putUpdateComment = async (requestObj, commentId) => {
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }
-    const { data, error } = await supabase
-      .from('user_list')
-      .select()
-      .eq('user_id', user.id)
-      .single();
+    const { error } = await supabase.from('user_list').select().eq('user_id', user.id).single();
 
     if (error) {
       throw new Error(error);
@@ -85,7 +81,7 @@ export const deleteComment = async (commentId) => {
     if (!user) {
       throw new Error('로그인이 필요합니다!');
     }
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('post_comments')
       .delete()
       .eq('id', commentId)

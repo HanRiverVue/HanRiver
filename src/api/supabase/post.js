@@ -1,6 +1,5 @@
 import { supabase } from '@/config/supabase';
 import { getPostComments } from '@/api/supabase/comment';
-import { getUserInfoToUserId } from './user';
 
 // 전체 게시물을 보여주는 API
 // export const getAllPosts = async (filters, size = 10) => {

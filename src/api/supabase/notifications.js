@@ -12,7 +12,7 @@ const insertNotification = async (receiverId, senderId, postId, type, message) =
     message: message, // 알림 메시지
   };
 
-  const { data, error } = await supabase.from('notifications').insert([notification]);
+  const { error } = await supabase.from('notifications').insert([notification]);
 
   if (error) {
     console.error('알림 생성 중 오류 발생:', error);
@@ -108,19 +108,6 @@ export const subscribeToNotifications = (addNotifications, setHasNewNotification
       },
     )
     .subscribe();
-};
-
-// 알림 읽음 처리
-export const markAsSeen = async (id, notifications, hasNewNoti) => {
-  // db에 업데이트
-  await supabase.from('notifications').update({ seen: true }).eq('id', id);
-
-  notifications = notifications.map((noti) => (noti.id === id ? { ...noti, seen: true } : noti));
-
-  const data = await getNotifications();
-  const result = data.filter((item) => !item.seen);
-  if (result.length === 0) hasNewNoti = false;
-  else hasNewNoti = true;
 };
 
 export const markAsChecked = async (id) => {

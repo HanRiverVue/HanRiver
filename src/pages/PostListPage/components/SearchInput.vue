@@ -2,7 +2,7 @@
 import { SearchIcon } from '@/assets/icons';
 import BaseInput from '@/components/BaseInput.vue';
 
-const props = defineProps({
+defineProps({
   value: String,
 });
 

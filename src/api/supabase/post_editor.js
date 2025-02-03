@@ -94,12 +94,10 @@ export const postUploadPostImage = async (file) => {
       }
     });
     if (addData) {
-      const { data, error } = await supabase.storage
-        .from('post_images')
-        .upload(encodedFileName, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
+      const { error } = await supabase.storage.from('post_images').upload(encodedFileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
       if (error) {
         throw new Error(error);
       }
@@ -186,7 +184,7 @@ const putUpdateTechStack = async (postId, stacks) => {
 // 내가 작성한 게시물 삭제 API(🔒)  - DELETE
 export const deletePost = async (postId) => {
   try {
-    const { data, error } = await supabase.from('post').delete().eq('id', postId);
+    const { error } = await supabase.from('post').delete().eq('id', postId);
 
     if (error) {
       throw new Error(error);

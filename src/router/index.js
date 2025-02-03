@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MainPage from '@/pages/MainPage/MainPage.vue';
 import ErrorPage from '@/pages/ErrorPage.vue';
 import MainLayout from '@/layout/MainLayout.vue';
 import { supabase } from '@/config/supabase';
@@ -90,24 +89,11 @@ const router = createRouter({
       component: () => import('@/pages/OnboardPage/OnboardPage.vue'),
       meta: { requiredAuth: true },
     },
-    {
-      path: '/test',
-      name: 'testage',
-      component: () => import('@/pages/test_api_page_hw/LoginAndUserTest.vue'),
-    },
-    {
-      path: '/testhw',
-      name: 'testhw',
-      component: () => import('@/pages/test_api_page_hw/Post.vue'),
-    },
   ],
 });
 
 // 로그인 페이지 이동제어
 router.beforeEach(async (to, from, next) => {
-  // const isAuthenticated = await getSession();
-  // console.log(isAuthenticated);
-
   // 온보딩이 완료된 사용자는 접근 차단
   const { useUserStore } = await import('@/stores/user');
   const userStore = useUserStore();
