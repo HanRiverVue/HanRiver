@@ -271,7 +271,7 @@ onUnmounted(() => {
 
         <!-- 댓글 내용 -->
         <div class="col-start-1 col-span-3" ref="commentRef">
-          <p v-if="!comment.isEditable" class="text-gray-700">{{ comment.content }}</p>
+          <p v-if="!comment.isEditable" class="text-gray-700 break-words">{{ comment.content }}</p>
           <div v-else class="flex flex-wrap justify-end">
             <textarea
               type="text"
