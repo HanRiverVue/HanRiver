@@ -8,14 +8,12 @@ import PostPagination from '@/pages/PostListPage/components/PostPagination.vue';
 import { usePagination } from '@/hooks/usePagination';
 import { supabase } from '@/config/supabase';
 import { getMyApplyPosts } from '@/api/supabase/post';
-
 const statusFilterList = ['전체', '수락 완료', '수락 대기중', '모집 마감'];
 const router = useRouter();
 onMounted(async () => {
   fetchMyApplyPostsWithPagination();
   subscribeCancelPostApply();
 });
-
 // 필터링 & 페이지네이션 처리된 게시물 불러오기
 const fetchMyApplyPostsWithPagination = async () => {
   return await getMyApplyPosts(
@@ -38,16 +36,14 @@ const {
   fetchMyApplyPostsWithPagination,
   'filteredApplyPosts',
   {
-    status: null,
+    status: '전체',
   },
   false,
 );
-
 const handleGetStatus = (status) => {
   status = status === '전체' ? null : status;
   handleUpdateFilter({ status });
 };
-
 // post_apply_list  구독(delete시)
 const subscribeCancelPostApply = async () => {
   return supabase
@@ -65,7 +61,6 @@ const subscribeCancelPostApply = async () => {
 <template>
   <!-- 로딩중일 때 -->
   <LoadingPage v-if="isLoading" class="w-32 h-32" />
-
   <div v-else class="flex flex-col gap-5 px-6">
     <!-- 드롭다운 -->
     <div class="max-w-[126px] ml-auto">
@@ -102,7 +97,6 @@ const subscribeCancelPostApply = async () => {
         class="m-auto"
       />
     </div>
-
     <!-- 목록이 없을 때 -->
     <div
       v-else-if="filteredPosts?.length === 0"
