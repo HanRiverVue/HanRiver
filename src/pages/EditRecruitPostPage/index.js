@@ -176,6 +176,11 @@ export const sendData = async (
       goto = scrollRefs[0];
       break;
     }
+    case userInfo.recruit_area === '': {
+      errorToast('모집 지역 선택을 완료해주세요');
+      goto = scrollRefs[0];
+      break;
+    }
     case userInfo.recruit_deadline === null: {
       errorToast('모집 마감일 선택을 완료해주세요');
       goto = scrollRefs[0];
