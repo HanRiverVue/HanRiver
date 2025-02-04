@@ -39,18 +39,19 @@ const introduceToggle = ref(true);
     <div v-if="userInfo.link !== ''" class="flex flex-col gap-2.5">
       <span class="h3-b text-gray-80">링크</span>
       <ul class="flex flex-col gap-2.5">
-        <a
-          :href="link"
-          rel="noopener noreferrer"
-          target="_blank"
-          v-for="(link, index) in userInfo.link"
-          :key="index"
-        >
-          <li class="flex items-center gap-5 bg-secondary-3 rounded-lg input-shadow py-[5.5px]">
-            <img :src="linkIcon" alt="링크 아이콘" class="pl-4" />
-            <span class="text-black body-r">{{ link }}</span>
+        <template v-for="(link, index) in userInfo.link" :key="index">
+          <li v-if="link" class="bg-secondary-3 rounded-lg input-shadow py-[5.5px]">
+            <a
+              :href="link"
+              rel="noopener noreferrer"
+              target="_blank"
+              class="flex items-center gap-5"
+            >
+              <img :src="linkIcon" alt="링크 아이콘" class="pl-4" />
+              <span class="text-black body-r">{{ link }}</span>
+            </a>
           </li>
-        </a>
+        </template>
       </ul>
     </div>
 
