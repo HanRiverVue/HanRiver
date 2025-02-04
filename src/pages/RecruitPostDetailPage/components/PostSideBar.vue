@@ -82,6 +82,12 @@ const handleCloseRecruitmentClick = () => {
       <div class="p-4 relative">
         <ul class="space-y-2 text-gray-80 text-xs">
           <li class="grid grid-cols-[120px_1fr]">
+            <strong class="caption-b">모집 구분</strong>
+            <span class="caption-r break-words overflow-hidden">
+              {{ props.postDetails.recruit_type }}
+            </span>
+          </li>
+          <li class="grid grid-cols-[120px_1fr]">
             <strong class="caption-b">모집 인원</strong>
             <span class="caption-r break-words overflow-hidden">
               {{ props.postDetails.recruit_count }}명
