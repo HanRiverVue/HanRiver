@@ -198,7 +198,7 @@ const handleInitFilter = () => {
     </section>
     <section v-else>
       <div class="flex justify-center items-center h-[600px]">
-        <p class="text-center text-primary-4 h3-b">조건에 맞는 모집글이 없습니다...</p>
+        <p class="text-center text-primary-4 h3-b">조건에 맞는 모집글이 없습니다.</p>
       </div>
     </section>
     <PostPagination :currentPage="currentPage" :totalPage="totalPage" @change="handleChangePage" />
