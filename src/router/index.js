@@ -73,6 +73,7 @@ const router = createRouter({
           path: 'service',
           name: 'servicePage',
           component: () => import('@/pages/ServicePage.vue'),
+          meta: { bg_color: 'bg-secondary-3' },
         },
 
         {
