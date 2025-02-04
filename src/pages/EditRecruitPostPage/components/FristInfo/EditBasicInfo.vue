@@ -71,7 +71,10 @@ watch(
   <article
     class="flex flex-col gap-7 w-full rounded-md px-6 py-9 mb-10 bg-white drop-shadow-post-editor-shadow"
   >
-    <EditTitle :index="1" title="프로젝트 시작을 위해 기본 정보를 입력해주세요" />
+    <EditTitle
+      :index="1"
+      :title="`${userInfo.recruit_type || '프로젝트'} 시작을 위해 기본 정보를 입력해주세요`"
+    />
     <!-- 기본 정보 -->
     <article class="mt-4 flex gap-10">
       <article class="flex flex-col gap-7 w-[calc(50%-20px)] justify-between">

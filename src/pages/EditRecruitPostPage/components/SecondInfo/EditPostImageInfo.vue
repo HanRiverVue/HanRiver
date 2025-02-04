@@ -54,7 +54,10 @@ watch(
   <article
     class="flex flex-col w-full rounded-md px-6 py-9 mb-10 bg-white drop-shadow-post-editor-shadow"
   >
-    <EditTitle :index="2" title="프로젝트를 소개하는 이미지를 첨부해주세요" />
+    <EditTitle
+      :index="2"
+      :title="`${props.userInfo.recruit_type || '프로젝트'}를 소개하는 이미지를 첨부해주세요`"
+    />
     <article
       class="w-full py-5 mt-10 min-h-[390px] bg-secondary-2 border-dashed border-primary-4 border-2 flex items-center justify-center cursor-pointer"
       @click="handleImgButtonClick"

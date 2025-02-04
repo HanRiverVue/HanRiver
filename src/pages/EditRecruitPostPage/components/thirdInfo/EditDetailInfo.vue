@@ -25,7 +25,10 @@ const handleEditorFocusKeydown = (event) => {
   <article
     class="flex flex-col w-full px-6 mb-4 bg-white rounded-md gap-7 py-9 drop-shadow-post-editor-shadow"
   >
-    <EditTitle :index="3" title="프로젝트의 세부 내용을 작성해주세요" />
+    <EditTitle
+      :index="3"
+      :title="`${props.userInfo.recruit_type || '프로젝트'}의 세부 내용을 작성해주세요`"
+    />
     <article class="flex flex-col gap-3">
       <BaseInput
         :value="props.userInfo.title"
