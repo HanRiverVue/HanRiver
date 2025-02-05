@@ -2,6 +2,8 @@
 
 <img src="https://github.com/user-attachments/assets/86c8265c-d6c0-43b8-8a17-d2553886c536" width="100%">
 
+프로젝트 링크 : https://rivervue-mergi.netlify.app/
+
 <br/>
 
 ## 🤝 Introduce Our Project - 디지아너, 기획자, 개발자들의 연결고리!
